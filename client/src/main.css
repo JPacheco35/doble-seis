@@ -1,0 +1,30 @@
+.wood-grain {
+    background-color: #2a1506;
+    background-image:
+            radial-gradient(
+                    ellipse at center,
+                    transparent 40%,
+                    rgba(0, 0, 0, 0.55) 100%
+            ),
+            repeating-linear-gradient(
+                    92deg,
+                    rgba(0, 0, 0, 0) 0px,
+                    rgba(0, 0, 0, 0) 18px,
+                    rgba(0, 0, 0, 0.025) 19px,
+                    rgba(0, 0, 0, 0) 20px
+            ),
+            repeating-linear-gradient(
+                    178deg,
+                    rgba(255, 255, 255, 0) 0px,
+                    rgba(255, 255, 255, 0) 8px,
+                    rgba(255, 255, 255, 0.012) 9px,
+                    rgba(255, 255, 255, 0) 10px
+            ),
+            linear-gradient(
+                    160deg,
+                    #3d1f0a 0%,
+                    #2a1506 30%,
+                    #1e0f04 60%,
+                    #2d1808 100%
+            );
+}

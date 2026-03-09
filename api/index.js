@@ -1,32 +1,37 @@
-require('dotenv').config();
 const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.json());
-
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 
-app.use(cors({
-    origin: ["https://pheels.vercel.app", "http://localhost:5173"],
-    credentials: true,
-}));
+const app = express();
+app.use(cors());
 
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST"]
+    }
+});
 
-// POST /api/health
-// This route returns OK if the api is running
-app.get('/api/health', (req, res) => {
-    res.status(200).json({
-        status: 'ok',
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
+let currentColor = "blue"; // server holds the truth
+
+io.on('connection', (socket) => {
+    console.log('Client connected:', socket.id);
+
+    // immediately tell the new client the current color
+    socket.emit('colorUpdate', currentColor);
+
+    socket.on('toggleColor', () => {
+        currentColor = currentColor === 'blue' ? 'red' : 'blue';
+        const time = new Date().toLocaleTimeString();
+        console.log(`[${time}] Client ${socket.id} toggled color to ${currentColor}`);
+        io.emit('colorUpdate', currentColor);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected:', socket.id);
     });
 });
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////;
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-module.exports = app;
+server.listen(3000, () => console.log('Server running on port 3000'));
