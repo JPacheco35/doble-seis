@@ -4,7 +4,9 @@ import { io } from 'socket.io-client';
 
 import './App.css';
 
-const socket = io('http://localhost:3000');
+const API_URL = import.meta.env.VITE_API_URL;
+
+const socket = io(API_URL);
 
 export default function App() {
   const [color, setColor] = useState('blue');
