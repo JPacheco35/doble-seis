@@ -17,6 +17,16 @@ const io = new Server(server, {
 
 let currentColor = "blue"; // server holds the truth
 
+// POST /api/health
+// This route returns OK if the api is running
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+    });
+});
+
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
 
