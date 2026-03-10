@@ -1,0 +1,46 @@
+.logo-text {
+    animation:
+            fadeUp 0.6s ease forwards,
+            pulse 10s ease-in-out 0.6s infinite,
+            sheen 30s linear 1.2s infinite;
+    background: linear-gradient(
+            105deg,
+            #ffffff 0%,
+            #ffffff 35%,
+            #ff4f64 45%,
+            #367be6 60%,
+            #ffffff 70%,
+            #ffffff 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+    }
+    50% {
+        filter:
+                drop-shadow(0 0 6px rgba(255, 255, 255, 0.8))
+                drop-shadow(0 0 12px rgba(230, 57, 70, 0.4));
+    }
+}
+
+@keyframes sheen {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}

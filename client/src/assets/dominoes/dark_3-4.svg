@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="123" height="60" viewBox="0 0 123 60">
+  <!-- Tile background -->
+  <rect width="123" height="60" rx="6" ry="6" fill="#111111" stroke="#333333" stroke-width="1.5"/>
+  <!-- Divider -->
+  <line x1="60" y1="8" x2="60" y2="52" stroke="#444444" stroke-width="3" stroke-linecap="round"/>
+  <!-- Left pips (3) -->
+  <circle cx="19.4" cy="19.4" r="5" fill="#ffffff"/>
+    <circle cx="30.0" cy="30.0" r="5" fill="#ffffff"/>
+    <circle cx="40.6" cy="40.6" r="5" fill="#ffffff"/>
+  <!-- Right pips (4) -->
+  <circle cx="82.4" cy="19.4" r="5" fill="#ffffff"/>
+    <circle cx="103.6" cy="19.4" r="5" fill="#ffffff"/>
+    <circle cx="82.4" cy="40.6" r="5" fill="#ffffff"/>
+    <circle cx="103.6" cy="40.6" r="5" fill="#ffffff"/>
+</svg>

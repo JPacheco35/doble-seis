@@ -1,0 +1,10 @@
+.sit-down-btn:hover {
+    background: linear-gradient(135deg, #c8932a, #f4b942, #b8821e) !important;
+    box-shadow: 0 8px 28px rgba(200, 147, 42, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
+
+.sit-down-btn:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+}

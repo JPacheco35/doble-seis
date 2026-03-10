@@ -28,3 +28,17 @@
                     #2d1808 100%
             );
 }
+
+@font-face {
+        font-family: 'KomikaRegular';
+        src: url('./fonts/KomikaRegular.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+}
+
+@font-face {
+        font-family: 'KomikaTitle';
+        src: url('./fonts/KomikaTitle.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+}

@@ -1,0 +1,17 @@
+/*domino floating animation*/
+.floating-domino-hero {
+    width: 160px;
+    transform: rotate(-3deg);
+    animation: tileFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+}
+@keyframes tileFloat {
+    0%, 100% {
+        transform: rotate(-3deg) translateY(0px);
+        filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+    }
+    50% {
+        transform: rotate(-3deg) translateY(-8px);
+        filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.4));
+    }
+}
