@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const connect = require('./db');
 
 const app = express();
 app.use(cors());
@@ -9,7 +10,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: ["http://localhost:5173", "https://doble-seis.vercel.app"],
         methods: ["GET", "POST"]
     }
 });
@@ -34,4 +35,5 @@ io.on('connection', (socket) => {
     });
 });
 
+connect();
 server.listen(3000, () => console.log('Server running on port 3000'));
