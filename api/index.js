@@ -3,9 +3,11 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const connect = require('./db');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -31,7 +33,25 @@ app.get('/api/health', (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+// POST / join
+// This route is used to join a new user to the lobby
+app.post('/api/join', (req, res) => {
+    const { username } = req.body;
 
+    // no username provided
+    if (!username || !username.trim()) {
+        return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const playerId = uuidv4();
+
+    // join the lobby
+    res.status(200).json({
+        message: 'Joined lobby',
+        playerId,
+        username,
+    });
+});
 
 
 io.on('connection', (socket) => {
