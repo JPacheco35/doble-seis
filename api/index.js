@@ -4,6 +4,8 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const connect = require('./db');
 const { v4: uuidv4 } = require('uuid');
+const healthRoutes = require('./routes/health');
+
 
 const app = express();
 app.use(cors());
@@ -19,15 +21,7 @@ const io = new Server(server, {
 
 let currentColor = "blue"; // server holds the truth
 
-// POST /api/health
-// This route returns OK if the api is running
-app.get('/api/health', (req, res) => {
-    res.status(200).json({
-        status: 'ok',
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-    });
-});
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,4 +67,5 @@ io.on('connection', (socket) => {
 });
 
 connect();
+app.use('/api', healthRoutes);
 server.listen(3000, () => console.log('Server running on port 3000'));
