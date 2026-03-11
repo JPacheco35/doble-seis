@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import React, { useState } from 'react';
 import Logo from '../../ui/Logo/Logo.tsx';
 import { Button, Stack, Text, TextInput } from '@mantine/core';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
@@ -11,34 +10,9 @@ import { useNavigate } from 'react-router';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const socket = io(API_URL);
-
 export default function Welcome() {
-
-  const [color, setColor] = useState('blue');
-  const [connected, setConnected] = useState(false);
-
   const [username, setUsername] = useState('');
-
   const navigate = useNavigate();
-
-
-  // on page load, connect to the server via websocket
-  useEffect(() => {
-    socket.on('connect', () => setConnected(true));
-    socket.on('disconnect', () => setConnected(false));
-    socket.on('colorUpdate', (newColor) => setColor(newColor));
-
-    return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('colorUpdate');
-    };
-  }, []);
-
-  const handleToggle = () => {
-    socket.emit('toggleColor');
-  };
 
   // on username submit, join the lobby and navigate to it
   const handleSubmit = async() => {
@@ -47,9 +21,14 @@ export default function Welcome() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/connect`, { username });
-      console.log('Connected to lobby.', response.data);
+      const res = await axios.post(`${API_URL}/api/connect`, { username });
+
+      localStorage.setItem('playerId', res.data.playerId);
+      localStorage.setItem('username', res.data.username);
+
+      console.log(`Connected to lobby as ${res.data.username}-${res.data.playerId}`);
       navigate('/lobby');
+
     } catch (error) {
       console.error('Failed to connect:', error);
     }
@@ -147,27 +126,6 @@ export default function Welcome() {
           >
             Sit Down
           </Button>
-
-          <div>
-            <p style={{ color: connected ? 'green' : 'red' }}>
-              {connected ? 'Connected' : 'Disconnected'}
-            </p>
-            <button
-              onClick={handleToggle}
-              style={{
-                backgroundColor: color,
-                color: 'white',
-                padding: '20px 40px',
-                fontSize: '24px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                transition: 'background-color 0.3s',
-              }}
-            >
-              {color.toUpperCase()}
-            </button>
-          </div>
         </Stack>
       </CornerCard>
     </div>

@@ -6,47 +6,29 @@ const connect = require('./db');
 
 const healthRoutes = require('./routes/health');
 const connectRoutes = require('./routes/connect');
-
+const lobbySocket = require('./sockets/lobby');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// create server and io FIRST
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5173", "https://doble-seis.vercel.app"],
-        methods: ["GET", "POST"]
-    }
+        origin: ['http://localhost:5173', 'https://doble-seis.vercel.app'],
+        methods: ['GET', 'POST'],
+    },
 });
 
-let currentColor = "blue"; // server holds the truth
+// now you can use io and server
+lobbySocket(io);
 
-io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
-
-    // immediately tell the new client the current color
-    socket.emit('colorUpdate', currentColor);
-
-    socket.on('toggleColor', () => {
-        currentColor = currentColor === 'blue' ? 'red' : 'blue';
-        const time = new Date().toLocaleTimeString();
-        console.log(`[${time}] Client ${socket.id} toggled color to ${currentColor}`);
-        io.emit('colorUpdate', currentColor);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    });
-});
-
-
-// connect to the database
-connect();
-
-// import api routes
+// api routes
 app.use('/api', healthRoutes);
 app.use('/api', connectRoutes);
 
+// connect to the database
+connect();
 
 server.listen(3000, () => console.log('Server running on port 3000'));
