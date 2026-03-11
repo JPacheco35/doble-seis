@@ -5,6 +5,7 @@ const cors = require('cors');
 const connect = require('./db');
 const { v4: uuidv4 } = require('uuid');
 const healthRoutes = require('./routes/health');
+const connectRoutes = require('./routes/connect');
 
 
 const app = express();
@@ -20,33 +21,6 @@ const io = new Server(server, {
 });
 
 let currentColor = "blue"; // server holds the truth
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// POST / join
-// This route is used to join a new user to the lobby
-app.post('/api/join', (req, res) => {
-    const { username } = req.body;
-
-    // no username provided
-    if (!username || !username.trim()) {
-        return res.status(400).json({ error: 'Username is required' });
-    }
-
-    const playerId = uuidv4();
-
-    // join the lobby
-    res.status(200).json({
-        message: 'Joined lobby',
-        playerId,
-        username,
-    });
-});
-
 
 io.on('connection', (socket) => {
     console.log('Client connected:', socket.id);
@@ -66,6 +40,13 @@ io.on('connection', (socket) => {
     });
 });
 
+
+// connect to the database
 connect();
+
+// import api routes
 app.use('/api', healthRoutes);
+app.use('/api', connectRoutes);
+
+
 server.listen(3000, () => console.log('Server running on port 3000'));
