@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { v4: uuidv4 } = require('uuid');
 
 // POST /api/connect
 // connect a client to the server, provide them with a unique uuid
