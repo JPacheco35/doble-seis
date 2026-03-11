@@ -1,0 +1,87 @@
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: rgba(10, 7, 3, 0.7);
+    border-bottom: 1px solid rgba(180, 140, 60, 0.2);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+}
+
+/* Corner decorations */
+.header-corner {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: rgba(180, 140, 60, 0.35);
+    border-style: solid;
+}
+.header-corner.tl { top: 6px;    left: 6px;   border-width: 1px 0 0 1px; }
+.header-corner.tr { top: 6px;    right: 6px;  border-width: 1px 1px 0 0; }
+.header-corner.bl { bottom: 6px; left: 6px;   border-width: 0 0 1px 1px; }
+.header-corner.br { bottom: 6px; right: 6px;  border-width: 0 1px 1px 0; }
+
+/* Connectivity dot */
+.connectivity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.connectivity-dot.connected {
+    background: #4caf50;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.8);
+    animation: pulse-green 2s ease-in-out infinite;
+}
+
+.connectivity-dot.disconnected {
+    background: #e53935;
+    box-shadow: 0 0 6px rgba(229, 57, 53, 0.8);
+}
+
+@keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 4px rgba(76, 175, 80, 0.6); }
+    50%       { box-shadow: 0 0 10px rgba(76, 175, 80, 1); }
+}
+
+.connectivity-label {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    color: rgba(200, 184, 122, 0.5) !important;
+}
+
+/* Divider */
+.header-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(180, 140, 60, 0.2);
+}
+
+/* Username */
+.header-username {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #f4e8c1 !important;
+    letter-spacing: 0.03em !important;
+}
+
+/* Player ID — just the first segment */
+.header-playerid {
+    font-family: monospace !important;
+    font-size: 10px !important;
+    color: rgba(100, 160, 255, 0.7) !important;
+    background: rgba(100, 160, 255, 0.08) !important;
+    border: 1px solid rgba(100, 160, 255, 0.15) !important;
+    border-radius: 4px !important;
+    padding: 1px 6px !important;
+    letter-spacing: 0.05em !important;
+}

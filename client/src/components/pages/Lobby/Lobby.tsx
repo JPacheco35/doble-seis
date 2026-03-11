@@ -1,68 +1,64 @@
-import React, { useState, useEffect} from 'react';
+import React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
-import { Stack } from '@mantine/core';
+import { Grid, Stack } from '@mantine/core';
 import { Navigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import LobbyHeader from "../../ui/LobbyHeader/LobbyHeader.tsx";
+import LobbyList from "../../ui/LobbyList/LobbyList.tsx";
+import CreateLobby from "../../ui/CreateLobby/CreateLobby.tsx";
+import JoinLobby from "../../ui/JoinLobby/JoinLobby.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
-let socket: Socket
 
 export default function Lobby() {
+    const playerId = localStorage.getItem('playerId');
+    const username = localStorage.getItem('username');
 
-  const playerId = localStorage.getItem('playerId');
-  const username = localStorage.getItem('username');
-  const [, setConnected] = useState(false);
+    const [connected, setConnected] = useState(false);
+    const [lobbyName, setLobbyName] = useState('');
+    const [joinCode, setJoinCode] = useState('');
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    const socketRef = useRef<Socket | null>(null);
+
+    if (!playerId || !username) {
+        return <Navigate to="/welcome" replace />;
+    }
 
     useEffect(() => {
-        socket = io(`${API_URL}/lobby`, {
-            auth: {
-                playerId,
-                username,
-            },
+        const s = io(`${API_URL}/lobby`, {
+            auth: { playerId, username },
         });
 
-        socket.on('connect', () => setConnected(true));
-        socket.on('disconnect', () => setConnected(false));
-
-        socket.on('lobbyConnected', (data) => {
-            console.log(data.message);
-        });
-
-        socket.on('playerJoined', (data) => {
-            console.log(`${data.username} joined`);
-        });
-
-        socket.on('playerLeft', (data) => {
-            console.log(`${data.username} left`);
-        });
+        setSocket(s); // store in state so LobbyList will see it
+        setConnected(true);
 
         return () => {
-            socket.disconnect();
+            s.disconnect();
         };
     }, []);
+    return (
+        <div className="wood-grain" style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}>
+            <BGDominoes />
+            <LobbyHeader connected={connected} />
 
+            <div style={{ padding: '80px 32px 32px', maxWidth: '100%', margin: '0 auto' }}>
+                <Grid gutter="lg">
 
-  if (!playerId || !username) {
-      return <Navigate to="/welcome" replace/>;
-  }
+                    <Grid.Col span={8}>
+                        {socket && <LobbyList socket={socket} />}
+                    </Grid.Col>
 
-  return (
-    <div
-      className="wood-grain"
-      style={{
-        fontFamily: 'KomikaTitle, sans-serif',
-      }}
-    >
-      <BGDominoes />
-      <Stack justify={'center'} align={'center'} style={{ height: '100vh' }}>
-        <h1>Lobby Page</h1>
-          <p>
-              Welcome to the lobby,{' '}
-              <span style={{ color: 'red' }}>{username}</span>
-              {' '}-{' '}
-              <span style={{ color: 'blue' }}>{playerId}</span>!
-          </p>
-      </Stack>
-    </div>
-  );
+                    <Grid.Col span={4}>
+                        <Stack gap="lg">
+                            <CreateLobby lobbyName={lobbyName} setLobbyName={setLobbyName} socket={socketRef.current} />
+                            <JoinLobby joinCode={joinCode} setJoinCode={setJoinCode} socket={socketRef.current} />
+                        </Stack>
+                    </Grid.Col>
+
+                </Grid>
+            </div>
+        </div>
+    );
 }

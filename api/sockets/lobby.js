@@ -1,5 +1,35 @@
 // keep track of all the current lobbies
-const lobbies = {};
+// const lobbies = {};
+
+// DEBUG: PLACEHOLDER LOBBIES
+const lobbies = {
+    'TEST': {
+        code: 'TEST',
+        name: 'Test Lobby 1',
+        host: 'system',
+        status: 'waiting',
+        players: [],
+    },
+    'DEV2': {
+        code: 'DEV2',
+        name: 'Test Lobby 2',
+        host: 'system',
+        status: 'waiting',
+        players: [],
+    },
+    'DEV3': {
+        code: 'DEV3',
+        name: 'Test Lobby 3',
+        host: 'system',
+        status: 'waiting',
+        players: [],
+    },
+};
+
+// helper function at the top of lobby.js
+function broadcastLobbyList(lobby) {
+    lobby.emit('lobbyList', Object.values(lobbies));
+}
 
 // generate a unique lobby code and add it to the lobbies object
 function generateLobbyCode() {
@@ -16,7 +46,10 @@ module.exports = (io) => {
 
     lobby.on('connection', (socket) => {
         const { playerId, username } = socket.handshake.auth;
-        console.log(`${username} connected to lobby`);
+        console.log(`${username} connected to lobby`)
+
+        console.log("Sending lobby list:", lobbies);
+        lobby.emit('lobbyList', lobbies);
 
         // create a new lobby
         socket.on('createLobby', () => {
@@ -38,6 +71,7 @@ module.exports = (io) => {
 
             // update clients
             socket.emit('lobbyCreated', lobbies[code]);
+            broadcastLobbyList(lobby);
         });
 
 
@@ -76,6 +110,7 @@ module.exports = (io) => {
 
             // tell the new player specifically
             socket.emit('lobbyJoined', foundLobby);
+            broadcastLobbyList(lobby);
         });
 
 
@@ -102,6 +137,7 @@ module.exports = (io) => {
             foundLobby.status = 'playing';
             console.log(`Game starting in lobby ${code}`);
             lobby.to(code).emit('gameStarting', { code });
+            broadcastLobbyList(lobby);
         });
 
         // leaving a lobby
@@ -131,6 +167,7 @@ module.exports = (io) => {
                     break;
                 }
             }
+            broadcastLobbyList(lobby);
         });
     });
 };
