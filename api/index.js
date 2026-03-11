@@ -3,7 +3,6 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const connect = require('./db');
-const { v4: uuidv4 } = require('uuid');
 
 const healthRoutes = require('./routes/health');
 const connectRoutes = require('./routes/connect');

@@ -6,6 +6,8 @@ import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import FloatingDominoHero from '../../animations/FloatingDominoHero/FloatingDominoHero.tsx';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 import './Welcome.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,6 +19,8 @@ export default function Welcome() {
   const [connected, setConnected] = useState(false);
 
   const [username, setUsername] = useState('');
+
+  const navigate = useNavigate();
 
 
   // on page load, connect to the server via websocket
@@ -37,11 +41,18 @@ export default function Welcome() {
   };
 
   // on username submit, join the lobby and navigate to it
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     if (!username.trim()) {
       return;
     }
-    // navigate('/lobby');
+
+    try {
+      const response = await axios.post(`${API_URL}/api/connect`, { username });
+      console.log('Connected to lobby.', response.data);
+      navigate('/lobby');
+    } catch (error) {
+      console.error('Failed to connect:', error);
+    }
   }
 
   return (
