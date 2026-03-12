@@ -6,12 +6,15 @@ import { Socket } from "socket.io-client";
 interface JoinLobbyProps {
     joinCode: string;
     setJoinCode: (code: string) => void;
-    socket: Socket | null;
+    socket: Socket;
 }
 
 export default function JoinLobby({joinCode, setJoinCode, socket}: JoinLobbyProps) {
     return (
-        <CornerCard style={{ padding: '24px' }}>
+        <CornerCard
+          style={{ padding: '24px' }}
+          cornerSize={10}
+        >
             <Text
                 style={{
                     fontFamily: 'KomikaTitle, serif',

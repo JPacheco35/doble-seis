@@ -16,15 +16,20 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket }: CreateL
     };
 
     return (
-        <CornerCard style={{ padding: '24px' }}>
-            <Text style={{
+        <CornerCard
+          style={{ padding: '24px' }}
+          cornerSize={15}
+        >
+            <Text
+              style={{
                 fontFamily: 'KomikaTitle, serif',
                 fontSize: 14,
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
                 color: 'rgba(200,184,122,0.6)',
                 marginBottom: 20,
-            }}>
+              }}
+            >
                 Create Lobby
             </Text>
 
@@ -34,7 +39,7 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket }: CreateL
 
                 <TextInput
                     placeholder="Bob's Game..."
-                    label="Lobby Name (optional)"
+                    label="Lobby Name"
                     value={lobbyName}
                     onChange={(e) => setLobbyName(e.currentTarget.value)}
                     maxLength={24}
