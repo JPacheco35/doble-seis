@@ -1,0 +1,40 @@
+/* CreateLobby.css */
+
+.create-btn {
+    background: linear-gradient(135deg, #b8821e, #f4b942) !important;
+    color: #1a0e00 !important;
+    border: none !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    transition: opacity 0.2s, transform 0.15s !important;
+    box-shadow: 0 4px 16px rgba(200, 147, 42, 0.25) !important;
+}
+
+.create-btn:hover:not(:disabled) {
+    opacity: 0.85 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(200, 147, 42, 0.4) !important;
+}
+
+.create-btn:disabled {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(200, 184, 122, 0.25) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+}
+
+.delete-btn {
+    background: rgba(180, 40, 40, 0.15) !important;
+    color: #e07070 !important;
+    border: 1px solid rgba(180, 40, 40, 0.3) !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s !important;
+}
+
+.delete-btn:hover {
+    background: rgba(180, 40, 40, 0.28) !important;
+    border-color: rgba(180, 40, 40, 0.55) !important;
+    transform: translateY(-1px) !important;
+}
