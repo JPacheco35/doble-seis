@@ -31,18 +31,33 @@ export default function LobbyList({ socket, isHosting, setIsHosting, hostedCode,
 
     useEffect(() => {
         if (!socket) return;
+
         socket.on('lobbyList', (data) => setLobbies(Array.isArray(data) ? data : Object.values(data)));
-        socket.on('lobbyJoined', (lobby) => setJoinedCode(lobby.code));
+
+        socket.on('lobbyJoined', (lobby) => {
+            console.log('lobbyJoined', lobby.code);
+            setJoinedCode(lobby.code);
+        });
+
+        socket.on('lobbyClosed', (data) => {
+            console.log('lobbyClosed received', data);
+            setJoinedCode(null);
+        });
+
         return () => {
             socket.off('lobbyList');
             socket.off('lobbyJoined');
+            socket.off('lobbyClosed');
         };
     }, [socket]);
 
-    // sync joinedCode with hostedCode
+    // sync hostedCode -> joinedCode
     useEffect(() => {
-        if (hostedCode) setJoinedCode(hostedCode);
-        else setJoinedCode(null);
+        if (hostedCode && hostedCode !== '') {
+            setJoinedCode(hostedCode);
+        } else if (hostedCode === '' || hostedCode === null) {
+            setJoinedCode(null);
+        }
     }, [hostedCode]);
 
     console.log({isHosting,hostedCode,joinedCode})

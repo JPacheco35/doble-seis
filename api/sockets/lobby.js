@@ -105,12 +105,14 @@ module.exports = (io) => {
             broadcastLobbyList(lobby);
         });
 
+
         socket.on('deleteLobby', (code) => {
             const foundLobby = lobbies[code];
 
             if (!foundLobby) return socket.emit('lobbyError', { message: 'Lobby not found' });
             if (foundLobby.host !== playerId) return socket.emit('lobbyError', { message: 'Only the host can delete the lobby' });
 
+            lobby.to(code).emit('lobbyClosed', { code }); // notify players first
             delete lobbies[code];
             broadcastLobbyList(lobby);
             console.log(`${username} deleted lobby ${code}`);
@@ -157,7 +159,6 @@ module.exports = (io) => {
 
 
         socket.on('leaveLobby', (code) => {
-            console.log(`${username} leaving lobby ${code}`);
             const foundLobby = lobbies[code];
             if (!foundLobby) return;
 
@@ -165,14 +166,26 @@ module.exports = (io) => {
             if (index === -1) return;
 
             foundLobby.players.splice(index, 1);
-            socket.leave(code);
 
             if (foundLobby.players.length === 0 || foundLobby.host === playerId) {
+                lobby.to(code).emit('lobbyClosed', { code }); // emit BEFORE leaving
+                socket.leave(code);
                 delete lobbies[code];
             } else {
+                socket.leave(code);
                 lobby.to(code).emit('lobbyUpdated', foundLobby);
             }
 
+            broadcastLobbyList(lobby);
+        });
+
+        socket.on('closeLobby', (code) => {
+            const foundLobby = lobbies[code];
+            if (!foundLobby) return;
+            if (foundLobby.host !== username) return socket.emit('lobbyError', { message: 'Only the host can close the lobby' });
+
+            lobby.to(code).emit('lobbyClosed', { code });
+            delete lobbies[code];
             broadcastLobbyList(lobby);
         });
 
