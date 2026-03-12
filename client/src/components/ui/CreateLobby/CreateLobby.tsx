@@ -27,14 +27,29 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket }: CreateL
             }}>
                 Create Lobby
             </Text>
-            <Stack gap="md">
+
+            <Stack
+              gap="md"
+            >
+
                 <TextInput
                     placeholder="Bob's Game..."
                     label="Lobby Name (optional)"
                     value={lobbyName}
                     onChange={(e) => setLobbyName(e.currentTarget.value)}
                     maxLength={24}
+                    styles={{
+                      input: {
+                        fontFamily: 'KomikaTitle, serif',
+                        fontSize: 10,
+                      },
+                      label: {
+                        marginBottom: '10px',
+                        fontSize: 10,
+                      }
+                    }}
                 />
+
                 <Button
                     fullWidth
                     className="sit-down-btn"
