@@ -22,6 +22,7 @@ export function Lobby() {
   const [lobbyCreated, setLobbyCreated] = useState(false);
   const [lobbyCode, setLobbyCode] = useState('');
   const [joinedCode, setJoinedCode] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   if (!playerId || !username) {
     return <Navigate to="/welcome" replace />;
@@ -32,14 +33,20 @@ export function Lobby() {
       auth: { playerId, username },
     });
 
-    s.on('connect', () => setConnected(true));
+    s.on('connect', () => {
+      setConnected(true);
+      setSocket(s);
+    });
+
     s.on('disconnect', () => {
       setConnected(false);
       setLobbyCreated(false);
       setLobbyCode('');
+      setCountdown(null);
     });
 
-    setSocket(s);
+    s.on('gameCountdown', () => setCountdown(10));
+    s.on('countdownCancelled', () => setCountdown(null));
 
     return () => { s.disconnect(); };
   }, []);
@@ -73,11 +80,18 @@ export function Lobby() {
                     setLobbyCreated={setLobbyCreated}
                     lobbyCode={lobbyCode}
                     setLobbyCode={setLobbyCode}
+                    joinedCode={joinedCode}
+                    countdown={countdown}
+                    setCountdown={setCountdown}
                 />
                 <JoinLobby
                     joinCode={joinCode}
                     setJoinCode={setJoinCode}
                     socket={socket}
+                    countdown={countdown}
+                    setCountdown={setCountdown}
+                    joinedCode={joinedCode}
+                    lobbyCreated={lobbyCreated}
                 />
               </Stack>
             </Grid.Col>

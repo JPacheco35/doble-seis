@@ -7,6 +7,7 @@ const connect = require('./db');
 const healthRoutes = require('./routes/health');
 const connectRoutes = require('./routes/connect');
 const lobbySocket = require('./sockets/lobby');
+const gameSocket = require('./sockets/game');
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ const io = new Server(server, {
 
 // now you can use io and server
 lobbySocket(io);
+gameSocket(io);
 
 // api routes
 app.use('/api', healthRoutes);

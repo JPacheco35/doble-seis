@@ -4,9 +4,10 @@
     background: linear-gradient(135deg, #b8821e, #f4b942) !important;
     color: #1a0e00 !important;
     border: none !important;
+    font-family: 'KomikaTitle', sans-serif !important;
     font-size: 11px !important;
     font-weight: 700 !important;
-    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
     transition: opacity 0.2s, transform 0.15s !important;
     box-shadow: 0 4px 16px rgba(200, 147, 42, 0.25) !important;
 }
@@ -28,8 +29,9 @@
     background: rgba(180, 40, 40, 0.15) !important;
     color: #e07070 !important;
     border: 1px solid rgba(180, 40, 40, 0.3) !important;
+    font-family: 'KomikaTitle', sans-serif !important;
     font-size: 11px !important;
-    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
     transition: background 0.2s, border-color 0.2s, transform 0.15s !important;
 }
 
@@ -37,4 +39,110 @@
     background: rgba(180, 40, 40, 0.28) !important;
     border-color: rgba(180, 40, 40, 0.55) !important;
     transform: translateY(-1px) !important;
+}
+
+.team-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.team-label {
+    font-size: 10px !important;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.player-badge {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    user-select: none;
+}
+
+.player-badge:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
+}
+
+.player-badge-selected {
+    background: rgba(255, 255, 255, 0.12) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.player-badge-name {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+.player-slot-empty {
+    height: 38px;
+    border-radius: 8px;
+    border: 1px dashed rgba(200, 184, 122, 0.12);
+}
+
+.player-slot-droppable {
+    border-color: rgba(200, 184, 122, 0.35) !important;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+}
+
+.start-btn {
+    background: linear-gradient(135deg, #1a6b3a, #2ecc71) !important;
+    color: #fff !important;
+    border: none !important;
+    font-family: 'KomikaTitle', sans-serif !important;
+    font-size: 11px !important;
+    letter-spacing: 0.05em !important;
+    transition: opacity 0.2s, transform 0.15s !important;
+    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.25) !important;
+}
+
+.start-btn:hover {
+    opacity: 0.85 !important;
+    transform: translateY(-1px) !important;
+}
+
+.countdown-wrap {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+}
+
+.countdown-ring {
+    width: 60px;
+    height: 60px;
+    transform: rotate(-90deg);
+}
+
+.countdown-ring-bg {
+    fill: none;
+    stroke: rgba(200, 184, 122, 0.1);
+    stroke-width: 4;
+}
+
+.countdown-ring-fill {
+    fill: none;
+    stroke: #f4b942;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.countdown-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #f4e8c1;
 }

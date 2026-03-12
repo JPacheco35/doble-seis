@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import CornerCard from "../CornerCard/CornerCard.tsx";
-import {Text} from "@mantine/core";
+import {Stack, Text} from "@mantine/core";
 import LobbyCard from '../LobbyCard/LobbyCard.tsx';
 
 interface LobbyListProps {
@@ -74,24 +74,26 @@ export default function LobbyList({ socket, isHosting, setIsHosting, hostedCode,
                 Open Lobbies
             </Text>
 
-            {lobbies.length === 0 ? (
-                <Text style={{ color: 'rgba(200,184,122,0.3)', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
-                    No open lobbies
-                </Text>
-            ) : (
-                lobbies.map((lobby) => (
-                    <LobbyCard
-                        key={lobby.code}
-                        lobby={lobby}
-                        onJoin={handleJoin}
-                        onLeave={handleLeave}
-                        isJoined={joinedCode === lobby.code}
-                        isHosting={isHosting}
-                        isDisabled={(joinedCode !== null && joinedCode !== lobby.code) || (isHosting && lobby.code !== hostedCode)}
-                        hostedCode={hostedCode}
-                    />
-                ))
-            )}
+            <Stack gap={10}>
+                {lobbies.length === 0 ? (
+                    <Text style={{ color: 'rgba(200,184,122,0.3)', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
+                        No open lobbies
+                    </Text>
+                ) : (
+                    lobbies.map((lobby) => (
+                        <LobbyCard
+                            key={lobby.code}
+                            lobby={lobby}
+                            onJoin={handleJoin}
+                            onLeave={handleLeave}
+                            isJoined={joinedCode === lobby.code}
+                            isHosting={isHosting}
+                            isDisabled={(joinedCode !== null && joinedCode !== lobby.code) || (isHosting && lobby.code !== hostedCode)}
+                            hostedCode={hostedCode}
+                        />
+                    ))
+                )}
+            </Stack>
         </CornerCard>
     );
 }
