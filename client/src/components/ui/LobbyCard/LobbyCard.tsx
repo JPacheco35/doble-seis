@@ -31,7 +31,7 @@ export default function LobbyCard({ lobby }: LobbyCardProps) {
           <Text
             className="lobby-host"
           >
-            Host: {lobby.host}
+            Host: {lobby.hostname}
           </Text>
         </div>
 

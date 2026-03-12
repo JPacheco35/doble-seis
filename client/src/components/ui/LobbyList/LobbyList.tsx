@@ -36,7 +36,6 @@ export default function LobbyList({ socket }: LobbyListProps) {
         <CornerCard style={{ padding: '24px' }}>
             <Text
                 style={{
-                    // fontFamily: 'Abril Fatface, serif',
                     fontSize: 14,
                     letterSpacing: '0.15em',
                     textTransform: 'uppercase',
