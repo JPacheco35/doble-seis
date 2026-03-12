@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import CornerCard from "../CornerCard/CornerCard.tsx";
 import { Button, Stack, Text, TextInput } from "@mantine/core";
 import { Socket } from "socket.io-client";
@@ -10,11 +10,13 @@ interface CreateLobbyProps {
     setLobbyName: (name: string) => void;
     socket: Socket | null;
     connected: boolean;
+    lobbyCreated: boolean;
+    setLobbyCreated: (val: boolean) => void;
+    lobbyCode: string;
+    setLobbyCode: (val: string) => void;
 }
 
-export default function CreateLobby({ lobbyName, setLobbyName, socket, connected }: CreateLobbyProps) {
-    const [lobbyCreated, setLobbyCreated] = useState(false);
-    const [lobbyCode, setLobbyCode] = useState('');
+export default function CreateLobby({ lobbyName, setLobbyName, socket, connected, lobbyCreated, setLobbyCreated, lobbyCode, setLobbyCode }: CreateLobbyProps) {
 
     const handleCreate = () => {
         if (!socket) return;
@@ -26,6 +28,7 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
         if (!socket) return;
         socket.emit('deleteLobby', lobbyCode);
         setLobbyCreated(false);
+        setLobbyCode('');
     };
 
     useEffect(() => {
@@ -34,6 +37,7 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
             setLobbyCode(lobby.code);
             setLobbyCreated(true);
         });
+        return () => { socket.off('lobbyCreated'); };
     }, [socket]);
 
     return (
@@ -64,9 +68,7 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
                     className="create-btn"
                     disabled={!connected || !lobbyName.trim() || lobbyCreated}
                     onClick={handleCreate}
-                    style={{
-                        overflow: 'visible'
-                    }}
+                    style={{ overflow: 'visible' }}
                 >
                     Create Game
                 </Button>

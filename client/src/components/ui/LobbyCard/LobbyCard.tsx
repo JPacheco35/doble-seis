@@ -11,9 +11,15 @@ interface Player {
 
 interface LobbyCardProps {
   lobby: any;
+  onJoin: (code: string) => void;
+  onLeave: () => void;
+  isJoined: boolean;
+  isHosting: boolean;
+  isDisabled: boolean;
+  hostedCode: string | null;
 }
 
-export default function LobbyCard({ lobby }: LobbyCardProps) {
+export default function LobbyCard({ lobby, onJoin, onLeave, isJoined, isHosting, isDisabled}: LobbyCardProps) {
   const full = lobby.players.length === 4;
   const emptySeats = 4 - lobby.players.length;
 
@@ -56,17 +62,23 @@ export default function LobbyCard({ lobby }: LobbyCardProps) {
 
         {/* Right: badge + join */}
         <div className="lobby-right">
-          {full ? (
-            <Badge className="badge-full">Full</Badge>
+          {isJoined ? (<Badge className="badge-joined">Joined</Badge>)
+              : full ? (<Badge className="badge-full">Full</Badge>)
+              : (<Badge className="badge-waiting">Waiting</Badge>) }
+
+          {isJoined ? (
+              <Button className="delete-btn" onClick={onLeave}>
+                Leave
+              </Button>
           ) : (
-            <Badge className="badge-waiting">Waiting</Badge>
+              <Button
+                  className="join-btn"
+                  disabled={full || (isHosting && !isJoined) || (isDisabled && !isJoined)}
+                  onClick={() => onJoin(lobby.code)}
+              >
+                Join
+              </Button>
           )}
-          <Button
-            className="join-btn"
-            disabled={full}
-          >
-            Join
-          </Button>
         </div>
       </Group>
     </CornerCard>

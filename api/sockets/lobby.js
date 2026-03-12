@@ -101,12 +101,11 @@ module.exports = (io) => {
 
             socket.join(code);
             socket.emit('lobbyCreated', lobbies[code]);
-            console.log(`${username} created lobby ${name}`);
+            console.log(`${username} created lobby ${name} (${code})`);
             broadcastLobbyList(lobby);
         });
 
         socket.on('deleteLobby', (code) => {
-            console.log(`${username} tried deleting lobby ${code}`);
             const foundLobby = lobbies[code];
 
             if (!foundLobby) return socket.emit('lobbyError', { message: 'Lobby not found' });
@@ -114,6 +113,7 @@ module.exports = (io) => {
 
             delete lobbies[code];
             broadcastLobbyList(lobby);
+            console.log(`${username} deleted lobby ${code}`);
         });
 
 
@@ -152,6 +152,27 @@ module.exports = (io) => {
 
             // tell the new player specifically
             socket.emit('lobbyJoined', foundLobby);
+            broadcastLobbyList(lobby);
+        });
+
+
+        socket.on('leaveLobby', (code) => {
+            console.log(`${username} leaving lobby ${code}`);
+            const foundLobby = lobbies[code];
+            if (!foundLobby) return;
+
+            const index = foundLobby.players.findIndex(p => p.playerId === playerId);
+            if (index === -1) return;
+
+            foundLobby.players.splice(index, 1);
+            socket.leave(code);
+
+            if (foundLobby.players.length === 0 || foundLobby.host === playerId) {
+                delete lobbies[code];
+            } else {
+                lobby.to(code).emit('lobbyUpdated', foundLobby);
+            }
+
             broadcastLobbyList(lobby);
         });
 

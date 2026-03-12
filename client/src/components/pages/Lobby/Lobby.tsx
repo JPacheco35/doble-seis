@@ -19,6 +19,9 @@ export function Lobby() {
   const [lobbyName, setLobbyName] = useState(`${username}'s Game`);
   const [joinCode, setJoinCode] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [lobbyCreated, setLobbyCreated] = useState(false);
+  const [lobbyCode, setLobbyCode] = useState('');
+  const [joinedCode, setJoinedCode] = useState<string | null>(null);
 
   if (!playerId || !username) {
     return <Navigate to="/welcome" replace />;
@@ -30,52 +33,56 @@ export function Lobby() {
     });
 
     s.on('connect', () => setConnected(true));
-    s.on('disconnect', () => setConnected(false));
+    s.on('disconnect', () => {
+      setConnected(false);
+      setLobbyCreated(false);
+      setLobbyCode('');
+    });
 
     setSocket(s);
 
-    return () => {
-      s.disconnect();
-    };
+    return () => { s.disconnect(); };
   }, []);
 
   return (
-    <div
-      className="wood-grain"
-      style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}
-    >
-      <BGDominoes />
-      <LobbyHeader connected={connected} />
+      <div className="wood-grain" style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}>
+        <BGDominoes />
+        <LobbyHeader connected={connected} />
 
-      <div
-        style={{
-          padding: '80px 32px 32px',
-          maxWidth: '100%',
-          margin: '0 auto',
-        }}
-      >
-        <Grid gutter="lg">
-          <Grid.Col span={8}>
-            <LobbyList socket={socket} />
-          </Grid.Col>
+        <div style={{ padding: '80px 32px 32px', maxWidth: '100%', margin: '0 auto' }}>
+          <Grid gutter="lg">
+            <Grid.Col span={8}>
+              <LobbyList
+                  socket={socket}
+                  isHosting={lobbyCreated}
+                  setIsHosting={setLobbyCreated}
+                  hostedCode={lobbyCode}
+                  joinedCode={joinedCode}
+                  setJoinedCode={setJoinedCode}
+              />
+            </Grid.Col>
 
-          <Grid.Col span={4}>
-            <Stack gap="lg">
-              <CreateLobby
-                lobbyName={lobbyName}
-                setLobbyName={setLobbyName}
-                socket={socket}
-                connected={connected}
-              />
-              <JoinLobby
-                joinCode={joinCode}
-                setJoinCode={setJoinCode}
-                socket={socket}
-              />
-            </Stack>
-          </Grid.Col>
-        </Grid>
+            <Grid.Col span={4}>
+              <Stack gap="lg">
+                <CreateLobby
+                    lobbyName={lobbyName}
+                    setLobbyName={setLobbyName}
+                    socket={socket}
+                    connected={connected}
+                    lobbyCreated={lobbyCreated}
+                    setLobbyCreated={setLobbyCreated}
+                    lobbyCode={lobbyCode}
+                    setLobbyCode={setLobbyCode}
+                />
+                <JoinLobby
+                    joinCode={joinCode}
+                    setJoinCode={setJoinCode}
+                    socket={socket}
+                />
+              </Stack>
+            </Grid.Col>
+          </Grid>
+        </div>
       </div>
-    </div>
   );
 }
