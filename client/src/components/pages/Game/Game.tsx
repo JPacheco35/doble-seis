@@ -55,7 +55,7 @@ export default function Game() {
                 <Text style={{ color: 'rgba(200,184,122,0.5)', fontSize: 13, fontFamily: 'KomikaTitle, serif' }}>
                     {gameData.players?.length} players connected
                 </Text>
-                {gameData.players?.map((player, index) => (
+                {gameData.players?.map((player: any, index: number) => (
                     <Text key={index} style={{ color: 'rgba(200,184,122,0.5)', fontSize: 13, fontFamily: 'KomikaTitle, serif' }}>
                         {player.username}
                     </Text>
