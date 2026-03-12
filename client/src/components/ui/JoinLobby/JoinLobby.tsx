@@ -6,7 +6,7 @@ import { Socket } from "socket.io-client";
 interface JoinLobbyProps {
     joinCode: string;
     setJoinCode: (code: string) => void;
-    socket: Socket;
+    socket: Socket | null;
 }
 
 export default function JoinLobby({joinCode, setJoinCode, socket}: JoinLobbyProps) {
@@ -45,7 +45,7 @@ export default function JoinLobby({joinCode, setJoinCode, socket}: JoinLobbyProp
                 />
                 <Button
                     className="sit-down-btn"
-                    onClick={() => socket.emit('joinLobby', joinCode)}
+                    onClick={() => socket?.emit('joinLobby', joinCode)}
                     disabled={joinCode.length !== 4}
                 >
                     Join

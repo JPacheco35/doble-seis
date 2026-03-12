@@ -11,54 +11,54 @@ import JoinLobby from "../../ui/JoinLobby/JoinLobby.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function Lobby() {
-    const playerId = localStorage.getItem('playerId');
-    const username = localStorage.getItem('username');
+export function Lobby() {
+  const playerId = localStorage.getItem('playerId');
+  const username = localStorage.getItem('username');
 
-    const [connected, setConnected] = useState(false);
-    const [lobbyName, setLobbyName] = useState('');
-    const [joinCode, setJoinCode] = useState('');
-    const [socket, setSocket] = useState<Socket | null>(null);
+  const [connected, setConnected] = useState(false);
+  const [lobbyName, setLobbyName] = useState('');
+  const [joinCode, setJoinCode] = useState('');
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-    const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-    if (!playerId || !username) {
-        return <Navigate to="/welcome" replace />;
-    }
+  if (!playerId || !username) {
+    return <Navigate to="/welcome" replace />;
+  }
 
-    useEffect(() => {
-        const s = io(`${API_URL}/lobby`, {
-            auth: { playerId, username },
-        });
+  useEffect(() => {
+    const s = io(`${API_URL}/lobby`, {
+      auth: { playerId, username },
+    });
 
-        setSocket(s); // store in state so LobbyList will see it
-        setConnected(true);
+    setSocket(s); // store in state so LobbyList will see it
+    setConnected(true);
 
-        return () => {
-            s.disconnect();
-        };
-    }, []);
-    return (
-        <div className="wood-grain" style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}>
-            <BGDominoes />
-            <LobbyHeader connected={connected} />
+    return () => {
+      s.disconnect();
+    };
+  }, []);
+  return (
+    <div className="wood-grain" style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}>
+      <BGDominoes />
+      <LobbyHeader connected={connected} />
 
-            <div style={{ padding: '80px 32px 32px', maxWidth: '100%', margin: '0 auto' }}>
-                <Grid gutter="lg">
+      <div style={{ padding: '80px 32px 32px', maxWidth: '100%', margin: '0 auto' }}>
+        <Grid gutter="lg">
 
-                    <Grid.Col span={8}>
-                        {socket && <LobbyList socket={socket} />}
-                    </Grid.Col>
+          <Grid.Col span={8}>
+            {socket && <LobbyList socket={socket} />}
+          </Grid.Col>
 
-                    <Grid.Col span={4}>
-                        <Stack gap="lg">
-                            <CreateLobby lobbyName={lobbyName} setLobbyName={setLobbyName} socket={socketRef.current} />
-                            <JoinLobby joinCode={joinCode} setJoinCode={setJoinCode} socket={socketRef.current} />
-                        </Stack>
-                    </Grid.Col>
+          <Grid.Col span={4}>
+            <Stack gap="lg">
+              <CreateLobby lobbyName={lobbyName} setLobbyName={setLobbyName} socket={socketRef.current} />
+              <JoinLobby joinCode={joinCode} setJoinCode={setJoinCode} socket={socketRef.current} />
+            </Stack>
+          </Grid.Col>
 
-                </Grid>
-            </div>
-        </div>
-    );
+        </Grid>
+      </div>
+    </div>
+  );
 }
