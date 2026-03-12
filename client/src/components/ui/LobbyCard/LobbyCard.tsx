@@ -61,7 +61,10 @@ export default function LobbyCard({ lobby }: LobbyCardProps) {
           ) : (
             <Badge className="badge-waiting">Waiting</Badge>
           )}
-          <Button className="join-btn" disabled={full}>
+          <Button
+            className="join-btn"
+            disabled={full}
+          >
             Join
           </Button>
         </div>

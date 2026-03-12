@@ -87,6 +87,7 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-size: 10px !important;
+    padding: 10px 10px !important;
 }
 
 .badge-full {
@@ -96,18 +97,20 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-size: 10px !important;
+    padding: 10px 10px !important;
 }
 
 .join-btn {
     background: linear-gradient(135deg, #b8821e, #f4b942) !important;
     color: #1a0e00 !important;
     border: none !important;
-    font-size: 11px !important;
+    font-size: 10px !important;
     font-weight: 700 !important;
+    margin-top: 15px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 6px 16px !important;
-    height: auto !important;
+    padding: 8px 16px !important;
+    height: 30px !important;
     transition: opacity 0.2s, transform 0.15s !important;
 }
 
