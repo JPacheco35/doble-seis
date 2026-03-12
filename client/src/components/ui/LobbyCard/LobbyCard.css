@@ -1,0 +1,124 @@
+/* LobbyCard.css */
+
+.corner-card {
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+}
+
+.corner-card:hover {
+    border-color: rgba(244, 185, 66, 0.35) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Left */
+.lobby-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 140px;
+}
+
+.lobby-code {
+    font-size: 16px !important;
+    letter-spacing: 0.12em;
+    color: #f4e8c1 !important;
+}
+
+.lobby-name {
+    font-size: 11px !important;
+    letter-spacing: 0.08em;
+    color: rgba(200, 184, 122, 0.5) !important;
+    text-transform: uppercase;
+}
+
+.lobby-host {
+    margin-top: 5px;
+    font-size: 11px !important;
+    color: rgba(200, 184, 122, 0.35) !important;
+}
+
+.lobby-host span {
+    color: rgba(200, 184, 122, 0.6);
+}
+
+/* Middle: seats */
+.lobby-middle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seat {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid currentColor;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.seat-empty {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px dashed rgba(200, 184, 122, 0.15);
+}
+
+/* Right */
+.lobby-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 80px;
+}
+
+.badge-waiting {
+    background: rgba(74, 144, 217, 0.15) !important;
+    color: #4a90d9 !important;
+    border: 1px solid rgba(74, 144, 217, 0.3) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px !important;
+}
+
+.badge-full {
+    background: rgba(200, 184, 122, 0.08) !important;
+    color: rgba(200, 184, 122, 0.4) !important;
+    border: 1px solid rgba(200, 184, 122, 0.15) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px !important;
+}
+
+.join-btn {
+    background: linear-gradient(135deg, #b8821e, #f4b942) !important;
+    color: #1a0e00 !important;
+    border: none !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 16px !important;
+    height: auto !important;
+    transition: opacity 0.2s, transform 0.15s !important;
+}
+
+.join-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.join-btn:disabled {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(200, 184, 122, 0.3) !important;
+    cursor: not-allowed;
+    transform: none !important;
+}

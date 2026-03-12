@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
 import CornerCard from "../CornerCard/CornerCard.tsx";
 import { Text } from "@mantine/core";
+import LobbyCard from '../LobbyCard/LobbyCard.tsx';
 
 interface LobbyListProps {
     socket: Socket | null;
@@ -45,14 +46,19 @@ export default function LobbyList({ socket }: LobbyListProps) {
                 Open Lobbies
             </Text>
             {lobbies.length === 0 ? (
-                <Text style={{ color: 'rgba(200,184,122,0.3)', fontSize: 13, textAlign: 'center', padding: '40px 0' }}>
-                    No open lobbies yet
+                <Text
+                  style={{
+                    color: 'rgba(200,184,122,0.3)',
+                    fontSize: 13,
+                    textAlign: 'center',
+                    padding: '40px 0'
+                  }}
+                >
+                    No Open Lobbies Available
                 </Text>
             ) : (
                 lobbies.map((lobby) => (
-                    <div key={lobby.code}>
-                        <Text>{lobby.code} — {lobby.name} — {lobby.players.length}/4</Text>
-                    </div>
+                  <LobbyCard key={lobby.code} lobby={lobby} />
                 ))
             )}
         </CornerCard>
