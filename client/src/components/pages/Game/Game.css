@@ -1,0 +1,245 @@
+.game-status-panel {
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid rgba(180, 140, 60, 0.22);
+  background: rgba(10, 7, 3, 0.55);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.game-status-title {
+  color: rgba(200, 184, 122, 0.45);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.game-status-text {
+  color: #f4e8c1;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.game-timer-track {
+  margin-top: 10px;
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.game-timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f4b942, #d9704a);
+  transition: width 0.08s linear;
+}
+
+.game-events {
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid rgba(180, 140, 60, 0.16);
+  background: rgba(10, 7, 3, 0.35);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.game-event-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 28px;
+}
+
+.game-table-layout {
+  width: 100%;
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: 130px 1fr 130px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    '. top .'
+    'left center right';
+  gap: 14px;
+}
+
+.seat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.seat-top {
+  grid-area: top;
+  flex-direction: column;
+}
+
+.seat-left {
+  grid-area: left;
+  flex-direction: column;
+}
+
+.seat-right {
+  grid-area: right;
+  flex-direction: column;
+}
+
+.seat-chip {
+  min-width: 110px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: rgba(244, 232, 193, 0.9);
+  border-radius: 8px;
+  border: 1px solid rgba(180, 140, 60, 0.3);
+  background: rgba(10, 7, 3, 0.5);
+}
+
+.seat-chip-active {
+  border-color: rgba(244, 185, 66, 0.65);
+  box-shadow: 0 0 0 1px rgba(244, 185, 66, 0.15) inset;
+}
+
+.seat-you {
+  min-width: 220px;
+}
+
+.domino-backs-row {
+  display: flex;
+  gap: 3px;
+}
+
+.domino-backs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.domino-back {
+  width: 22px;
+  height: 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(160deg, #090909 0%, #141414 60%, #050505 100%);
+}
+
+.domino-back.vertical {
+  width: 12px;
+  height: 22px;
+}
+
+.table-center {
+  grid-area: center;
+  border: 1px solid rgba(180, 140, 60, 0.2);
+  border-radius: 14px;
+  background: rgba(10, 7, 3, 0.32);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.board-surface {
+  width: 100%;
+  min-height: 160px;
+  border-radius: 10px;
+  border: 1px solid rgba(180, 140, 60, 0.16);
+  background: rgba(7, 4, 2, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px;
+}
+
+.board-empty {
+  color: rgba(200, 184, 122, 0.2);
+  font-size: 12px;
+}
+
+.game-board-canvas {
+  position: relative;
+}
+
+.game-events {
+  max-width: unset;
+  width: 100%;
+}
+
+.board-domino {
+  position: absolute;
+  width: 50px;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+}
+
+.hand-domino {
+  width: 48px;
+  height: auto;
+  display: block;
+}
+
+.event-domino {
+  width: 28px;
+  height: auto;
+  opacity: 0.9;
+}
+
+.modal-domino {
+  width: 68px;
+  height: auto;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
+}
+
+@media (max-width: 980px) {
+  .game-table-layout {
+    grid-template-columns: 90px 1fr 90px;
+  }
+
+  .seat-chip {
+    min-width: 84px;
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .seat-you {
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 760px) {
+  .game-table-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .seat-left,
+  .seat-right {
+    flex-direction: row;
+  }
+
+  .domino-backs-col {
+    flex-direction: row;
+  }
+
+  .domino-back.vertical {
+    width: 22px;
+    height: 12px;
+  }
+}
+
+button:focus-visible {
+  outline: 2px solid #f4b942;
+  outline-offset: 2px;
+}
+

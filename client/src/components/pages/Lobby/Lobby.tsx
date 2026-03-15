@@ -52,51 +52,60 @@ export function Lobby() {
   }, []);
 
   return (
-      <div className="wood-grain" style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}>
-        <BGDominoes />
-        <LobbyHeader connected={connected} />
+    <div
+      className="wood-grain"
+      style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}
+    >
+      <BGDominoes />
+      <LobbyHeader connected={connected} />
 
-        <div style={{ padding: '80px 32px 32px', maxWidth: '100%', margin: '0 auto' }}>
-          <Grid gutter="lg">
-            <Grid.Col span={8}>
-              <LobbyList
-                  socket={socket}
-                  isHosting={lobbyCreated}
-                  setIsHosting={setLobbyCreated}
-                  hostedCode={lobbyCode}
-                  joinedCode={joinedCode}
-                  setJoinedCode={setJoinedCode}
+      <div
+        style={{
+          padding: '80px 32px 32px',
+          maxWidth: '100%',
+          margin: '0 auto',
+        }}
+      >
+        <Grid gutter="lg">
+          <Grid.Col span={8}>
+            <LobbyList
+              socket={socket}
+              isHosting={lobbyCreated}
+              setIsHosting={setLobbyCreated}
+              hostedCode={lobbyCode}
+              joinedCode={joinedCode}
+              setJoinedCode={setJoinedCode}
+            />
+          </Grid.Col>
+
+          <Grid.Col span={4}>
+            <Stack gap="lg">
+              <CreateLobby
+                lobbyName={lobbyName}
+                setLobbyName={setLobbyName}
+                socket={socket}
+                connected={connected}
+                lobbyCreated={lobbyCreated}
+                setLobbyCreated={setLobbyCreated}
+                lobbyCode={lobbyCode}
+                setLobbyCode={setLobbyCode}
+                joinedCode={joinedCode}
+                countdown={countdown}
+                setCountdown={setCountdown}
               />
-            </Grid.Col>
-
-            <Grid.Col span={4}>
-              <Stack gap="lg">
-                <CreateLobby
-                    lobbyName={lobbyName}
-                    setLobbyName={setLobbyName}
-                    socket={socket}
-                    connected={connected}
-                    lobbyCreated={lobbyCreated}
-                    setLobbyCreated={setLobbyCreated}
-                    lobbyCode={lobbyCode}
-                    setLobbyCode={setLobbyCode}
-                    joinedCode={joinedCode}
-                    countdown={countdown}
-                    setCountdown={setCountdown}
-                />
-                <JoinLobby
-                    joinCode={joinCode}
-                    setJoinCode={setJoinCode}
-                    socket={socket}
-                    countdown={countdown}
-                    setCountdown={setCountdown}
-                    joinedCode={joinedCode}
-                    lobbyCreated={lobbyCreated}
-                />
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </div>
+              <JoinLobby
+                joinCode={joinCode}
+                setJoinCode={setJoinCode}
+                socket={socket}
+                countdown={countdown}
+                setCountdown={setCountdown}
+                joinedCode={joinedCode}
+                lobbyCreated={lobbyCreated}
+              />
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </div>
+    </div>
   );
 }
