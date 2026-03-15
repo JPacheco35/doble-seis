@@ -5,11 +5,20 @@ import { io, Socket } from 'socket.io-client';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
+const PLAYER_HAND_TILE_SIZE = 40;
+const OPPONENT_TILE_WIDTH = 12;
+const OPPONENT_TILE_HEIGHT = 18;
+const TILE_SIZE = 28;
+const PLAYER_NAME_COLOR = '#ffc94a';
+
+
 interface Player {
   playerId: string;
   username: string;
   team: number;
   handSize: number;
+  points: number;
 }
 
 interface Domino {
@@ -32,11 +41,30 @@ interface GameState {
   roundNumber: number;
 }
 
+interface ScorePayload {
+  scores: { 1: number; 2: number };
+  playerScores?: Record<string, number>;
+}
+
+interface DominoPlacedPayload {
+  playerId: string;
+  placedDomino?: Domino;
+  moveNumber?: number;
+  side?: 'left' | 'right';
+  board: BoardDomino[];
+  leftEnd: number | null;
+  rightEnd: number | null;
+  autoPlayed: boolean;
+}
+
 interface LogEntry {
   id: number;
   text: string;
   type: 'play' | 'knock' | 'score' | 'system' | 'auto';
   player?: string;
+  domino?: Domino;
+  outcome?: 'win' | 'lose';
+  isFreeKnock?: boolean;
 }
 
 function dominoSrc(a: number, b: number): string {
@@ -81,7 +109,7 @@ function BoardChain({ board }: { board: BoardDomino[] }) {
     return (
       <div style={{
         color: 'rgba(200,184,122,0.18)', fontSize: 11,
-        fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.2em',
+        fontFamily: 'KomikaTitle, sans-serif', letterSpacing: '0.2em',
         textAlign: 'center', width: '100%',
       }}>
         BOARD IS EMPTY — WAITING FOR FIRST PLAY
@@ -89,19 +117,19 @@ function BoardChain({ board }: { board: BoardDomino[] }) {
     );
   }
 
-  const TILE_SIZE = 32;
   const imgW = Math.round(TILE_SIZE * 1.9);
   const imgH = TILE_SIZE;
 
   return (
     <div style={{
       display: 'flex', alignItems: 'center', flexWrap: 'wrap',
-      gap: 3, justifyContent: 'center', maxWidth: '100%',
+      gap: 1, justifyContent: 'center', maxWidth: '100%',
     }}>
       {board.map((domino, i) => {
         const isDouble = domino.left === domino.right;
+        const needsFlip = !isDouble && domino.left > domino.right;
         return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isDouble ? (
               <div style={{
                 width: imgH, height: imgW, flexShrink: 0,
@@ -119,11 +147,18 @@ function BoardChain({ board }: { board: BoardDomino[] }) {
                 src={dominoSrc(domino.left, domino.right)}
                 alt={`${domino.left}|${domino.right}`}
                 width={imgW} height={imgH}
-                style={{ borderRadius: 3, boxShadow: '1px 2px 5px rgba(0,0,0,0.5)', display: 'block', flexShrink: 0 }}
+                style={{
+                  transform: needsFlip ? 'scaleX(-1)' : 'none',
+                  transformOrigin: 'center',
+                  borderRadius: 3,
+                  boxShadow: '1px 2px 5px rgba(0,0,0,0.5)',
+                  display: 'block',
+                  flexShrink: 0,
+                }}
               />
             )}
             {i < board.length - 1 && (
-              <div style={{ width: 6, height: 1, background: 'rgba(180,140,60,0.12)' }} />
+              <div style={{ width: 3, height: 1, background: 'rgba(180,140,60,0.12)' }} />
             )}
           </div>
         );
@@ -132,19 +167,24 @@ function BoardChain({ board }: { board: BoardDomino[] }) {
   );
 }
 
-function FaceDownTiles({ total, remaining, vertical = false }: {
-  total: number; remaining: number; vertical?: boolean;
+function FaceDownTiles({ total, remaining }: {
+  total: number; remaining: number;
 }) {
   return (
     <div style={{
-      display: 'flex', flexDirection: vertical ? 'column' : 'row',
-      gap: 2, flexWrap: 'wrap', maxWidth: vertical ? 20 : 120,
+      display: 'flex', flexDirection: 'row',
+      gap: 2,
+      flexWrap: 'wrap',
+      maxWidth: 96,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
     }}>
       {Array.from({ length: total }).map((_, i) => {
         const played = i >= remaining;
         return (
           <div key={i} style={{
-            width: vertical ? 18 : 10, height: vertical ? 10 : 16,
+            width: OPPONENT_TILE_WIDTH, height: OPPONENT_TILE_HEIGHT,
             borderRadius: 1,
             background: played ? 'rgba(20,12,3,0.4)' : 'linear-gradient(135deg,#2a1e10,#1a1208)',
             border: `0.5px solid ${played ? 'rgba(40,24,8,0.15)' : 'rgba(180,140,60,0.2)'}`,
@@ -158,19 +198,17 @@ function FaceDownTiles({ total, remaining, vertical = false }: {
   );
 }
 
-function SeatCard({ player, isActive, isMe, position }: {
+function SeatCard({ player, isActive, isMe }: {
   player: Player; isActive: boolean; isMe?: boolean;
-  position: 'top' | 'left' | 'right' | 'bottom';
 }) {
   const teamColor = player.team === 1 ? '#88c0f0' : '#f0956a';
   const teamBorder = player.team === 1 ? 'rgba(74,144,217,0.25)' : 'rgba(217,112,74,0.25)';
-  const vertical = position === 'left' || position === 'right';
 
   return (
     <div style={{
       background: isActive ? 'rgba(8,4,1,0.95)' : 'rgba(8,4,1,0.8)',
-      border: `1px solid ${isActive ? 'rgba(76,175,80,0.4)' : isMe ? 'rgba(244,184,66,0.2)' : teamBorder}`,
-      borderRadius: 4, padding: '5px 10px',
+      border: `2px solid ${isActive ? 'rgba(76,175,80,0.4)' : isMe ? 'rgba(244,184,66,0.2)' : teamBorder}`,
+      borderRadius: 15, padding: '5px 10px',
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
       minWidth: 80,
       boxShadow: isActive ? '0 0 14px rgba(76,175,80,0.1)' : 'none',
@@ -182,8 +220,9 @@ function SeatCard({ player, isActive, isMe, position }: {
           boxShadow: isActive ? `0 0 6px ${teamColor}` : 'none',
         }} />
         <span style={{
-          fontFamily: "'Bebas Neue', sans-serif", fontSize: 12, letterSpacing: '0.1em',
-          color: isActive ? '#7ecf82' : isMe ? '#f4e8c1' : 'rgba(244,232,193,0.65)',
+          fontFamily: 'KomikaTitle, sans-serif', fontSize: 12, letterSpacing: '0.1em',
+          color: isActive ? '#7ecf82' : PLAYER_NAME_COLOR,
+          textShadow: isActive ? 'none' : '0 0 6px rgba(255,201,74,0.35)',
         }}>
           {player.username.toUpperCase()}{isActive ? ' ▶' : ''}
         </span>
@@ -191,14 +230,14 @@ function SeatCard({ player, isActive, isMe, position }: {
           fontSize: 7, letterSpacing: '0.1em', padding: '1px 4px', borderRadius: 2,
           background: player.team === 1 ? 'rgba(74,144,217,0.1)' : 'rgba(217,112,74,0.1)',
           color: teamColor, border: `0.5px solid ${teamBorder}`,
-          fontFamily: "'Bebas Neue', sans-serif",
+          fontFamily: 'KomikaTitle, sans-serif',
         }}>
           T{player.team}
         </span>
       </div>
-      {!isMe && <FaceDownTiles total={7} remaining={player.handSize} vertical={vertical} />}
+      {!isMe && <FaceDownTiles total={7} remaining={player.handSize} />}
       <span style={{
-        fontFamily: "'DM Sans', sans-serif", fontSize: 9,
+        fontFamily: 'KomikaTitle, sans-serif', fontSize: 9,
         color: isActive ? '#7ecf82' : 'rgba(200,184,122,0.28)',
       }}>
         {isActive ? `${player.handSize} tiles · playing…` : `${player.handSize} tiles`}
@@ -212,26 +251,97 @@ export default function Game() {
   const navigate = useNavigate();
   const playerId = localStorage.getItem('playerId');
   const username = localStorage.getItem('username');
+  const logStorageKey = `game-log:v1:${code ?? 'unknown'}:${playerId ?? 'anon'}`;
 
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [sidePrompt, setSidePrompt] = useState<number | null>(null);
   const [log, setLog] = useState<LogEntry[]>([]);
-  const [logCounter, setLogCounter] = useState(0);
+  const [logsHydrated, setLogsHydrated] = useState(false);
   const [gameOver, setGameOver] = useState<{ winner: number; scores: { 1: number; 2: number } } | null>(null);
   const [bootTimer, setBootTimer] = useState(180);
   const logRef = useRef<HTMLDivElement>(null);
+  const logEntriesRef = useRef<LogEntry[]>([]);
+  const gameStateRef = useRef<GameState | null>(null);
+  const lastDominoLogKeyRef = useRef('');
+  const logCounterRef = useRef(0);
+  const lastRoundStartLogKeyRef = useRef('');
 
-  const addLog = useCallback((text: string, type: LogEntry['type'], player?: string) => {
-    setLogCounter(c => {
-      const id = c + 1;
-      setLog(prev => [{ id, text, type, player }, ...prev.slice(0, 49)]);
-      return id;
-    });
+  useEffect(() => {
+    setLogsHydrated(false);
+
+    let restoredLog: LogEntry[] = [];
+    try {
+      const raw = localStorage.getItem(logStorageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw) as {
+          log?: LogEntry[];
+          logCounter?: number;
+          lastDominoLogKey?: string;
+        };
+
+        if (Array.isArray(parsed.log)) restoredLog = parsed.log.slice(0, 50);
+        logCounterRef.current = typeof parsed.logCounter === 'number' ? parsed.logCounter : 0;
+        lastDominoLogKeyRef.current = parsed.lastDominoLogKey ?? '';
+      } else {
+        logCounterRef.current = 0;
+        lastDominoLogKeyRef.current = '';
+      }
+    } catch {
+      // Ignore invalid persisted log payloads.
+      logCounterRef.current = 0;
+      lastDominoLogKeyRef.current = '';
+    }
+
+    lastRoundStartLogKeyRef.current = '';
+
+    setLog(restoredLog);
+    setLogsHydrated(true);
+  }, [logStorageKey]);
+
+  useEffect(() => {
+    if (!logsHydrated) return;
+    try {
+      localStorage.setItem(logStorageKey, JSON.stringify({
+        log,
+        logCounter: logCounterRef.current,
+        lastDominoLogKey: lastDominoLogKeyRef.current,
+      }));
+    } catch {
+      // Ignore storage write failures; gameplay should continue.
+    }
+  }, [log, logStorageKey, logsHydrated]);
+
+  const addLog = useCallback((
+    text: string,
+    type: LogEntry['type'],
+    player?: string,
+    domino?: Domino,
+    outcome?: LogEntry['outcome'],
+    isFreeKnock?: boolean
+  ) => {
+    logCounterRef.current += 1;
+    const id = logCounterRef.current;
+    setLog(prev => [{ id, text, type, player, domino, outcome, isFreeKnock }, ...prev.slice(0, 49)]);
+  }, []);
+
+  const clearRoundLog = useCallback(() => {
+    logCounterRef.current = 0;
+    lastDominoLogKeyRef.current = '';
+    lastRoundStartLogKeyRef.current = '';
+    setLog([]);
   }, []);
 
   const isMyTurn = gameState?.currentTurn === playerId;
+
+  useEffect(() => {
+    logEntriesRef.current = log;
+  }, [log]);
+
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
 
   useEffect(() => {
     if (timeLeft === null || timeLeft <= 0) return;
@@ -250,24 +360,43 @@ export default function Game() {
     const s = io(`${API_URL}/game`, { auth: { playerId, username } });
 
     s.on('connect', () => s.emit('joinGame', code));
-    s.on('gameState', (data: GameState) => setGameState(data));
+    s.on('gameState', (data: GameState) => {
+      setGameState(prev => ({
+        ...data,
+        roundNumber: data.roundNumber ?? prev?.roundNumber ?? 1,
+        players: (data.players || []).map((p) => ({
+          ...p,
+          points: p.points ?? prev?.players.find((old) => old.playerId === p.playerId)?.points ?? 0,
+        })),
+      }));
+    });
 
     s.on('timerStarted', (data: { currentTurn: string; duration: number }) => {
       setGameState(prev => prev ? { ...prev, currentTurn: data.currentTurn } : prev);
       setTimeLeft(data.duration);
     });
 
-    s.on('dominoPlaced', (data: any) => {
-      setGameState(prev => {
-        if (!prev) return prev;
-        const placerName = prev.players.find(p => p.playerId === data.playerId)?.username ?? data.playerId;
-        const type: LogEntry['type'] = data.autoPlayed ? 'auto' : 'play';
-        const text = data.autoPlayed
-          ? `${placerName} auto-played (timer)`
-          : `${placerName} played ${data.board[data.board.length - 1]?.left}|${data.board[data.board.length - 1]?.right}`;
-        addLog(text, type, placerName);
-        return { ...prev, board: data.board, leftEnd: data.leftEnd, rightEnd: data.rightEnd };
-      });
+    s.on('dominoPlaced', (data: DominoPlacedPayload) => {
+      const inferredLast = data.board?.[data.board.length - 1];
+      const placed = data.placedDomino ?? inferredLast;
+      const eventKey = [
+        typeof data.moveNumber === 'number' ? `m${data.moveNumber}` : data.playerId,
+        `${placed?.left ?? 'x'}-${placed?.right ?? 'x'}`,
+        data.side ?? 'x',
+      ].join(':');
+
+      if (lastDominoLogKeyRef.current === eventKey) return;
+      lastDominoLogKeyRef.current = eventKey;
+
+      const placerName = gameStateRef.current?.players.find(p => p.playerId === data.playerId)?.username ?? data.playerId;
+      const type: LogEntry['type'] = data.autoPlayed ? 'auto' : 'play';
+      const tileLabel = placed ? `${placed.left}-${placed.right}` : '?-?';
+      const text = data.autoPlayed
+        ? `${placerName} played ${tileLabel} (timeout)`
+        : `${placerName} played ${tileLabel}`;
+
+      addLog(text, type, placerName, placed);
+      setGameState(prev => prev ? { ...prev, board: data.board, leftEnd: data.leftEnd, rightEnd: data.rightEnd } : prev);
     });
 
     s.on('handUpdated', (data: any) => {
@@ -285,28 +414,94 @@ export default function Game() {
       setGameState(prev => prev ? { ...prev, currentTurn: data.currentTurn } : prev);
     });
 
-    s.on('playerKnocked', (data: any) => {
-      setGameState(prev => prev ? { ...prev, scores: data.scores } : prev);
-      addLog(`${data.username} knocked — ${data.points}pt to opposing team`, 'knock', data.username);
+    s.on('playerKnocked', (data: ScorePayload & { playerId: string; username: string; points: number; isFreeKnock?: boolean }) => {
+      setGameState(prev => prev ? {
+        ...prev,
+        scores: data.scores,
+        players: prev.players.map((p) => ({
+          ...p,
+          points: data.playerScores?.[p.playerId] ?? p.points,
+        })),
+      } : prev);
+
+      const myTeam = gameStateRef.current?.players.find(p => p.playerId === playerId)?.team;
+      const knockerTeam = gameStateRef.current?.players.find(p => p.playerId === data.playerId)?.team;
+      const outcome = myTeam && knockerTeam
+        ? (knockerTeam === myTeam ? 'lose' : 'win')
+        : undefined;
+
+      addLog(
+        data.isFreeKnock
+          ? `${data.username} knocked — free knock (no points)`
+          : `${data.username} knocked — ${data.points}pt to opposing team`,
+        'knock',
+        data.username,
+        undefined,
+        outcome,
+        data.isFreeKnock
+      );
     });
 
-    s.on('softLock', (data: any) => {
-      setGameState(prev => prev ? { ...prev, scores: data.scores } : prev);
-      addLog('Soft lock — 2pts awarded', 'score');
+    s.on('softLock', (data: ScorePayload & { playerId?: string }) => {
+      setGameState(prev => prev ? {
+        ...prev,
+        scores: data.scores,
+        players: prev.players.map((p) => ({
+          ...p,
+          points: data.playerScores?.[p.playerId] ?? p.points,
+        })),
+      } : prev);
+
+      const myTeam = gameStateRef.current?.players.find(p => p.playerId === playerId)?.team;
+      const lockerTeam = data.playerId
+        ? gameStateRef.current?.players.find(p => p.playerId === data.playerId)?.team
+        : undefined;
+      const outcome = myTeam && lockerTeam
+        ? (lockerTeam === myTeam ? 'win' : 'lose')
+        : undefined;
+
+      addLog('Soft lock — 2pts awarded', 'score', undefined, undefined, outcome);
     });
 
     s.on('roundStarted', (data: any) => {
+      if (data.roundNumber > 1) {
+        clearRoundLog();
+      }
+
       setGameState(prev => prev ? {
         ...prev, board: [], leftEnd: null, rightEnd: null,
         roundNumber: data.roundNumber, currentTurn: data.currentTurn,
       } : prev);
       setTimeLeft(data.timeLimit);
-      addLog(`— Round ${data.roundNumber} started —`, 'system');
+
+      const roundStartKey = `${data.roundNumber}:${data.currentTurn}`;
+      const roundStartText = `— Round ${data.roundNumber} started —`;
+      const alreadyLogged = logEntriesRef.current.some(
+        (entry) => entry.type === 'system' && entry.text === roundStartText
+      );
+
+      if (lastRoundStartLogKeyRef.current !== roundStartKey && !alreadyLogged) {
+        lastRoundStartLogKeyRef.current = roundStartKey;
+        addLog(roundStartText, 'system');
+      }
     });
 
-    s.on('roundEnded', (data: any) => {
-      setGameState(prev => prev ? { ...prev, scores: data.scores } : prev);
-      addLog(`Round ended — tally ${data.tally} = ${data.points}pts to Team ${data.winningTeam}`, 'score');
+    s.on('roundEnded', (data: ScorePayload & { tally: number; points: number; winningTeam: number | null }) => {
+      setGameState(prev => prev ? {
+        ...prev,
+        scores: data.scores,
+        players: prev.players.map((p) => ({
+          ...p,
+          points: data.playerScores?.[p.playerId] ?? p.points,
+        })),
+      } : prev);
+
+      const myTeam = gameStateRef.current?.players.find(p => p.playerId === playerId)?.team;
+      const outcome = myTeam && data.winningTeam
+        ? (data.winningTeam === myTeam ? 'win' : 'lose')
+        : undefined;
+
+      addLog(`Round ended — tally ${data.tally} = ${data.points}pts to Team ${data.winningTeam}`, 'score', undefined, undefined, outcome);
       setTimeLeft(null);
     });
 
@@ -320,7 +515,7 @@ export default function Game() {
 
     setSocket(s);
     return () => { s.disconnect(); };
-  }, []);
+  }, [addLog, clearRoundLog, code, navigate, playerId, username]);
 
   const getValidIndices = (): number[] => {
     if (!gameState) return [];
@@ -347,7 +542,7 @@ export default function Game() {
     }
     const fitsLeft = domino.left === leftEnd || domino.right === leftEnd;
     const fitsRight = domino.left === rightEnd || domino.right === rightEnd;
-    if (fitsLeft && fitsRight) { setSidePrompt(dominoIndex); return; }
+    if (fitsLeft && fitsRight && leftEnd !== rightEnd) { setSidePrompt(dominoIndex); return; }
     socket?.emit('placeDomino', { code, dominoIndex, side: fitsLeft ? 'left' : 'right' });
   };
 
@@ -361,13 +556,15 @@ export default function Game() {
   };
 
   const seats = getSeatedPlayers();
+  const currentRound = gameState?.roundNumber ?? 1;
+  const displayUsername = (username?.trim() || 'Guest').slice(0, 20);
   const timerPct = timeLeft !== null ? (timeLeft / 30) * 100 : 100;
   const timerColor = timerPct < 20 ? '#e05555' : timerPct < 50 ? '#f4a042' : '#4caf50';
   const formatBoot = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
   if (!gameState) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#160d06' }}>
-      <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
+      <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
         CONNECTING TO GAME…
       </span>
     </div>
@@ -376,7 +573,7 @@ export default function Game() {
   return (
     <div style={{
       width: '100vw', height: '100vh', background: '#160d06',
-      fontFamily: "'Bebas Neue', sans-serif", color: '#f4e8c1',
+      fontFamily: 'KomikaTitle, sans-serif', color: '#f4e8c1',
       display: 'grid', gridTemplateColumns: '1fr 230px', gridTemplateRows: '38px 1fr',
       overflow: 'hidden',
     }}>
@@ -407,9 +604,22 @@ export default function Game() {
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{
+            fontSize: 10,
+            letterSpacing: '0.08em',
+            padding: '2px 8px',
+            borderRadius: 999,
+            border: '1px solid rgba(244,184,66,0.24)',
+            background: 'linear-gradient(180deg, rgba(244,184,66,0.16), rgba(180,120,40,0.08))',
+            color: '#f4e8c1',
+            textTransform: 'uppercase',
+            boxShadow: 'inset 0 0 6px rgba(244,184,66,0.12)',
+          }}>
+            {displayUsername}
+          </span>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4caf50', boxShadow: '0 0 5px #4caf50' }} />
           <span style={{ fontSize: 10, color: 'rgba(200,184,122,0.3)', letterSpacing: '0.12em' }}>
-            GAME #{code} · RND {gameState.roundNumber}
+            GAME #{code} · RND {currentRound}
           </span>
         </div>
       </div>
@@ -446,36 +656,21 @@ export default function Game() {
             ))}
           </div>
 
-          {/* end labels */}
-          {gameState.board.length > 0 && (
-            <>
-              <div style={{
-                position: 'absolute', left: 26, top: '50%', transform: 'translateY(-50%)', zIndex: 3,
-                background: 'rgba(6,3,0,0.88)', border: '1px solid rgba(180,140,60,0.2)',
-                borderRadius: 3, padding: '2px 7px', fontSize: 13, color: '#f4b942', letterSpacing: '0.08em',
-              }}>{gameState.leftEnd}</div>
-              <div style={{
-                position: 'absolute', right: 26, top: '50%', transform: 'translateY(-50%)', zIndex: 3,
-                background: 'rgba(6,3,0,0.88)', border: '1px solid rgba(180,140,60,0.2)',
-                borderRadius: 3, padding: '2px 7px', fontSize: 13, color: '#f4b942', letterSpacing: '0.08em',
-              }}>{gameState.rightEnd}</div>
-            </>
-          )}
 
           {/* seats */}
           {seats.top && (
             <div style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3 }}>
-              <SeatCard player={seats.top} isActive={gameState.currentTurn === seats.top.playerId} position="top" />
+              <SeatCard player={seats.top} isActive={gameState.currentTurn === seats.top.playerId} />
             </div>
           )}
           {seats.left && (
             <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
-              <SeatCard player={seats.left} isActive={gameState.currentTurn === seats.left.playerId} position="left" />
+              <SeatCard player={seats.left} isActive={gameState.currentTurn === seats.left.playerId} />
             </div>
           )}
           {seats.right && (
             <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
-              <SeatCard player={seats.right} isActive={gameState.currentTurn === seats.right.playerId} position="right" />
+              <SeatCard player={seats.right} isActive={gameState.currentTurn === seats.right.playerId} />
             </div>
           )}
 
@@ -520,14 +715,14 @@ export default function Game() {
           <div style={{ fontSize: 8, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.18)', textAlign: 'center' }}>
             YOUR HAND
           </div>
-          <div style={{ display: 'flex', gap: 5, justifyContent: 'center', alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'flex-end' }}>
             {gameState.hand?.map((domino, i) => {
               const isValid = validIndices.includes(i);
               return (
                 <div key={i} style={{ opacity: isMyTurn && !isValid ? 0.22 : 1, transition: 'opacity 0.2s' }}>
                   <DominoTile
                     left={domino.left} right={domino.right}
-                    size={40} valid={isValid}
+                    size={PLAYER_HAND_TILE_SIZE} valid={isValid}
                     onClick={isValid ? () => handlePlaceDomino(i) : undefined}
                   />
                 </div>
@@ -547,7 +742,7 @@ export default function Game() {
           background: 'rgba(180,140,60,0.04)', borderBottom: '0.5px solid rgba(180,140,60,0.07)',
           fontSize: 9, letterSpacing: '0.12em', color: 'rgba(200,184,122,0.28)',
         }}>
-          <span>ROUND <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{gameState.roundNumber}</span></span>
+          <span>ROUND <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</span></span>
           <span>FIRST TO <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>20</span></span>
         </div>
 
@@ -568,11 +763,12 @@ export default function Game() {
               {gameState.players.filter(p => p.team === t).map(p => (
                 <div key={p.playerId} style={{
                   display: 'flex', justifyContent: 'space-between',
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 9,
-                  color: 'rgba(200,184,122,0.25)', letterSpacing: '0.06em', padding: '1px 0',
+                  fontFamily: 'KomikaTitle, sans-serif', fontSize: 9,
+                  color: PLAYER_NAME_COLOR, letterSpacing: '0.06em', padding: '1px 0',
+                  textShadow: '0 0 5px rgba(255,201,74,0.22)',
                 }}>
                   <span>{p.username.toUpperCase()}</span>
-                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 10, color: 'rgba(244,184,66,0.4)' }}>—</span>
+                  <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 10, color: 'rgba(244,184,66,0.4)' }}>{p.points}</span>
                 </div>
               ))}
             </div>
@@ -586,23 +782,48 @@ export default function Game() {
           flex: 1, overflowY: 'auto', padding: '5px 10px',
           display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'none',
         }}>
-          {log.map(entry => (
+          {log.map((entry, index) => (
             <div key={entry.id} style={{
-              fontFamily: "'DM Sans', sans-serif", fontSize: 10,
+              fontFamily: 'KomikaTitle, sans-serif', fontSize: 10,
               lineHeight: 1.5, paddingBottom: 2,
               borderBottom: '0.5px solid rgba(180,140,60,0.04)',
-              color: entry.type === 'knock' ? 'rgba(217,112,74,0.5)'
-                : entry.type === 'score' ? 'rgba(76,175,80,0.5)'
-                  : entry.type === 'system' ? 'rgba(200,184,122,0.15)'
-                    : 'rgba(200,184,122,0.35)',
+              color: entry.isFreeKnock ? 'rgba(225,225,225,0.98)'
+                : entry.outcome === 'win' ? 'rgba(156,242,160,0.98)'
+                : entry.outcome === 'lose' ? 'rgba(255,168,128,0.98)'
+                : entry.type === 'knock' ? 'rgba(255,168,128,0.98)'
+                : entry.type === 'score' ? 'rgba(156,242,160,0.98)'
+                  : entry.type === 'system' ? 'rgba(245,231,188,0.9)'
+                    : 'rgba(245,228,176,0.96)',
+              opacity: index === 0 ? 1 : Math.max(0.84, 0.97 - index * 0.01),
+              textShadow: index === 0 ? '0 0 9px rgba(255,247,215,0.42)' : '0 0 3px rgba(255,247,215,0.16)',
+              transition: 'opacity 0.2s ease',
             }}>
-              {entry.player
-                ? <><b style={{ color: 'rgba(244,184,66,0.58)', fontWeight: 500 }}>{entry.player}</b>{' '}{entry.text.replace(entry.player + ' ', '')}</>
+              {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
+                  <b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</b>
+                  <span>played</span>
+                  <img
+                    src={dominoSrc(entry.domino.left, entry.domino.right)}
+                    alt={`${entry.domino.left}-${entry.domino.right}`}
+                    width={22}
+                    height={12}
+                    style={{
+                      display: 'inline-block',
+                      objectFit: 'contain',
+                      borderRadius: 2,
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.28)',
+                      verticalAlign: 'middle',
+                    }}
+                  />
+                  {entry.type === 'auto' && <span>(timeout)</span>}
+                </span>
+              ) : entry.player
+                ? <><b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, textShadow: '0 0 6px rgba(255,201,74,0.35)' }}>{entry.player}</b>{' '}{entry.text.replace(entry.player + ' ', '')}</>
                 : entry.text}
             </div>
           ))}
           {log.length === 0 && (
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: 'rgba(200,184,122,0.15)', fontStyle: 'italic' }}>
+            <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, color: 'rgba(200,184,122,0.15)', fontStyle: 'italic' }}>
               Round log will appear here…
             </div>
           )}
@@ -620,7 +841,7 @@ export default function Game() {
             borderRadius: 6, padding: '24px 32px', textAlign: 'center',
           }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: 'rgba(200,184,122,0.3)', marginBottom: 8 }}>WHICH END?</div>
-            <div style={{ fontFamily: "'Abril Fatface', serif", fontSize: 22, color: '#f4e8c1', marginBottom: 18 }}>
+            <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 22, color: '#f4e8c1', marginBottom: 18 }}>
               {gameState.hand[sidePrompt]?.left}|{gameState.hand[sidePrompt]?.right}
             </div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
@@ -652,8 +873,8 @@ export default function Game() {
             <div style={{ fontSize: 28, color: '#f4b942', letterSpacing: '0.1em', marginBottom: 2 }}>
               TEAM {gameOver.winner} WINS!
             </div>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', textTransform: 'uppercase', marginBottom: 18 }}>
-              Final Score · Round {gameState.roundNumber}
+            <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', textTransform: 'uppercase', marginBottom: 18 }}>
+              Final Score · Round {currentRound}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
               {[1, 2].map(t => (
@@ -665,14 +886,19 @@ export default function Game() {
                   <div style={{ fontSize: 10, letterSpacing: '0.14em', color: t === 1 ? '#88c0f0' : '#f0956a', marginBottom: 2 }}>TEAM {t}</div>
                   <div style={{ fontSize: 24, color: t === 1 ? '#88c0f0' : '#f0956a', marginBottom: 5 }}>{gameOver.scores[t as 1 | 2]}</div>
                   {gameState.players.filter(p => p.team === t).map(p => (
-                    <div key={p.playerId} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: t === 1 ? 'rgba(136,192,240,0.55)' : 'rgba(240,149,106,0.55)' }}>
+                    <div key={p.playerId} style={{
+                      fontFamily: 'KomikaTitle, sans-serif',
+                      fontSize: 9,
+                      color: PLAYER_NAME_COLOR,
+                      textShadow: '0 0 5px rgba(255,201,74,0.22)',
+                    }}>
                       {p.username}
                     </div>
                   ))}
                 </div>
               ))}
             </div>
-            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: 'rgba(200,184,122,0.22)', marginBottom: 12 }}>
+            <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, color: 'rgba(200,184,122,0.22)', marginBottom: 12 }}>
               Returning to lobby in {formatBoot(bootTimer)}
             </div>
             <div onClick={() => navigate('/lobby')} style={{

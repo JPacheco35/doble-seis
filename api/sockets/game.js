@@ -16,7 +16,50 @@ const TURN_DURATION = 30000;
 
 // ── Helpers ───────────────────────────────────────────
 
+function getTeamPlayerIds(game, team) {
+    if (game.teams?.[team]) return [...game.teams[team]];
+    return (game.players || []).filter(p => p.team === team).map(p => p.playerId);
+}
+
+function splitPointsAcrossPlayers(game, team, points) {
+    if (!points) return;
+    const teamIds = getTeamPlayerIds(game, team);
+    if (teamIds.length === 0) return;
+    const base = Math.floor(points / teamIds.length);
+    let remainder = points % teamIds.length;
+    teamIds.forEach((pid) => {
+        game.playerScores[pid] = (game.playerScores[pid] || 0) + base + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) remainder--;
+    });
+}
+
+function ensurePlayerScores(game) {
+    if (!game.playerScores) game.playerScores = {};
+    (game.playerOrder || []).forEach((pid) => {
+        if (typeof game.playerScores[pid] !== 'number') game.playerScores[pid] = 0;
+    });
+}
+
+function awardPoints(game, team, points, actorId) {
+    if (!points) return;
+    ensurePlayerScores(game);
+    game.scores[team] += points;
+
+    if (actorId && getTeamOf(game, actorId) === team) {
+        game.playerScores[actorId] = (game.playerScores[actorId] || 0) + points;
+        return;
+    }
+
+    splitPointsAcrossPlayers(game, team, points);
+}
+
+function nextMoveNumber(game) {
+    game.moveNumber = (game.moveNumber || 0) + 1;
+    return game.moveNumber;
+}
+
 function broadcastGameState(io, game) {
+    ensurePlayerScores(game);
     game.playerOrder.forEach(pid => {
         const sockets = [...io.of('/game').sockets.values()];
         const playerSocket = sockets.find(s => s.handshake.auth.playerId === pid);
@@ -28,11 +71,13 @@ function broadcastGameState(io, game) {
                 scores: game.scores,
                 leftEnd: game.leftEnd,
                 rightEnd: game.rightEnd,
+                roundNumber: game.roundNumber,
                 players: game.playerOrder.map(id => ({
                     playerId: id,
                     username: game.playerInfo[id].username,
                     team: getTeamOf(game, id),
                     handSize: game.hands[id].length,
+                    points: game.playerScores[id] || 0,
                 })),
             });
         }
@@ -78,9 +123,15 @@ function startTurnTimer(io, game) {
         }
 
         const placerId = applyMove(game, dominoIndex, side);
+        const placedDomino = side === 'left'
+            ? game.board[0]
+            : game.board[game.board.length - 1];
 
         io.of('/game').to(game.code).emit('dominoPlaced', {
             playerId: placerId,
+            placedDomino,
+            side,
+            moveNumber: nextMoveNumber(game),
             board: game.board,
             leftEnd: game.leftEnd,
             rightEnd: game.rightEnd,
@@ -134,16 +185,28 @@ function processKnock(io, game, playerId) {
     const team = getTeamOf(game, playerId);
     const opposingTeam = getOpposingTeam(team);
 
-    const points = game.knockCount === 0 ? 2 : 1;
-    game.scores[opposingTeam] += points;
-    game.knockCount++;
+    // Alternate knock scoring in a streak: scored knock, free knock, scored knock...
+    const isFreeKnock = game.consecutiveKnocks % 2 === 1;
+    const points = isFreeKnock ? 0 : (game.knockCount === 0 ? 2 : 1);
+    if (!isFreeKnock) {
+        const previousTurnIndex =
+            (game.currentTurnIndex - 1 + game.playerOrder.length) % game.playerOrder.length;
+        const forcingPlayerId = game.playerOrder[previousTurnIndex];
+
+        // Award scored knocks to the player who forced the knock.
+        awardPoints(game, opposingTeam, points, forcingPlayerId);
+        game.knockCount++;
+    }
     game.consecutiveKnocks++;
 
     io.of('/game').to(game.code).emit('playerKnocked', {
         playerId,
         username: game.playerInfo[playerId].username,
         points,
+        isFreeKnock,
+        awardedTeam: isFreeKnock ? null : opposingTeam,
         scores: game.scores,
+        playerScores: game.playerScores,
         consecutiveKnocks: game.consecutiveKnocks,
     });
 
@@ -159,10 +222,11 @@ function processKnock(io, game, playerId) {
         const nextPlayerId = game.playerOrder[nextIndex];
         const nextValidMoves = getValidMoves(game.hands[nextPlayerId], game.leftEnd, game.rightEnd);
         if (nextValidMoves.length > 0) {
-            game.scores[getTeamOf(game, playerId)] += 2;
+            awardPoints(game, getTeamOf(game, playerId), 2, playerId);
             io.of('/game').to(game.code).emit('softLock', {
                 playerId,
                 scores: game.scores,
+                playerScores: game.playerScores,
             });
         }
     }
@@ -181,10 +245,10 @@ function endRound(io, game, winnerId) {
 
     if (winnerId) {
         winningTeam = getTeamOf(game, winnerId);
-        game.scores[winningTeam] += points;
+        awardPoints(game, winningTeam, points, winnerId);
     } else {
         winningTeam = hardLockTiebreaker(game);
-        if (winningTeam) game.scores[winningTeam] += points;
+        if (winningTeam) awardPoints(game, winningTeam, points, null);
     }
 
     io.of('/game').to(game.code).emit('roundEnded', {
@@ -193,6 +257,7 @@ function endRound(io, game, winnerId) {
         tally,
         points,
         scores: game.scores,
+        playerScores: game.playerScores,
         hands: game.hands,
     });
 
@@ -201,6 +266,7 @@ function endRound(io, game, winnerId) {
         io.of('/game').to(game.code).emit('gameOver', {
             winner,
             scores: game.scores,
+            playerScores: game.playerScores,
         });
         delete games[game.code];
         return;
@@ -214,9 +280,11 @@ function endRound(io, game, winnerId) {
 // ── Start Round ───────────────────────────────────────
 
 function startRound(io, game) {
+    ensurePlayerScores(game);
     const hands = deal(game.playerOrder);
     game.hands = hands;
     game.board = [];
+    game.moveNumber = 0;
     game.leftEnd = null;
     game.rightEnd = null;
     game.consecutiveKnocks = 0;
@@ -268,7 +336,14 @@ module.exports = (io) => {
                 foundGame.consecutiveKnocks = 0;
                 foundGame.roundNumber = 1;
                 foundGame.lastOpenerIndex = 0;
-                foundGame.playerOrder = foundGame.players.map(p => p.playerId);
+                const team1 = foundGame.players.filter(p => p.team === 1);
+                const team2 = foundGame.players.filter(p => p.team === 2);
+                foundGame.playerOrder = [
+                    team1[0].playerId,
+                    team2[0].playerId,
+                    team1[1].playerId,
+                    team2[1].playerId,
+                ];
                 foundGame.teams = {
                     1: foundGame.players.filter(p => p.team === 1).map(p => p.playerId),
                     2: foundGame.players.filter(p => p.team === 2).map(p => p.playerId),
@@ -278,6 +353,8 @@ module.exports = (io) => {
                     foundGame.playerInfo[p.playerId] = { username: p.username };
                 });
             }
+
+            ensurePlayerScores(foundGame);
 
             const connectedSockets = [...game.sockets.values()].filter(s =>
                 foundGame.playerOrder.includes(s.handshake.auth.playerId)
@@ -293,11 +370,13 @@ module.exports = (io) => {
                     scores: foundGame.scores,
                     leftEnd: foundGame.leftEnd,
                     rightEnd: foundGame.rightEnd,
+                    roundNumber: foundGame.roundNumber,
                     players: foundGame.playerOrder?.map(id => ({
                         playerId: id,
                         username: foundGame.playerInfo[id].username,
                         team: getTeamOf(foundGame, id),
                         handSize: foundGame.hands?.[id]?.length ?? 7,
+                        points: foundGame.playerScores?.[id] || 0,
                     })),
                 });
             }
@@ -328,9 +407,15 @@ module.exports = (io) => {
 
             clearTimeout(foundGame.turnTimer);
             const placerId = applyMove(foundGame, dominoIndex, side);
+            const placedDomino = side === 'left'
+                ? foundGame.board[0]
+                : foundGame.board[foundGame.board.length - 1];
 
             game.to(code).emit('dominoPlaced', {
                 playerId: placerId,
+                placedDomino,
+                side,
+                moveNumber: nextMoveNumber(foundGame),
                 board: foundGame.board,
                 leftEnd: foundGame.leftEnd,
                 rightEnd: foundGame.rightEnd,
