@@ -1,6 +1,7 @@
 import React from 'react';
 import DominoTile from '../DominoTile/DominoTile.tsx';
 import { GameState, Player } from '../../../types/Game.ts';
+import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
 type Seats = {
     bottom: Player | null;
@@ -22,15 +23,21 @@ function getTeamLabel(team: number) {
 
 export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino, validIndices}: HandCardProps) {
     return (
-        <div
-            className="game-hand-tray"
+        <CornerCard
             style={{
                 padding: '8px 14px 10px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 5,
                 zIndex: 3,
+                marginTop: 8,
+                background: 'rgba(24, 14, 7, 0.76)',
+                border: '1px solid rgba(180, 140, 60, 0.18)',
+                borderBottom: 'none',
+                borderRadius: '14px 14px 0 0',
+                backdropFilter: 'blur(4px)',
             }}
+            cornerSize={12}
         >
             <div
                 style={{
@@ -107,6 +114,6 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                     );
                 })}
             </div>
-        </div>
+        </CornerCard>
     )
 }
