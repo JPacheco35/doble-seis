@@ -216,20 +216,6 @@ function processKnock(io, game, playerId) {
         return;
     }
 
-    // soft lock — 3 knocked, next player is NOT blocked
-    if (game.consecutiveKnocks === 3) {
-        const nextIndex = (game.currentTurnIndex + 1) % game.playerOrder.length;
-        const nextPlayerId = game.playerOrder[nextIndex];
-        const nextValidMoves = getValidMoves(game.hands[nextPlayerId], game.leftEnd, game.rightEnd);
-        if (nextValidMoves.length > 0) {
-            awardPoints(game, getTeamOf(game, playerId), 2, playerId);
-            io.of('/game').to(game.code).emit('softLock', {
-                playerId,
-                scores: game.scores,
-                playerScores: game.playerScores,
-            });
-        }
-    }
 
     advanceTurn(io, game);
 }

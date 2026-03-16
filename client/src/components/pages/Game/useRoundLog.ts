@@ -3,6 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Domino, LogEntry } from '../../../types/Game.ts';
 
+function shouldKeepBetweenRounds(entry: LogEntry) {
+  return (
+    (entry.type === 'system' && entry.text.includes('started')) ||
+    (entry.type === 'score' && entry.text.startsWith('Round ended — tally'))
+  );
+}
+
 export default function useRoundLog(logStorageKey: string) {
   const [log, setLog] = useState<LogEntry[]>([]);
   const [logsHydrated, setLogsHydrated] = useState(false);
@@ -71,10 +78,9 @@ export default function useRoundLog(logStorageKey: string) {
   }, []);
 
   const clearRoundLog = useCallback(() => {
-    logCounterRef.current = 0;
     lastDominoLogKeyRef.current = '';
     lastRoundStartLogKeyRef.current = '';
-    setLog([]);
+    setLog(prev => prev.filter(shouldKeepBetweenRounds).slice(0, 50));
   }, []);
 
   useEffect(() => {

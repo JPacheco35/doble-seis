@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';;
+import React, {useRef} from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 
 interface RoundLogProps {
@@ -21,8 +21,8 @@ export default function RoundLog({log}: RoundLogProps) {
             }}>
                 {log.map((entry, index) => (
                     <div key={entry.id} className="game-log-entry" style={{
-                        fontFamily: 'KomikaTitle, sans-serif', fontSize: 10,
-                        lineHeight: 1.5, paddingBottom: 2,
+                        fontFamily: 'KomikaTitle, sans-serif', fontSize: 11,
+                        lineHeight: 1.6, paddingBottom: 3,
                         borderBottom: '0.5px solid rgba(180,140,60,0.04)',
                         color: entry.isFreeKnock ? 'rgba(225,225,225,0.98)'
                             : entry.outcome === 'win' ? 'rgba(156,242,160,0.98)'
@@ -36,19 +36,21 @@ export default function RoundLog({log}: RoundLogProps) {
                         transition: 'opacity 0.2s ease',
                     }}>
                         {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
-                            <span className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
+                            <span className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</b>
                   <span>played</span>
                   <img
                       src={dominoSrc(entry.domino.left, entry.domino.right)}
                       alt={`${entry.domino.left}-${entry.domino.right}`}
-                      width={22}
-                      height={12}
+                      width={30}
+                      height={16}
                       style={{
                           display: 'inline-block',
                           objectFit: 'contain',
-                          borderRadius: 2,
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.28)',
+                          background: 'rgba(255,248,232,0.96)',
+                          border: '1px solid rgba(180,140,60,0.28)',
+                          borderRadius: 3,
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.34)',
                           verticalAlign: 'middle',
                       }}
                   />

@@ -138,26 +138,6 @@ export default function Game() {
       );
     });
 
-    s.on('softLock', (data: ScorePayload & { playerId?: string }) => {
-      setGameState(prev => prev ? {
-        ...prev,
-        scores: data.scores,
-        players: prev.players.map((p) => ({
-          ...p,
-          points: data.playerScores?.[p.playerId] ?? p.points,
-        })),
-      } : prev);
-
-      const myTeam = gameStateRef.current?.players.find(p => p.playerId === playerId)?.team;
-      const lockerTeam = data.playerId
-        ? gameStateRef.current?.players.find(p => p.playerId === data.playerId)?.team
-        : undefined;
-      const outcome = myTeam && lockerTeam
-        ? (lockerTeam === myTeam ? 'win' : 'lose')
-        : undefined;
-
-      addLog('Soft lock — 2pts awarded', 'score', undefined, undefined, outcome);
-    });
 
     s.on('roundStarted', (data: any) => {
       if (data.roundNumber > 1) {
