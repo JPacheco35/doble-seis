@@ -53,7 +53,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     fontFamily: 'KomikaTitle, sans-serif',
                     fontSize: 9,
                     letterSpacing: '0.2em',
-                    color: 'rgba(200,184,122,0.28)',
+                    color: 'rgba(235,218,165,0.66)',
                     textTransform: 'uppercase',
                     marginBottom: 18
                     }}
@@ -114,7 +114,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                 <div style={{
                     fontFamily: 'KomikaTitle, sans-serif',
                     fontSize: 9,
-                    color: 'rgba(200,184,122,0.22)',
+                    color: 'rgba(235,218,165,0.62)',
                     marginBottom: 12
                     }}
                 >

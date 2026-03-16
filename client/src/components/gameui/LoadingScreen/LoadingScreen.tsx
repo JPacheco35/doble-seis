@@ -16,7 +16,7 @@ export default function LoadingScreen() {
                 fontFamily: 'KomikaTitle, sans-serif',
                 fontSize: 24,
                 letterSpacing: '0.15em',
-                color: 'rgba(200,184,122,0.5)'
+                color: 'rgba(235,218,165,0.78)'
             }}
         >
           connecting to game...

@@ -67,7 +67,7 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                     style={{
                         fontSize: 9,
                         letterSpacing: '0.22em',
-                        color: 'rgba(200,184,122,0.3)',
+                        color: 'rgba(235,218,165,0.66)',
                         marginBottom: 8
                 }}>
                     WHICH END?

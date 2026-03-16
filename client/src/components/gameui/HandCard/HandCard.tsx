@@ -51,7 +51,7 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                             style={{
                                 fontSize: 9,
                                 letterSpacing: '0.14em',
-                                color: isMyTurn ? '#7ecf82' : 'rgba(200,184,122,0.35)'
+                                color: isMyTurn ? '#7ecf82' : 'rgba(235,218,165,0.66)'
                             }}
                         >
 
@@ -69,7 +69,7 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                 style={{
                     fontSize: 8,
                     letterSpacing: '0.2em',
-                    color: 'rgba(200,184,122,0.18)',
+                    color: 'rgba(235,218,165,0.58)',
                     textAlign: 'center'
                 }}
             >

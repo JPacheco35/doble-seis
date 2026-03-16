@@ -15,7 +15,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
     if (board.length === 0) {
         return (
             <div style={{
-                color: 'rgba(200,184,122,0.18)',
+                color: 'rgba(235,218,165,0.58)',
                 fontSize: 11,
                 fontFamily: 'KomikaTitle, sans-serif',
                 letterSpacing: '0.2em',

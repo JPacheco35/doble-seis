@@ -12,7 +12,7 @@ export default function RoundLog({log}: RoundLogProps) {
 
     return (
         <div>
-            <div className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', padding: '7px 12px 5px' }}>
+            <div className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(235,218,165,0.68)', padding: '7px 12px 5px' }}>
                 round log
             </div>
             <div className="game-log-list" ref={logRef} style={{

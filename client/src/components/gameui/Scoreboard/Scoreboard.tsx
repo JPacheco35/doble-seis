@@ -19,7 +19,7 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                     padding: '5px 12px',
                     fontSize: 9,
                     letterSpacing: '0.12em',
-                    color: 'rgba(200,184,122,0.28)',
+                    color: 'rgba(235,218,165,0.64)',
                 }}
             >
                 <span>round <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</span></span>

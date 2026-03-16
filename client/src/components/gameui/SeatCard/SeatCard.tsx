@@ -48,7 +48,7 @@ export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
             {!isMe && <FaceDownTiles total={7} remaining={player.handSize} />}
             <span style={{
                 fontFamily: 'KomikaTitle, sans-serif', fontSize: 9,
-                color: isActive ? '#7ecf82' : 'rgba(200,184,122,0.28)',
+                color: isActive ? '#7ecf82' : 'rgba(235,218,165,0.64)',
             }}>
         {isActive ? `${player.handSize} tiles · playing…` : `${player.handSize} tiles`}
       </span>

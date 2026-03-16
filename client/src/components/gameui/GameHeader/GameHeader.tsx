@@ -84,7 +84,7 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                 <span
                     style={{
                         fontSize: 10,
-                        color: 'rgba(200,184,122,0.3)',
+                        color: 'rgba(235,218,165,0.66)',
                         letterSpacing: '0.12em'
                     }}
                 >
