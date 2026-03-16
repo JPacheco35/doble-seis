@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from "../../ui/Logo/Logo.tsx";
+import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
 interface GameHeaderProps {
     gameState: any;
@@ -14,8 +15,7 @@ function getTeamLabelLower(team: number) {
 
 export default function GameHeader({gameState, code, displayUsername, currentRound}: GameHeaderProps) {
     return (
-        <div
-            className="game-header"
+        <CornerCard
             style={{
                 gridColumn: '1/-1',
                 display: 'flex',
@@ -23,7 +23,14 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                 justifyContent: 'space-between',
                 padding: '0 16px',
                 zIndex: 3,
+                background: 'rgba(28, 16, 8, 0.76)',
+                border: 'none',
+                borderBottom: '1px solid rgba(180, 140, 60, 0.2)',
+                borderRadius: 0,
+                boxShadow: 'none',
+                backdropFilter: 'blur(4px)',
             }}
+            cornerSize={6}
         >
             <div
                 className="game-title"
@@ -96,6 +103,6 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                 </span>
 
             </div>
-        </div>
+        </CornerCard>
     )
 }
