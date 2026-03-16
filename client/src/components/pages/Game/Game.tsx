@@ -2,6 +2,9 @@ import React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
+import Logo from '../../ui/Logo/Logo.tsx';
+import './Game.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -563,7 +566,7 @@ export default function Game() {
   const formatBoot = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
   if (!gameState) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#160d06' }}>
+    <div className="wood-grain game-loading-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
         CONNECTING TO GAME…
       </span>
@@ -571,29 +574,27 @@ export default function Game() {
   );
 
   return (
-    <div style={{
-      width: '100vw', height: '100vh', background: '#160d06',
+    <div className="wood-grain game-page-root" style={{
+      width: '100vw', height: '100vh',
       fontFamily: 'KomikaTitle, sans-serif', color: '#f4e8c1',
       display: 'grid', gridTemplateColumns: '1fr 230px', gridTemplateRows: '38px 1fr',
       overflow: 'hidden',
     }}>
+      <div className="game-bg-dominoes-layer" aria-hidden="true">
+        <BGDominoes />
+      </div>
 
       {/* HEADER */}
-      <div style={{
+      <div className="game-header" style={{
         gridColumn: '1/-1', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px', background: 'rgba(8,4,1,0.97)',
-        borderBottom: '1px solid rgba(180,140,60,0.16)', zIndex: 3,
+        padding: '0 16px', zIndex: 3,
       }}>
-        <div style={{
-          fontSize: 19, letterSpacing: '0.12em',
-          background: 'linear-gradient(90deg,#ff4f64,#ff8c42)',
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        }}>
-          ¡Doble Seis!
+        <div className="game-title" style={{ display: 'flex', alignItems: 'center' }}>
+          <Logo fontSize={24} />
         </div>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        <div className="game-team-scores" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {[1, 2].map(t => (
-            <div key={t} style={{
+            <div key={t} className="game-team-chip" style={{
               padding: '2px 11px', borderRadius: 3, fontSize: 11, letterSpacing: '0.1em',
               background: t === 1 ? 'rgba(74,144,217,0.1)' : 'rgba(217,112,74,0.1)',
               color: t === 1 ? '#88c0f0' : '#f0956a',
@@ -604,16 +605,13 @@ export default function Game() {
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{
+          <span className="game-user-chip" style={{
             fontSize: 10,
             letterSpacing: '0.08em',
             padding: '2px 8px',
             borderRadius: 999,
-            border: '1px solid rgba(244,184,66,0.24)',
-            background: 'linear-gradient(180deg, rgba(244,184,66,0.16), rgba(180,120,40,0.08))',
             color: '#f4e8c1',
             textTransform: 'uppercase',
-            boxShadow: 'inset 0 0 6px rgba(244,184,66,0.12)',
           }}>
             {displayUsername}
           </span>
@@ -625,23 +623,21 @@ export default function Game() {
       </div>
 
       {/* TABLE AREA */}
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* felt */}
-        <div style={{
+        <div className="game-felt" style={{
           flex: 1, position: 'relative', overflow: 'hidden',
-          background: 'radial-gradient(ellipse at 50% 48%,#1e3d1b 0%,#122810 52%,#0a1b0b 100%)',
         }}>
           {/* grid texture */}
-          <div style={{
+          <div className="game-felt-texture" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',
-            backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(0,0,0,0.022) 27px,rgba(0,0,0,0.022) 28px),repeating-linear-gradient(90deg,transparent,transparent 27px,rgba(0,0,0,0.022) 27px,rgba(0,0,0,0.022) 28px)',
           }} />
 
           {/* border frame */}
-          <div style={{
+          <div className="game-felt-frame" style={{
             position: 'absolute', inset: 8,
-            border: '1px solid rgba(180,140,60,0.1)', borderRadius: 8, pointerEvents: 'none', zIndex: 2,
+            borderRadius: 8, pointerEvents: 'none', zIndex: 2,
           }}>
             {[
               { top: -1, left: -1, borderWidth: '2px 0 0 2px' },
@@ -649,9 +645,9 @@ export default function Game() {
               { bottom: -1, left: -1, borderWidth: '0 0 2px 2px' },
               { bottom: -1, right: -1, borderWidth: '0 2px 2px 0' },
             ].map((s, i) => (
-              <div key={i} style={{
+              <div key={i} className="game-felt-corner" style={{
                 position: 'absolute', width: 12, height: 12,
-                borderColor: 'rgba(180,140,60,0.28)', borderStyle: 'solid', ...s,
+                borderStyle: 'solid', ...s,
               }} />
             ))}
           </div>
@@ -659,23 +655,23 @@ export default function Game() {
 
           {/* seats */}
           {seats.top && (
-            <div style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3 }}>
+            <div className="game-seat game-seat-top" style={{ zIndex: 3 }}>
               <SeatCard player={seats.top} isActive={gameState.currentTurn === seats.top.playerId} />
             </div>
           )}
           {seats.left && (
-            <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+            <div className="game-seat game-seat-left" style={{ zIndex: 3 }}>
               <SeatCard player={seats.left} isActive={gameState.currentTurn === seats.left.playerId} />
             </div>
           )}
           {seats.right && (
-            <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', zIndex: 3 }}>
+            <div className="game-seat game-seat-right" style={{ zIndex: 3 }}>
               <SeatCard player={seats.right} isActive={gameState.currentTurn === seats.right.playerId} />
             </div>
           )}
 
           {/* board chain */}
-          <div style={{
+          <div className="game-board-zone" style={{
             position: 'absolute', inset: 0, display: 'flex',
             alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: '60px 110px',
           }}>
@@ -684,18 +680,17 @@ export default function Game() {
         </div>
 
         {/* timer bar */}
-        <div style={{ height: 3, background: 'rgba(255,255,255,0.04)', position: 'relative', zIndex: 4 }}>
-          <div style={{
+        <div className="game-timer-track" style={{ height: 3, position: 'relative', zIndex: 4 }}>
+          <div className="game-timer-fill" style={{
             height: '100%', width: `${timerPct}%`,
             background: `linear-gradient(90deg,${timerColor},${timerPct < 20 ? '#f47a42' : timerPct < 50 ? '#f4c042' : '#f4b942'})`,
-            transition: 'width 1s linear, background 0.5s ease',
+            transition: 'width 1s linear, background 0.35s ease',
           }} />
         </div>
 
         {/* hand tray */}
-        <div style={{
-          padding: '8px 14px 10px', background: 'rgba(6,3,0,0.92)',
-          borderTop: '1px solid rgba(180,140,60,0.12)',
+        <div className="game-hand-tray" style={{
+          padding: '8px 14px 10px',
           display: 'flex', flexDirection: 'column', gap: 5, zIndex: 3,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
@@ -733,20 +728,18 @@ export default function Game() {
       </div>
 
       {/* RIGHT PANEL */}
-      <div style={{
-        background: 'rgba(6,3,0,0.9)', borderLeft: '1px solid rgba(180,140,60,0.1)',
+      <div className="game-right-panel" style={{
         display: 'flex', flexDirection: 'column', overflow: 'hidden', zIndex: 1,
       }}>
-        <div style={{
+        <div className="game-right-panel-meta" style={{
           display: 'flex', justifyContent: 'space-between', padding: '5px 12px',
-          background: 'rgba(180,140,60,0.04)', borderBottom: '0.5px solid rgba(180,140,60,0.07)',
           fontSize: 9, letterSpacing: '0.12em', color: 'rgba(200,184,122,0.28)',
         }}>
           <span>ROUND <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</span></span>
           <span>FIRST TO <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>20</span></span>
         </div>
 
-        <div style={{ padding: '9px 12px', borderBottom: '0.5px solid rgba(180,140,60,0.07)' }}>
+        <div className="game-right-panel-scores" style={{ padding: '9px 12px' }}>
           {[1, 2].map(t => (
             <div key={t} style={{ marginBottom: t === 1 ? 8 : 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
@@ -775,15 +768,15 @@ export default function Game() {
           ))}
         </div>
 
-        <div style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', padding: '7px 12px 5px', borderBottom: '0.5px solid rgba(180,140,60,0.07)' }}>
+        <div className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', padding: '7px 12px 5px' }}>
           ROUND LOG
         </div>
-        <div ref={logRef} style={{
+        <div className="game-log-list" ref={logRef} style={{
           flex: 1, overflowY: 'auto', padding: '5px 10px',
           display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'none',
         }}>
           {log.map((entry, index) => (
-            <div key={entry.id} style={{
+            <div key={entry.id} className="game-log-entry" style={{
               fontFamily: 'KomikaTitle, sans-serif', fontSize: 10,
               lineHeight: 1.5, paddingBottom: 2,
               borderBottom: '0.5px solid rgba(180,140,60,0.04)',
@@ -799,7 +792,7 @@ export default function Game() {
               transition: 'opacity 0.2s ease',
             }}>
               {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
+                <span className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
                   <b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</b>
                   <span>played</span>
                   <img
@@ -823,7 +816,7 @@ export default function Game() {
             </div>
           ))}
           {log.length === 0 && (
-            <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, color: 'rgba(200,184,122,0.15)', fontStyle: 'italic' }}>
+            <div className="game-log-empty" style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, fontStyle: 'italic' }}>
               Round log will appear here…
             </div>
           )}
@@ -832,12 +825,11 @@ export default function Game() {
 
       {/* SIDE PROMPT */}
       {sidePrompt !== null && (
-        <div style={{
+        <div className="game-overlay" style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
         }}>
-          <div style={{
-            background: 'rgba(10,5,1,0.98)', border: '1px solid rgba(180,140,60,0.28)',
+          <div className="game-dialog-card" style={{
             borderRadius: 6, padding: '24px 32px', textAlign: 'center',
           }}>
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: 'rgba(200,184,122,0.3)', marginBottom: 8 }}>WHICH END?</div>
@@ -850,6 +842,7 @@ export default function Game() {
                 { side: 'right' as const, color: '#f0956a', border: 'rgba(217,112,74,0.3)', label: `RIGHT (${gameState.rightEnd}) →` },
               ]).map(({ side, color, border, label }) => (
                 <div key={side}
+                     className="game-dialog-action"
                      onClick={() => { socket?.emit('placeDomino', { code, dominoIndex: sidePrompt, side }); setSidePrompt(null); }}
                      style={{ padding: '8px 16px', borderRadius: 3, border: `1px solid ${border}`, color, cursor: 'pointer', fontSize: 11, letterSpacing: '0.1em' }}>
                   {label}
@@ -862,12 +855,11 @@ export default function Game() {
 
       {/* POST GAME */}
       {gameOver && (
-        <div style={{
+        <div className="game-overlay" style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.87)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50,
         }}>
-          <div style={{
-            background: 'rgba(10,5,1,0.98)', border: '1px solid rgba(180,140,60,0.25)',
+          <div className="game-dialog-card" style={{
             borderRadius: 6, padding: '24px 32px', textAlign: 'center', width: 300,
           }}>
             <div style={{ fontSize: 28, color: '#f4b942', letterSpacing: '0.1em', marginBottom: 2 }}>
@@ -901,10 +893,9 @@ export default function Game() {
             <div style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, color: 'rgba(200,184,122,0.22)', marginBottom: 12 }}>
               Returning to lobby in {formatBoot(bootTimer)}
             </div>
-            <div onClick={() => navigate('/lobby')} style={{
+            <div className="game-dialog-leave-btn" onClick={() => navigate('/lobby')} style={{
               display: 'inline-block', padding: '7px 20px', borderRadius: 3,
-              border: '1px solid rgba(180,140,60,0.22)', background: 'transparent',
-              color: 'rgba(200,184,122,0.48)', fontSize: 13, letterSpacing: '0.12em', cursor: 'pointer',
+              fontSize: 13, letterSpacing: '0.12em', cursor: 'pointer',
             }}>
               LEAVE GAME
             </div>
