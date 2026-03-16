@@ -13,6 +13,7 @@ const {
 } = require('./gameLogic.js');
 
 const TURN_DURATION = 30000;
+const ROUND_END_DELAY_MS = 15000;
 
 // ── Helpers ───────────────────────────────────────────
 
@@ -224,6 +225,7 @@ function processKnock(io, game, playerId) {
 
 function endRound(io, game, winnerId) {
     clearTimeout(game.turnTimer);
+    clearTimeout(game.roundTransitionTimer);
 
     const tally = calcTally(game);
     const points = tallyToPoints(tally);
@@ -242,6 +244,7 @@ function endRound(io, game, winnerId) {
         winningTeam,
         tally,
         points,
+        nextRoundInSec: ROUND_END_DELAY_MS / 1000,
         scores: game.scores,
         playerScores: game.playerScores,
         hands: game.hands,
@@ -254,18 +257,20 @@ function endRound(io, game, winnerId) {
             scores: game.scores,
             playerScores: game.playerScores,
         });
+        clearTimeout(game.roundTransitionTimer);
         delete games[game.code];
         return;
     }
 
     game.roundNumber++;
     game.lastOpenerIndex = game.currentTurnIndex;
-    setTimeout(() => startRound(io, game), 3000);
+    game.roundTransitionTimer = setTimeout(() => startRound(io, game), ROUND_END_DELAY_MS);
 }
 
 // ── Start Round ───────────────────────────────────────
 
 function startRound(io, game) {
+    clearTimeout(game.roundTransitionTimer);
     ensurePlayerScores(game);
     const hands = deal(game.playerOrder);
     game.hands = hands;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Socket } from 'socket.io-client';
 import { GameState } from '../../../types/Game.ts';
+import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
 interface SidePromptProps {
     sidePrompt: number | null;
@@ -29,14 +30,18 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                 zIndex: 100,
             }}>
 
-            <div
-                className="game-dialog-card"
+            <CornerCard
                 style={{
                     position: 'relative',
                     borderRadius: 6,
                     padding: '24px 32px',
                     textAlign: 'center',
-                }}>
+                    background: 'rgba(30, 18, 10, 0.94)',
+                    border: '1px solid rgba(180, 140, 60, 0.25)',
+                    boxShadow: '0 22px 50px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.04)',
+                }}
+                cornerSize={12}
+            >
 
                 <button
                     type="button"
@@ -46,18 +51,14 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                         position: 'absolute',
                         top: 10,
                         left: 10,
-                        width: 28,
-                        height: 28,
-                        borderRadius: '50%',
-                        border: '1px solid rgba(180,140,60,0.25)',
-                        background: 'rgba(44,26,14,0.84)',
+                        border: 'none',
+                        background: 'transparent',
                         color: '#f4e8c1',
                         cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 16,
+                        fontSize: 20,
+                        fontWeight: 700,
                         lineHeight: 1,
+                        padding: 0,
                     }}
                 >
                     ←
@@ -91,9 +92,9 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                     }}
                 >
                     {([
-                        { side: 'left' as const, color: '#88c0f0', border: 'rgba(74,144,217,0.3)', label: `← LEFT (${gameState.leftEnd})` },
-                        { side: 'right' as const, color: '#f0956a', border: 'rgba(217,112,74,0.3)', label: `RIGHT (${gameState.rightEnd}) →` },
-                    ]).map(({ side, color, border, label }) => (
+                        { side: 'left' as const, color: '#88c0f0', border: 'rgba(74,144,217,0.3)', end: gameState.leftEnd, arrow: '←', prefix: 'LEFT' },
+                        { side: 'right' as const, color: '#f0956a', border: 'rgba(217,112,74,0.3)', end: gameState.rightEnd, arrow: '→', prefix: 'RIGHT' },
+                    ]).map(({ side, color, border, end, arrow, prefix }) => (
                         <div key={side}
                              className="game-dialog-action"
                              onClick={() => { socket?.emit('placeDomino', { code, dominoIndex: sidePrompt, side }); setSidePrompt(null); }}
@@ -107,11 +108,14 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                                  letterSpacing: '0.1em'
                             }}
                         >
-                            {label}
+                            <span style={{ color, fontSize: 10 }}>{side === 'left' ? `${arrow} ${prefix}` : `${prefix} ${arrow}`}</span>
+                            <span style={{ marginLeft: 6, color: '#f4e8c1', fontSize: 14, fontWeight: 700, textShadow: '0 0 6px rgba(244,232,193,0.35)' }}>
+                                {end}
+                            </span>
                         </div>
                     ))}
                 </div>
-            </div>
+            </CornerCard>
         </div>
     );
 }

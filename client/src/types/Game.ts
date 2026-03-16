@@ -31,6 +31,13 @@ export interface ScorePayload {
     playerScores?: Record<string, number>;
 }
 
+export interface RoundEndedPayload extends ScorePayload {
+    tally: number;
+    points: number;
+    winningTeam: number | null;
+    nextRoundInSec?: number;
+}
+
 export interface DominoPlacedPayload {
     playerId: string;
     placedDomino?: Domino;
