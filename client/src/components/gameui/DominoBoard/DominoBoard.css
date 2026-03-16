@@ -1,0 +1,28 @@
+@keyframes dominoTileEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.92);
+    filter: drop-shadow(0 0 0 rgba(244, 185, 66, 0));
+  }
+
+  55% {
+    opacity: 1;
+    transform: translateY(0) scale(1.06);
+    filter: drop-shadow(0 0 8px rgba(244, 185, 66, 0.5));
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 0 rgba(244, 185, 66, 0));
+  }
+}
+
+.domino-board-tile {
+  will-change: transform, opacity, filter;
+}
+
+.domino-board-tile-enter {
+  animation: dominoTileEnter 320ms ease-out;
+}
+

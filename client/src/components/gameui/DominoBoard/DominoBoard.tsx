@@ -2,6 +2,7 @@ import React from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 import { Image } from '@mantine/core';
 import { Domino } from '../../../types/Game.ts'
+import './DominoBoard.css';
 
 // TESTING: change the size/gap of the board tiles
 const tileSize = 28;
@@ -50,6 +51,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                 return (
                     <div
                         key={i}
+                        className={i === board.length - 1 ? 'domino-board-tile domino-board-tile-enter' : 'domino-board-tile'}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
