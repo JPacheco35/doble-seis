@@ -24,7 +24,8 @@ export default function RoundLog({log}: RoundLogProps) {
                         fontFamily: 'KomikaTitle, sans-serif', fontSize: 11,
                         lineHeight: 1.6, paddingBottom: 3,
                         borderBottom: '0.5px solid rgba(180,140,60,0.04)',
-                        color: entry.isFreeKnock ? 'rgba(225,225,225,0.98)'
+                        color: /^\d+-\d+ Team [12]$/.test(entry.text) ? 'rgba(205,205,205,0.95)'
+                            : entry.isFreeKnock ? 'rgba(225,225,225,0.98)'
                             : entry.outcome === 'win' ? 'rgba(156,242,160,0.98)'
                                 : entry.outcome === 'lose' ? 'rgba(255,168,128,0.98)'
                                     : entry.type === 'knock' ? 'rgba(255,168,128,0.98)'
