@@ -6,9 +6,7 @@ import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import Logo from '../../ui/Logo/Logo.tsx';
 import './Game.css';
 import dominoSrc from "../../../functions/dominoSrc.ts";
-import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
 import DominoTile from '../../gameui/DominoTile/DominoTile.tsx';
-import SeatCard from "../../gameui/SeatCard/SeatCard.tsx";
 import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from "../../../types/Game.ts";
 
 import {
@@ -19,6 +17,7 @@ import {
 } from './gameUtils.ts';
 import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
 import PostGamePrompt from "../../gameui/PostGamePrompt/PostGamePrompt.tsx";
+import Seats from "../../gameui/Seats/Seats.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -406,31 +405,8 @@ export default function Game() {
             ))}
           </div>
 
-
-          {/* seats */}
-          {seats.top && (
-            <div className="game-seat game-seat-top" style={{ zIndex: 3 }}>
-              <SeatCard player={seats.top} isActive={gameState.currentTurn === seats.top.playerId} />
-            </div>
-          )}
-          {seats.left && (
-            <div className="game-seat game-seat-left" style={{ zIndex: 3 }}>
-              <SeatCard player={seats.left} isActive={gameState.currentTurn === seats.left.playerId} />
-            </div>
-          )}
-          {seats.right && (
-            <div className="game-seat game-seat-right" style={{ zIndex: 3 }}>
-              <SeatCard player={seats.right} isActive={gameState.currentTurn === seats.right.playerId} />
-            </div>
-          )}
-
-          {/* board chain */}
-          <div className="game-board-zone" style={{
-            position: 'absolute', inset: 0, display: 'flex',
-            alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: '60px 110px',
-          }}>
-            <DominoBoard board={gameState.board} />
-          </div>
+          {/*other players seats*/}
+          <Seats seats={seats} gameState={gameState} />
         </div>
 
         {/* timer bar */}
