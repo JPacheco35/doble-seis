@@ -257,7 +257,7 @@ export default function Game() {
         <Playmat gameState={gameState} seats={seats}/>
 
         {/*turn timer bar (30s)*/}
-        <TimerBar timerColor={timerColor} timerPct={timerPct} />
+        <TimerBar timerColor={timerColor} timerPct={timerPct} remainingSeconds={timeLeft} />
 
         {/* your hand tray */}
         <HandCard seats={seats} gameState={gameState} isMyTurn={isMyTurn} handlePlaceDomino={handlePlaceDomino} validIndices={validIndices} />
