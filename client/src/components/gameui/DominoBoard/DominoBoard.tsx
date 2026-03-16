@@ -1,5 +1,6 @@
 import React from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
+import { Image } from '@mantine/core';
 import './DominoBoard.css';
 
 type BoardDomino = {
@@ -18,11 +19,14 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
     if (board.length === 0) {
         return (
             <div style={{
-                color: 'rgba(200,184,122,0.18)', fontSize: 11,
-                fontFamily: 'KomikaTitle, sans-serif', letterSpacing: '0.2em',
-                textAlign: 'center', width: '100%',
+                color: 'rgba(200,184,122,0.18)',
+                fontSize: 11,
+                fontFamily: 'KomikaTitle, sans-serif',
+                letterSpacing: '0.2em',
+                textAlign: 'center',
+                width: '100%',
             }}>
-                BOARD IS EMPTY — WAITING FOR FIRST PLAY
+                board is empty, waiting for first play...
             </div>
         );
     }
@@ -30,8 +34,12 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
     // return dominoes board
     return (
         <div style={{
-            display: 'flex', alignItems: 'center', flexWrap: 'wrap',
-            gap: 1, justifyContent: 'center', maxWidth: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 1,
+            justifyContent: 'center',
+            maxWidth: '100%',
         }}>
             {/*lay out each domino in the array (has been played)*/}
             {board.map((domino, i) => {
@@ -73,7 +81,7 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
                             : 
                         // case: non double domino, place horizontally
                         (
-                            <img
+                            <Image
                                 src={dominoSrc(domino.left, domino.right)}
                                 alt={`${domino.left}|${domino.right}`}
                                 width={tileWidth} height={tileHeight}
