@@ -1,24 +1,23 @@
 import React from 'react';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import './Game.css';
-import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from "../../../types/Game.ts";
+import {GameState, DominoPlacedPayload, ScorePayload, LogEntry} from "../../../types/Game.ts";
 import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
-import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
-import PostGamePrompt from "../../gameui/PostGamePrompt/PostGamePrompt.tsx";
-import TimerBar from "../../gameui/TimerBar/TimerBar.tsx";
-import HandCard from "../../gameui/HandCard/HandCard.tsx";
+import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
+import SidePrompt from '../../gameui/SidePrompt/SidePrompt.tsx';
+import PostGamePrompt from '../../gameui/PostGamePrompt/PostGamePrompt.tsx';
+import TimerBar from '../../gameui/TimerBar/TimerBar.tsx';
+import HandCard from '../../gameui/HandCard/HandCard.tsx';
 import LoadingScreen from "../../gameui/LoadingScreen/LoadingScreen.tsx";
-import GameHeader from "../../gameui/GameHeader/GameHeader.tsx";
-import Scoreboard from "../../gameui/Scoreboard/Scoreboard.tsx";
-import RoundLog from "../../gameui/RoundLog/RoundLog.tsx";
-import Playmat from "../../gameui/Playmat/Playmat.tsx";
+import GameHeader from '../../gameui/GameHeader/GameHeader.tsx';
+import Scoreboard from '../../gameui/Scoreboard/Scoreboard.tsx';
+import RoundLog from '../../gameui/RoundLog/RoundLog.tsx';
+import Playmat from '../../gameui/Playmat/Playmat.tsx';
+import useRoundLog from './useRoundLog.ts';
 
 const API_URL = import.meta.env.VITE_API_URL;
-
-// Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
 
 export default function Game() {
   const { code } = useParams();
@@ -26,91 +25,15 @@ export default function Game() {
   const playerId = localStorage.getItem('playerId');
   const username = localStorage.getItem('username');
   const logStorageKey = `game-log:v1:${code ?? 'unknown'}:${playerId ?? 'anon'}`;
-
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [sidePrompt, setSidePrompt] = useState<number | null>(null);
-  const [log, setLog] = useState<LogEntry[]>([]);
-  const [logsHydrated, setLogsHydrated] = useState(false);
   const [gameOver, setGameOver] = useState<{ winner: number; scores: { 1: number; 2: number } } | null>(null);
   const [bootTimer, setBootTimer] = useState(180);
-  const logEntriesRef = useRef<LogEntry[]>([]);
   const gameStateRef = useRef<GameState | null>(null);
-  const lastDominoLogKeyRef = useRef('');
-  const logCounterRef = useRef(0);
-  const lastRoundStartLogKeyRef = useRef('');
-
-  useEffect(() => {
-    setLogsHydrated(false);
-
-    let restoredLog: LogEntry[] = [];
-    try {
-      const raw = localStorage.getItem(logStorageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw) as {
-          log?: LogEntry[];
-          logCounter?: number;
-          lastDominoLogKey?: string;
-        };
-
-        if (Array.isArray(parsed.log)) restoredLog = parsed.log.slice(0, 50);
-        logCounterRef.current = typeof parsed.logCounter === 'number' ? parsed.logCounter : 0;
-        lastDominoLogKeyRef.current = parsed.lastDominoLogKey ?? '';
-      } else {
-        logCounterRef.current = 0;
-        lastDominoLogKeyRef.current = '';
-      }
-    } catch {
-      // Ignore invalid persisted log payloads.
-      logCounterRef.current = 0;
-      lastDominoLogKeyRef.current = '';
-    }
-
-    lastRoundStartLogKeyRef.current = '';
-
-    setLog(restoredLog);
-    setLogsHydrated(true);
-  }, [logStorageKey]);
-
-  useEffect(() => {
-    if (!logsHydrated) return;
-    try {
-      localStorage.setItem(logStorageKey, JSON.stringify({
-        log,
-        logCounter: logCounterRef.current,
-        lastDominoLogKey: lastDominoLogKeyRef.current,
-      }));
-    } catch {
-      // Ignore storage write failures; gameplay should continue.
-    }
-  }, [log, logStorageKey, logsHydrated]);
-
-  const addLog = useCallback((
-    text: string,
-    type: LogEntry['type'],
-    player?: string,
-    domino?: Domino,
-    outcome?: LogEntry['outcome'],
-    isFreeKnock?: boolean
-  ) => {
-    logCounterRef.current += 1;
-    const id = logCounterRef.current;
-    setLog(prev => [{ id, text, type, player, domino, outcome, isFreeKnock }, ...prev.slice(0, 49)]);
-  }, []);
-
-  const clearRoundLog = useCallback(() => {
-    logCounterRef.current = 0;
-    lastDominoLogKeyRef.current = '';
-    lastRoundStartLogKeyRef.current = '';
-    setLog([]);
-  }, []);
-
+  const {log, addLog, clearRoundLog, logEntriesRef, lastDominoLogKeyRef, lastRoundStartLogKeyRef} = useRoundLog(logStorageKey);
   const isMyTurn = gameState?.currentTurn === playerId;
-
-  useEffect(() => {
-    logEntriesRef.current = log;
-  }, [log]);
 
   useEffect(() => {
     gameStateRef.current = gameState;
@@ -327,7 +250,6 @@ export default function Game() {
       gridTemplateRows: '38px 1fr',
       overflow: 'hidden',
     }}>
-
       {/*dominoes background*/}
       <div className="game-bg-dominoes-layer" aria-hidden="true">
         <BGDominoes />
@@ -338,7 +260,6 @@ export default function Game() {
 
       {/* table area */}
       <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
         {/*play board (domino board + player seat cards*/}
         <Playmat gameState={gameState} seats={seats}/>
 
@@ -356,7 +277,7 @@ export default function Game() {
              flexDirection: 'column',
              overflow: 'hidden',
              zIndex: 1,
-        }}
+           }}
       >
         <Scoreboard gameState={gameState} currentRound={currentRound} />
         <RoundLog log={log} />

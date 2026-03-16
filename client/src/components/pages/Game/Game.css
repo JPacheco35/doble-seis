@@ -61,6 +61,12 @@
   padding: 10px 0 0 10px;
 }
 
+.playmat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
 .game-felt {
   --seat-top-offset: 14px;
   --seat-side-offset: 14px;
