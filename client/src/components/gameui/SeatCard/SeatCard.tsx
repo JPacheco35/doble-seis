@@ -10,22 +10,18 @@ interface SeatCardProps {
 
 const PLAYER_NAME_COLOR = '#ffc94a';
 
-function getTeamBadgeLabel(team: number) {
-    return team === 1 ? 'BLUE' : 'RED';
-}
-
 export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
     const teamColor = player.team === 1 ? '#88c0f0' : '#f0956a';
-    const teamBorder = player.team === 1 ? 'rgba(74,144,217,0.25)' : 'rgba(217,112,74,0.25)';
+    const teamBorder = player.team === 1 ? 'rgba(74,144,217,0.42)' : 'rgba(217,112,74,0.42)';
 
     return (
         <div style={{
             background: isActive ? 'rgba(8,4,1,0.95)' : 'rgba(8,4,1,0.8)',
-            border: `2px solid ${isActive ? 'rgba(76,175,80,0.4)' : isMe ? 'rgba(244,184,66,0.2)' : teamBorder}`,
+            border: `3px solid ${isActive ? 'rgba(76,175,80,0.62)' : isMe ? 'rgba(244,184,66,0.42)' : teamBorder}`,
             borderRadius: 15, padding: '5px 10px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
             minWidth: 80,
-            boxShadow: isActive ? '0 0 14px rgba(76,175,80,0.1)' : 'none',
+            boxShadow: isActive ? '0 0 16px rgba(76,175,80,0.18)' : isMe ? '0 0 12px rgba(244,184,66,0.1)' : '0 0 10px rgba(0,0,0,0.12)',
             transition: 'all 0.3s ease',
         }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -39,14 +35,6 @@ export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
                     textShadow: isActive ? 'none' : '0 0 6px rgba(255,201,74,0.35)',
                 }}>
           {player.username.toUpperCase()}{isActive ? ' ▶' : ''}
-        </span>
-                <span style={{
-                    fontSize: 7, letterSpacing: '0.1em', padding: '1px 4px', borderRadius: 2,
-                    background: player.team === 1 ? 'rgba(74,144,217,0.1)' : 'rgba(217,112,74,0.1)',
-                    color: teamColor, border: `0.5px solid ${teamBorder}`,
-                    fontFamily: 'KomikaTitle, sans-serif',
-                }}>
-          {getTeamBadgeLabel(player.team)}
         </span>
             </div>
             {!isMe && <FaceDownTiles total={7} remaining={player.handSize} />}
