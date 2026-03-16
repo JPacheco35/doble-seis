@@ -18,6 +18,7 @@ import {
 import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
 import PostGamePrompt from "../../gameui/PostGamePrompt/PostGamePrompt.tsx";
 import Seats from "../../gameui/Seats/Seats.tsx";
+import TimerBar from "../../gameui/TimerBar/TimerBar.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -318,13 +319,14 @@ export default function Game() {
   const timerPct = getTimerPct(timeLeft);
   const timerColor = getTimerColor(timerPct);
 
-  if (!gameState) return (
-    <div className="wood-grain game-loading-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
-        CONNECTING TO GAME…
-      </span>
-    </div>
-  );
+  if (!gameState)
+    return (
+      <div className="wood-grain game-loading-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
+          CONNECTING TO GAME…
+        </span>
+      </div>
+    );
 
   return (
     <div className="wood-grain game-page-root" style={{
@@ -409,14 +411,8 @@ export default function Game() {
           <Seats seats={seats} gameState={gameState} />
         </div>
 
-        {/* timer bar */}
-        <div className="game-timer-track" style={{ height: 3, position: 'relative', zIndex: 4 }}>
-          <div className="game-timer-fill" style={{
-            height: '100%', width: `${timerPct}%`,
-            background: `linear-gradient(90deg,${timerColor},${timerPct < 20 ? '#f47a42' : timerPct < 50 ? '#f4c042' : '#f4b942'})`,
-            transition: 'width 1s linear, background 0.35s ease',
-          }} />
-        </div>
+        {/*turn timer bar (30s)*/}
+        <TimerBar timerColor={timerColor} timerPct={timerPct} />
 
         {/* hand tray */}
         <div className="game-hand-tray" style={{
