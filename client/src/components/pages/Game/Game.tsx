@@ -14,6 +14,7 @@ import Seats from "../../gameui/Seats/Seats.tsx";
 import TimerBar from "../../gameui/TimerBar/TimerBar.tsx";
 import HandCard from "../../gameui/HandCard/HandCard.tsx";
 import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
+import LoadingScreen from "../../gameui/LoadingScreen/LoadingScreen.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -315,28 +316,7 @@ export default function Game() {
 
   // if not connected to a game, or game hasnt started yet
   if (!gameState)
-    return (
-      <div
-          className="wood-grain game-loading-root"
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-      >
-        <span
-            style={{
-              fontFamily: 'KomikaTitle, sans-serif',
-              fontSize: 24,
-              letterSpacing: '0.15em',
-              color: 'rgba(200,184,122,0.5)'
-            }}
-        >
-          CONNECTING TO GAME…
-        </span>
-      </div>
-    );
+    return (<LoadingScreen/>);
 
   return (
     <div className="wood-grain game-page-root" style={{
