@@ -6,24 +6,18 @@ import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import Logo from '../../ui/Logo/Logo.tsx';
 import './Game.css';
 import dominoSrc from "../../../functions/dominoSrc.ts";
-import DominoTile from '../../gameui/DominoTile/DominoTile.tsx';
 import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from "../../../types/Game.ts";
-
-import {
-  getValidIndices,
-  getSeatedPlayers,
-  getTimerPct,
-  getTimerColor,
-} from './gameUtils.ts';
+import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
 import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
 import PostGamePrompt from "../../gameui/PostGamePrompt/PostGamePrompt.tsx";
 import Seats from "../../gameui/Seats/Seats.tsx";
 import TimerBar from "../../gameui/TimerBar/TimerBar.tsx";
+import HandCard from "../../gameui/HandCard/HandCard.tsx";
+import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
-const PLAYER_HAND_TILE_SIZE = 40;
 const PLAYER_NAME_COLOR = '#ffc94a';
 
 export default function Game() {
@@ -319,10 +313,26 @@ export default function Game() {
   const timerPct = getTimerPct(timeLeft);
   const timerColor = getTimerColor(timerPct);
 
+  // if not connected to a game, or game hasnt started yet
   if (!gameState)
     return (
-      <div className="wood-grain game-loading-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 24, letterSpacing: '0.15em', color: 'rgba(200,184,122,0.5)' }}>
+      <div
+          className="wood-grain game-loading-root"
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+      >
+        <span
+            style={{
+              fontFamily: 'KomikaTitle, sans-serif',
+              fontSize: 24,
+              letterSpacing: '0.15em',
+              color: 'rgba(200,184,122,0.5)'
+            }}
+        >
           CONNECTING TO GAME…
         </span>
       </div>
@@ -330,11 +340,17 @@ export default function Game() {
 
   return (
     <div className="wood-grain game-page-root" style={{
-      width: '100vw', height: '100vh',
-      fontFamily: 'KomikaTitle, sans-serif', color: '#f4e8c1',
-      display: 'grid', gridTemplateColumns: '1fr 230px', gridTemplateRows: '38px 1fr',
+      width: '100vw',
+      height: '100vh',
+      fontFamily: 'KomikaTitle, sans-serif',
+      color: '#f4e8c1',
+      display: 'grid',
+      gridTemplateColumns: '1fr 230px',
+      gridTemplateRows: '38px 1fr',
       overflow: 'hidden',
     }}>
+
+      {/*dominoes background*/}
       <div className="game-bg-dominoes-layer" aria-hidden="true">
         <BGDominoes />
       </div>
@@ -407,6 +423,14 @@ export default function Game() {
             ))}
           </div>
 
+          {/* board */}
+          <div className="game-board-zone" style={{
+            position: 'absolute', left: '50%', top: '52%', transform: 'translate(-50%, -50%)',
+            width: 'min(94%, 680px)', zIndex: 3, pointerEvents: 'none',
+          }}>
+            <DominoBoard board={gameState.board} />
+          </div>
+
           {/*other players seats*/}
           <Seats seats={seats} gameState={gameState} />
         </div>
@@ -414,43 +438,8 @@ export default function Game() {
         {/*turn timer bar (30s)*/}
         <TimerBar timerColor={timerColor} timerPct={timerPct} />
 
-        {/* hand tray */}
-        <div className="game-hand-tray" style={{
-          padding: '8px 14px 10px',
-          display: 'flex', flexDirection: 'column', gap: 5, zIndex: 3,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {seats.bottom && (
-              <>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: seats.bottom.team === 1 ? '#88c0f0' : '#f0956a' }} />
-                <span style={{ fontSize: 9, letterSpacing: '0.14em', color: isMyTurn ? '#7ecf82' : 'rgba(200,184,122,0.35)' }}>
-                  {isMyTurn
-                    ? gameState.board.length === 0 && gameState.roundNumber === 1
-                      ? 'YOUR TURN — PLAY THE 6|6 TO OPEN'
-                      : 'YOUR TURN — PLAY A TILE'
-                    : `YOU (TEAM ${seats.bottom.team}) — WAITING…`}
-                </span>
-              </>
-            )}
-          </div>
-          <div style={{ fontSize: 8, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.18)', textAlign: 'center' }}>
-            YOUR HAND
-          </div>
-          <div style={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'flex-end' }}>
-            {gameState.hand?.map((domino, i) => {
-              const isValid = validIndices.includes(i);
-              return (
-                <div key={i} style={{ opacity: isMyTurn && !isValid ? 0.22 : 1, transition: 'opacity 0.2s' }}>
-                  <DominoTile
-                    left={domino.left} right={domino.right}
-                    size={PLAYER_HAND_TILE_SIZE} valid={isValid}
-                    onClick={isValid ? () => handlePlaceDomino(i) : undefined}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* your hand tray */}
+        <HandCard seats={seats} gameState={gameState} isMyTurn={isMyTurn} handlePlaceDomino={handlePlaceDomino} validIndices={validIndices} />
       </div>
 
       {/* RIGHT PANEL */}
@@ -549,6 +538,7 @@ export default function Game() {
         </div>
       </div>
 
+      {/*conditional prompts*/}
       {code && (<SidePrompt sidePrompt={sidePrompt} setSidePrompt={setSidePrompt} gameState={gameState} code={code} socket={socket} />)}
       {gameOver && (<PostGamePrompt gameOver={gameOver} gameState={gameState} bootTimer={bootTimer} onLeave={() => navigate('/lobby')} />)}
     </div>
