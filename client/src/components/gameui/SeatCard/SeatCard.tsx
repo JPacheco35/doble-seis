@@ -10,6 +10,10 @@ interface SeatCardProps {
 
 const PLAYER_NAME_COLOR = '#ffc94a';
 
+function getTeamBadgeLabel(team: number) {
+    return team === 1 ? 'BLUE' : 'RED';
+}
+
 export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
     const teamColor = player.team === 1 ? '#88c0f0' : '#f0956a';
     const teamBorder = player.team === 1 ? 'rgba(74,144,217,0.25)' : 'rgba(217,112,74,0.25)';
@@ -42,7 +46,7 @@ export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
                     color: teamColor, border: `0.5px solid ${teamBorder}`,
                     fontFamily: 'KomikaTitle, sans-serif',
                 }}>
-          T{player.team}
+          {getTeamBadgeLabel(player.team)}
         </span>
             </div>
             {!isMe && <FaceDownTiles total={7} remaining={player.handSize} />}

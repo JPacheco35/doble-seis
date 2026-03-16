@@ -26,6 +26,10 @@ interface CreateLobbyProps {
     setCountdown: (val: number | null) => void;
 }
 
+function getTeamLabel(team: number) {
+    return team === 1 ? 'Blue Team' : 'Red Team';
+}
+
 export default function CreateLobby({ lobbyName, setLobbyName, socket, connected, lobbyCreated, setLobbyCreated, lobbyCode, setLobbyCode, joinedCode, countdown, setCountdown }: CreateLobbyProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -165,12 +169,12 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
                     <>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: '0 12px' }}>
                             <div className="team-column" onClick={() => handleEmptySlotClick(1)}>
-                                <Text className="team-label" style={{ color: '#4a90d9' }}>Team 1</Text>
+                                <Text className="team-label" style={{ color: '#4a90d9' }}>{getTeamLabel(1)}</Text>
                                 {renderSlots(1, team1)}
                             </div>
                             <div style={{ background: 'rgba(180,140,60,0.15)' }} />
                             <div className="team-column" onClick={() => handleEmptySlotClick(2)}>
-                                <Text className="team-label" style={{ color: '#d9704a' }}>Team 2</Text>
+                                <Text className="team-label" style={{ color: '#d9704a' }}>{getTeamLabel(2)}</Text>
                                 {renderSlots(2, team2)}
                             </div>
                         </div>

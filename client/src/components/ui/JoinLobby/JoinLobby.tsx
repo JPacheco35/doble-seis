@@ -16,6 +16,10 @@ interface JoinLobbyProps {
     lobbyCreated: boolean;
 }
 
+function getTeamLabel(team: number) {
+    return team === 1 ? 'Blue Team' : 'Red Team';
+}
+
 export default function JoinLobby({ setJoinCode, socket, countdown, joinedCode, lobbyCreated }: JoinLobbyProps) {
     const [, setJoined] = useState(false);
     const [, setError] = useState('');
@@ -82,7 +86,7 @@ export default function JoinLobby({ setJoinCode, socket, countdown, joinedCode, 
                         {/* Teams — always show */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: '0 12px' }}>
                             <div className="team-column">
-                                <Text className="team-label" style={{ color: '#4a90d9' }}>Team 1</Text>
+                                <Text className="team-label" style={{ color: '#4a90d9' }}>{getTeamLabel(1)}</Text>
                                 {currentLobby?.players?.filter((p: any) => p.team === 1).map((p: any) => (
                                     <div key={p.playerId} className="player-badge" style={{ borderColor: 'rgba(74,144,217,0.5)', color: '#4a90d9' }}>
                                         <span className="player-badge-name">{p.username}</span>
@@ -96,7 +100,7 @@ export default function JoinLobby({ setJoinCode, socket, countdown, joinedCode, 
                             <div style={{ background: 'rgba(180,140,60,0.15)' }} />
 
                             <div className="team-column">
-                                <Text className="team-label" style={{ color: '#d9704a' }}>Team 2</Text>
+                                <Text className="team-label" style={{ color: '#d9704a' }}>{getTeamLabel(2)}</Text>
                                 {currentLobby?.players?.filter((p: any) => p.team === 2).map((p: any) => (
                                     <div key={p.playerId} className="player-badge" style={{ borderColor: 'rgba(217,112,74,0.5)', color: '#d9704a' }}>
                                         <span className="player-badge-name">{p.username}</span>

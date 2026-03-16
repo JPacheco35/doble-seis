@@ -8,6 +8,10 @@ interface ScoreboardProps {
 
 const PLAYER_NAME_COLOR = '#ffc94a';
 
+function getTeamLabelLower(team: number) {
+    return team === 1 ? 'blue team' : 'red team';
+}
+
 export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
     return (
         <div>
@@ -40,7 +44,7 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 marginBottom: 2
                             }}
                         >
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>team {t}</span>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabelLower(t)}</span>
                             <span style={{ fontSize: 15, color: t === 1 ? '#88c0f0' : '#f0956a' }}>{gameState.scores[t as 1 | 2]}</span>
                         </div>
 

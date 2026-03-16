@@ -8,6 +8,10 @@ interface GameHeaderProps {
     currentRound: number;
 }
 
+function getTeamLabelLower(team: number) {
+    return team === 1 ? 'blue team' : 'red team';
+}
+
 export default function GameHeader({gameState, code, displayUsername, currentRound}: GameHeaderProps) {
     return (
         <div
@@ -49,7 +53,7 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                         color: t === 1 ? '#88c0f0' : '#f0956a',
                         border: `1px solid ${t === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`,
                     }}>
-                        team {t} — {gameState.scores[t as 1 | 2]} pts
+                        {getTeamLabelLower(t)} — {gameState.scores[t as 1 | 2]} pts
                     </div>
                 ))}
             </div>

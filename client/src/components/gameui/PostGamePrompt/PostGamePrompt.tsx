@@ -13,6 +13,10 @@ function formatBoot(seconds: number): string {
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
+function getTeamLabel(team: number) {
+    return team === 1 ? 'Blue Team' : 'Red Team';
+}
+
 export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave, playerNameColor = '#ffc94a',}: PostGamePromptProps) {
     if (!gameOver || !gameState) return null;
 
@@ -46,7 +50,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     marginBottom: 2
                     }}
                 >
-                    TEAM {gameOver.winner} WINS!
+                    {getTeamLabel(gameOver.winner).toUpperCase()} WINS!
                 </div>
 
                 <div style={{
@@ -85,7 +89,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                                     marginBottom: 2
                                 }}
                             >
-                                TEAM {t}
+                                {getTeamLabel(t).toUpperCase()}
                             </div>
 
                             <div style={{

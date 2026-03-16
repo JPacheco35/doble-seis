@@ -16,6 +16,10 @@ interface HandCardProps {
 
 const handTileSize = 40;
 
+function getTeamLabel(team: number) {
+    return team === 1 ? 'BLUE TEAM' : 'RED TEAM';
+}
+
 export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino, validIndices}: HandCardProps) {
     return (
         <div
@@ -59,7 +63,7 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                               ? gameState.board.length === 0 && gameState.roundNumber === 1
                                   ? 'YOUR TURN — PLAY THE 6|6 TO OPEN'
                                   : 'YOUR TURN — PLAY A TILE'
-                              : `YOU (TEAM ${seats.bottom.team}) — WAITING…`}
+                              : `YOU (${getTeamLabel(seats.bottom.team)}) — WAITING…`}
                         </span>
                     </>
                 )}

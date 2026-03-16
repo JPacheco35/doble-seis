@@ -19,6 +19,16 @@ import useRoundLog from './useRoundLog.ts';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+function getTeamLabel(team: number | null | undefined) {
+  if (team === 1) return 'Blue Team';
+  if (team === 2) return 'Red Team';
+  return 'Unknown Team';
+}
+
+function getTeamLabelLower(team: number | null | undefined) {
+  return getTeamLabel(team).toLowerCase();
+}
+
 export default function Game() {
   const { code } = useParams();
   const navigate = useNavigate();
@@ -130,7 +140,7 @@ export default function Game() {
       addLog(
         data.isFreeKnock
           ? `${data.username} knocked — free knock (no points)`
-          : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? `Team ${awardedTeam}` : 'opposing team'}`,
+          : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? getTeamLabelLower(awardedTeam) : 'opposing team'}`,
         'knock',
         data.username,
         undefined,
@@ -178,16 +188,16 @@ export default function Game() {
         ? (data.winningTeam === myTeam ? 'win' : 'lose')
         : undefined;
 
-      addLog(`Round ended — tally ${data.tally} = ${data.points}pts to Team ${data.winningTeam}`, 'score', undefined, undefined, outcome);
+      addLog(`Round ended — tally ${data.tally} = ${data.points}pts to ${data.winningTeam ? getTeamLabel(data.winningTeam) : 'no team'}`, 'score', undefined, undefined, outcome);
       const leadingTeam = data.scores[1] >= data.scores[2] ? 1 : 2;
-      addLog(`${data.scores[1]}-${data.scores[2]} Team ${leadingTeam}`, 'score', undefined, undefined, outcome);
+      addLog(`${data.scores[1]}-${data.scores[2]} ${getTeamLabel(leadingTeam)}`, 'score', undefined, undefined, outcome);
       setTimeLeft(null);
     });
 
     s.on('gameOver', (data: any) => {
       setGameOver({ winner: data.winner, scores: data.scores });
       setTimeLeft(null);
-      addLog(`Game over — Team ${data.winner} wins!`, 'score');
+      addLog(`Game over — ${getTeamLabel(data.winner)} wins!`, 'score');
     });
 
     s.on('gameError', () => navigate('/lobby'));

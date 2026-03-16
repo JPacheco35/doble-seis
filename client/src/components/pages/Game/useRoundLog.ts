@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Domino, LogEntry } from '../../../types/Game.ts';
 
 function shouldKeepBetweenRounds(entry: LogEntry) {
-  const isCompactScoreSnapshot = /^\d+-\d+ Team [12]$/.test(entry.text);
+  const isCompactScoreSnapshot = /^\d+-\d+ (Blue Team|Red Team)$/.test(entry.text) || /^\d+-\d+ Team [12]$/.test(entry.text);
 
   return (
     (entry.type === 'system' && entry.text.includes('started')) ||
