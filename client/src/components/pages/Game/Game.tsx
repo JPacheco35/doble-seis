@@ -8,14 +8,13 @@ import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from ".
 import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
 import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
 import PostGamePrompt from "../../gameui/PostGamePrompt/PostGamePrompt.tsx";
-import Seats from "../../gameui/Seats/Seats.tsx";
 import TimerBar from "../../gameui/TimerBar/TimerBar.tsx";
 import HandCard from "../../gameui/HandCard/HandCard.tsx";
-import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
 import LoadingScreen from "../../gameui/LoadingScreen/LoadingScreen.tsx";
 import GameHeader from "../../gameui/GameHeader/GameHeader.tsx";
 import Scoreboard from "../../gameui/Scoreboard/Scoreboard.tsx";
 import RoundLog from "../../gameui/RoundLog/RoundLog.tsx";
+import Playmat from "../../gameui/Playmat/Playmat.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -334,50 +333,14 @@ export default function Game() {
         <BGDominoes />
       </div>
 
-      {/* HEADER */}
+      {/* header */}
       <GameHeader gameState={gameState} code={code ?? 'unknown'} displayUsername={displayUsername} currentRound={currentRound} />
 
-      {/* TABLE AREA */}
+      {/* table area */}
       <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-        {/* felt */}
-        <div className="game-felt" style={{
-          flex: 1, position: 'relative', overflow: 'hidden',
-        }}>
-          {/* grid texture */}
-          <div className="game-felt-texture" style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-          }} />
-
-          {/* border frame */}
-          <div className="game-felt-frame" style={{
-            position: 'absolute', inset: 8,
-            borderRadius: 8, pointerEvents: 'none', zIndex: 2,
-          }}>
-            {[
-              { top: -1, left: -1, borderWidth: '2px 0 0 2px' },
-              { top: -1, right: -1, borderWidth: '2px 2px 0 0' },
-              { bottom: -1, left: -1, borderWidth: '0 0 2px 2px' },
-              { bottom: -1, right: -1, borderWidth: '0 2px 2px 0' },
-            ].map((s, i) => (
-              <div key={i} className="game-felt-corner" style={{
-                position: 'absolute', width: 12, height: 12,
-                borderStyle: 'solid', ...s,
-              }} />
-            ))}
-          </div>
-
-          {/* board */}
-          <div className="game-board-zone" style={{
-            position: 'absolute', left: '50%', top: '52%', transform: 'translate(-50%, -50%)',
-            width: 'min(94%, 680px)', zIndex: 3, pointerEvents: 'none',
-          }}>
-            <DominoBoard board={gameState.board} />
-          </div>
-
-          {/*other players seats*/}
-          <Seats seats={seats} gameState={gameState} />
-        </div>
+        {/*play board (domino board + player seat cards*/}
+        <Playmat gameState={gameState} seats={seats}/>
 
         {/*turn timer bar (30s)*/}
         <TimerBar timerColor={timerColor} timerPct={timerPct} />
