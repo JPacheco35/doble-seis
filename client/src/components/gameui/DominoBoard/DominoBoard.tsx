@@ -32,10 +32,11 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
         <div style={{
             display: 'flex',
             alignItems: 'center',
-            flexWrap: 'wrap',
+            flexWrap: 'nowrap',
             gap: tileGap,
             justifyContent: 'center',
-            maxWidth: '100%',
+            width: 'max-content',
+            maxWidth: 'none',
         }}>
             {/*lay out each domino in the array (has been played)*/}
             {board.map((domino, i) => {

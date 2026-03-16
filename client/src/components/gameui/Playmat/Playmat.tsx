@@ -40,7 +40,7 @@ export default function Playmat({gameState, seats}: PlaymatProps) {
                 {/* board */}
                 <div className="game-board-zone" style={{
                     position: 'absolute', left: '50%', top: '52%', transform: 'translate(-50%, -50%)',
-                    width: 'min(94%, 680px)', zIndex: 3, pointerEvents: 'none',
+                    width: 'max-content', zIndex: 3, pointerEvents: 'none', overflow: 'visible',
                 }}>
                     <DominoBoard board={gameState.board} />
                 </div>
