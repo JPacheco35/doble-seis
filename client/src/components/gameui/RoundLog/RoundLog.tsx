@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 
 interface RoundLogProps {
@@ -9,6 +9,30 @@ const PLAYER_NAME_COLOR = '#ffc94a';
 
 export default function RoundLog({log}: RoundLogProps) {
     const logRef = useRef<HTMLDivElement>(null);
+    const previousTopIdRef = useRef<number | null>(null);
+    const [animatedEntryId, setAnimatedEntryId] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (log.length === 0) return;
+
+        const currentTopId = log[0].id;
+        if (previousTopIdRef.current === null) {
+            // Avoid animating hydrated/restored entries on first render.
+            previousTopIdRef.current = currentTopId;
+            return;
+        }
+
+        if (currentTopId !== previousTopIdRef.current) {
+            setAnimatedEntryId(currentTopId);
+            previousTopIdRef.current = currentTopId;
+        }
+    }, [log]);
+
+    useEffect(() => {
+        if (animatedEntryId === null) return;
+        const timeout = setTimeout(() => setAnimatedEntryId(null), 360);
+        return () => clearTimeout(timeout);
+    }, [animatedEntryId]);
 
     return (
         <div>
@@ -20,7 +44,7 @@ export default function RoundLog({log}: RoundLogProps) {
                 display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'none',
             }}>
                 {log.map((entry, index) => (
-                    <div key={entry.id} className="game-log-entry" style={{
+                    <div key={entry.id} className={`game-log-entry${animatedEntryId === entry.id ? ' game-log-entry-enter' : ''}`} style={{
                         fontFamily: 'KomikaTitle, sans-serif', fontSize: 11,
                         lineHeight: 1.6, paddingBottom: 3,
                         borderBottom: '0.5px solid rgba(180,140,60,0.04)',
