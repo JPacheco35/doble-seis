@@ -1,11 +1,13 @@
 import React from 'react';
+import { Socket } from 'socket.io-client';
+import { GameState } from '../../../types/Game.ts';
 
 interface SidePromptProps {
     sidePrompt: number | null;
     setSidePrompt: (sidePrompt: number | null) => void;
-    gameState: any;
+    gameState: GameState | null;
     code: string;
-    socket: any;
+    socket: Socket | null;
 }
 
 export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code, socket }: SidePromptProps)
@@ -30,10 +32,36 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
             <div
                 className="game-dialog-card"
                 style={{
+                    position: 'relative',
                     borderRadius: 6,
                     padding: '24px 32px',
                     textAlign: 'center',
                 }}>
+
+                <button
+                    type="button"
+                    aria-label="Go back"
+                    onClick={() => setSidePrompt(null)}
+                    style={{
+                        position: 'absolute',
+                        top: 10,
+                        left: 10,
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        border: '1px solid rgba(180,140,60,0.25)',
+                        background: 'rgba(44,26,14,0.84)',
+                        color: '#f4e8c1',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 16,
+                        lineHeight: 1,
+                    }}
+                >
+                    ←
+                </button>
 
                 <div
                     style={{
