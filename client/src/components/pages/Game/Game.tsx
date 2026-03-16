@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import './Game.css';
-import dominoSrc from "../../../functions/dominoSrc.ts";
 import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from "../../../types/Game.ts";
 import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
 import SidePrompt from "../../gameui/SidePrompt/SidePrompt.tsx";
@@ -16,11 +15,11 @@ import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
 import LoadingScreen from "../../gameui/LoadingScreen/LoadingScreen.tsx";
 import GameHeader from "../../gameui/GameHeader/GameHeader.tsx";
 import Scoreboard from "../../gameui/Scoreboard/Scoreboard.tsx";
+import RoundLog from "../../gameui/RoundLog/RoundLog.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
-const PLAYER_NAME_COLOR = '#ffc94a';
 
 export default function Game() {
   const { code } = useParams();
@@ -37,7 +36,6 @@ export default function Game() {
   const [logsHydrated, setLogsHydrated] = useState(false);
   const [gameOver, setGameOver] = useState<{ winner: number; scores: { 1: number; 2: number } } | null>(null);
   const [bootTimer, setBootTimer] = useState(180);
-  const logRef = useRef<HTMLDivElement>(null);
   const logEntriesRef = useRef<LogEntry[]>([]);
   const gameStateRef = useRef<GameState | null>(null);
   const lastDominoLogKeyRef = useRef('');
@@ -388,66 +386,17 @@ export default function Game() {
         <HandCard seats={seats} gameState={gameState} isMyTurn={isMyTurn} handlePlaceDomino={handlePlaceDomino} validIndices={validIndices} />
       </div>
 
-      {/* RIGHT PANEL */}
-      <div className="game-right-panel" style={{
-        display: 'flex', flexDirection: 'column', overflow: 'hidden', zIndex: 1,
-      }}>
-
+      {/* right side panel */}
+      <div className="game-right-panel"
+           style={{
+             display: 'flex',
+             flexDirection: 'column',
+             overflow: 'hidden',
+             zIndex: 1,
+        }}
+      >
         <Scoreboard gameState={gameState} currentRound={currentRound} />
-
-        <div className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(200,184,122,0.28)', padding: '7px 12px 5px' }}>
-          ROUND LOG
-        </div>
-        <div className="game-log-list" ref={logRef} style={{
-          flex: 1, overflowY: 'auto', padding: '5px 10px',
-          display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'none',
-        }}>
-          {log.map((entry, index) => (
-            <div key={entry.id} className="game-log-entry" style={{
-              fontFamily: 'KomikaTitle, sans-serif', fontSize: 10,
-              lineHeight: 1.5, paddingBottom: 2,
-              borderBottom: '0.5px solid rgba(180,140,60,0.04)',
-              color: entry.isFreeKnock ? 'rgba(225,225,225,0.98)'
-                : entry.outcome === 'win' ? 'rgba(156,242,160,0.98)'
-                : entry.outcome === 'lose' ? 'rgba(255,168,128,0.98)'
-                : entry.type === 'knock' ? 'rgba(255,168,128,0.98)'
-                : entry.type === 'score' ? 'rgba(156,242,160,0.98)'
-                  : entry.type === 'system' ? 'rgba(245,231,188,0.9)'
-                    : 'rgba(245,228,176,0.96)',
-              opacity: index === 0 ? 1 : Math.max(0.84, 0.97 - index * 0.01),
-              textShadow: index === 0 ? '0 0 9px rgba(255,247,215,0.42)' : '0 0 3px rgba(255,247,215,0.16)',
-              transition: 'opacity 0.2s ease',
-            }}>
-              {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
-                <span className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
-                  <b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</b>
-                  <span>played</span>
-                  <img
-                    src={dominoSrc(entry.domino.left, entry.domino.right)}
-                    alt={`${entry.domino.left}-${entry.domino.right}`}
-                    width={22}
-                    height={12}
-                    style={{
-                      display: 'inline-block',
-                      objectFit: 'contain',
-                      borderRadius: 2,
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.28)',
-                      verticalAlign: 'middle',
-                    }}
-                  />
-                  {entry.type === 'auto' && <span>(timeout)</span>}
-                </span>
-              ) : entry.player
-                ? <><b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, textShadow: '0 0 6px rgba(255,201,74,0.35)' }}>{entry.player}</b>{' '}{entry.text.replace(entry.player + ' ', '')}</>
-                : entry.text}
-            </div>
-          ))}
-          {log.length === 0 && (
-            <div className="game-log-empty" style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, fontStyle: 'italic' }}>
-              Round log will appear here…
-            </div>
-          )}
-        </div>
+        <RoundLog log={log} />
       </div>
 
       {/*conditional prompts*/}
