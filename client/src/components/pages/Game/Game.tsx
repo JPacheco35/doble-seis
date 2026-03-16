@@ -11,13 +11,19 @@ import DominoTile from '../../gameui/DominoTile/DominoTile.tsx';
 import SeatCard from "../../gameui/SeatCard/SeatCard.tsx";
 import {GameState, DominoPlacedPayload, Domino, ScorePayload, LogEntry } from "../../../types/Game.ts";
 
+import {
+  getValidIndices,
+  getSeatedPlayers,
+  getTimerPct,
+  getTimerColor,
+  formatBoot,
+} from './gameUtils.ts';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
 const PLAYER_HAND_TILE_SIZE = 40;
 const PLAYER_NAME_COLOR = '#ffc94a';
-
-
 
 export default function Game() {
   const { code } = useParams();
@@ -290,20 +296,7 @@ export default function Game() {
     return () => { s.disconnect(); };
   }, [addLog, clearRoundLog, code, navigate, playerId, username]);
 
-  const getValidIndices = (): number[] => {
-    if (!gameState) return [];
-    const { hand, leftEnd, rightEnd, board, roundNumber } = gameState;
-    if (board.length === 0 && roundNumber === 1)
-      return hand.map((_, i) => i).filter(i => hand[i].left === 6 && hand[i].right === 6);
-    if (board.length === 0) return hand.map((_, i) => i);
-    return hand.reduce((acc: number[], d, i) => {
-      if (d.left === leftEnd || d.right === leftEnd || d.left === rightEnd || d.right === rightEnd)
-        acc.push(i);
-      return acc;
-    }, []);
-  };
-
-  const validIndices = isMyTurn ? getValidIndices() : [];
+  const validIndices = isMyTurn ? getValidIndices(gameState) : [];
 
   const handlePlaceDomino = (dominoIndex: number) => {
     if (!isMyTurn || !validIndices.includes(dominoIndex)) return;
@@ -319,21 +312,11 @@ export default function Game() {
     socket?.emit('placeDomino', { code, dominoIndex, side: fitsLeft ? 'left' : 'right' });
   };
 
-  const getSeatedPlayers = () => {
-    if (!gameState) return { bottom: null, left: null, top: null, right: null };
-    const me = gameState.players.find(p => p.playerId === playerId);
-    if (!me) return { bottom: null, left: null, top: null, right: null };
-    const myIndex = gameState.players.indexOf(me);
-    const order = [0, 1, 2, 3].map(offset => gameState.players[(myIndex + offset) % 4]);
-    return { bottom: order[0], left: order[1], top: order[2], right: order[3] };
-  };
-
-  const seats = getSeatedPlayers();
+  const seats = getSeatedPlayers(gameState, playerId);
   const currentRound = gameState?.roundNumber ?? 1;
   const displayUsername = (username?.trim() || 'Guest').slice(0, 20);
-  const timerPct = timeLeft !== null ? (timeLeft / 30) * 100 : 100;
-  const timerColor = timerPct < 20 ? '#e05555' : timerPct < 50 ? '#f4a042' : '#4caf50';
-  const formatBoot = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const timerPct = getTimerPct(timeLeft);
+  const timerColor = getTimerColor(timerPct);
 
   if (!gameState) return (
     <div className="wood-grain game-loading-root" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
