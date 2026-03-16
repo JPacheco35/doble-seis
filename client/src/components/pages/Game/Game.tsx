@@ -178,6 +178,8 @@ export default function Game() {
         : undefined;
 
       addLog(`Round ended — tally ${data.tally} = ${data.points}pts to Team ${data.winningTeam}`, 'score', undefined, undefined, outcome);
+      const endedRound = gameStateRef.current?.roundNumber ?? gameState?.roundNumber ?? 1;
+      addLog(`Round ended — score after round ${endedRound}: Team 1 ${data.scores[1]} - Team 2 ${data.scores[2]}`, 'score', undefined, undefined, outcome);
       setTimeLeft(null);
     });
 

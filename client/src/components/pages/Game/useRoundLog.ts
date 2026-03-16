@@ -6,7 +6,10 @@ import { Domino, LogEntry } from '../../../types/Game.ts';
 function shouldKeepBetweenRounds(entry: LogEntry) {
   return (
     (entry.type === 'system' && entry.text.includes('started')) ||
-    (entry.type === 'score' && entry.text.startsWith('Round ended — tally'))
+    (entry.type === 'score' && (
+      entry.text.startsWith('Round ended — tally') ||
+      entry.text.startsWith('Round ended — score after round')
+    ))
   );
 }
 
