@@ -7,13 +7,14 @@ import Logo from '../../ui/Logo/Logo.tsx';
 import './Game.css';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
+import FaceDownTiles from '../../gameui/FaceDownTiles/FaceDownTiles.tsx';
+import DominoTile from '../../gameui/DominoTile/DominoTile.tsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Hand sizing knobs: tweak these to scale all player/opponent hand tiles.
 const PLAYER_HAND_TILE_SIZE = 40;
-const OPPONENT_TILE_WIDTH = 12;
-const OPPONENT_TILE_HEIGHT = 18;
+
 const PLAYER_NAME_COLOR = '#ffc94a';
 
 
@@ -69,68 +70,6 @@ interface LogEntry {
   domino?: Domino;
   outcome?: 'win' | 'lose';
   isFreeKnock?: boolean;
-}
-
-function DominoTile({ left, right, size = 26, onClick, valid, selected }: {
-  left: number; right: number; size?: number;
-  onClick?: () => void; valid?: boolean; selected?: boolean;
-}) {
-  const imgW = Math.round(size * 1.9);
-  const imgH = size;
-  const outline = selected
-    ? '0 0 0 2px #4caf50, 0 0 10px rgba(76,175,80,0.45)'
-    : valid
-      ? '0 0 0 1.5px rgba(244,184,66,0.55), 0 0 7px rgba(244,184,66,0.15)'
-      : 'none';
-
-  return (
-    <div onClick={onClick} style={{
-      width: imgH, height: imgW, flexShrink: 0,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      cursor: onClick && valid ? 'pointer' : 'default',
-    }}>
-      <img
-        src={dominoSrc(left, right)}
-        alt={`${left}|${right}`}
-        width={imgW} height={imgH}
-        style={{
-          transform: 'rotate(90deg)', borderRadius: 3, boxShadow: outline,
-          display: 'block', objectFit: 'contain', transition: 'box-shadow 0.12s ease',
-        }}
-      />
-    </div>
-  );
-}
-
-function FaceDownTiles({ total, remaining }: {
-  total: number; remaining: number;
-}) {
-  return (
-    <div style={{
-      display: 'flex', flexDirection: 'row',
-      gap: 2,
-      flexWrap: 'wrap',
-      maxWidth: 96,
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      {Array.from({ length: total }).map((_, i) => {
-        const played = i >= remaining;
-        return (
-          <div key={i} style={{
-            width: OPPONENT_TILE_WIDTH, height: OPPONENT_TILE_HEIGHT,
-            borderRadius: 1,
-            background: played ? 'rgba(20,12,3,0.4)' : 'linear-gradient(135deg,#2a1e10,#1a1208)',
-            border: `0.5px solid ${played ? 'rgba(40,24,8,0.15)' : 'rgba(180,140,60,0.2)'}`,
-            boxShadow: played ? 'none' : '1px 1px 2px rgba(0,0,0,0.4)',
-            opacity: played ? 0.2 : 1,
-            transition: 'all 0.3s ease',
-          }} />
-        );
-      })}
-    </div>
-  );
 }
 
 function SeatCard({ player, isActive, isMe }: {
