@@ -5,6 +5,8 @@ import { io, Socket } from 'socket.io-client';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import Logo from '../../ui/Logo/Logo.tsx';
 import './Game.css';
+import dominoSrc from "../../../functions/dominoSrc.ts";
+import DominoBoard from '../../gameui/DominoBoard/DominoBoard.tsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,7 +14,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 const PLAYER_HAND_TILE_SIZE = 40;
 const OPPONENT_TILE_WIDTH = 12;
 const OPPONENT_TILE_HEIGHT = 18;
-const TILE_SIZE = 28;
 const PLAYER_NAME_COLOR = '#ffc94a';
 
 
@@ -70,12 +71,6 @@ interface LogEntry {
   isFreeKnock?: boolean;
 }
 
-function dominoSrc(a: number, b: number): string {
-  const lo = Math.min(a, b);
-  const hi = Math.max(a, b);
-  return `/src/assets/dominoes/light_${lo}-${hi}.svg`;
-}
-
 function DominoTile({ left, right, size = 26, onClick, valid, selected }: {
   left: number; right: number; size?: number;
   onClick?: () => void; valid?: boolean; selected?: boolean;
@@ -103,69 +98,6 @@ function DominoTile({ left, right, size = 26, onClick, valid, selected }: {
           display: 'block', objectFit: 'contain', transition: 'box-shadow 0.12s ease',
         }}
       />
-    </div>
-  );
-}
-
-function BoardChain({ board }: { board: BoardDomino[] }) {
-  if (board.length === 0) {
-    return (
-      <div style={{
-        color: 'rgba(200,184,122,0.18)', fontSize: 11,
-        fontFamily: 'KomikaTitle, sans-serif', letterSpacing: '0.2em',
-        textAlign: 'center', width: '100%',
-      }}>
-        BOARD IS EMPTY — WAITING FOR FIRST PLAY
-      </div>
-    );
-  }
-
-  const imgW = Math.round(TILE_SIZE * 1.9);
-  const imgH = TILE_SIZE;
-
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', flexWrap: 'wrap',
-      gap: 1, justifyContent: 'center', maxWidth: '100%',
-    }}>
-      {board.map((domino, i) => {
-        const isDouble = domino.left === domino.right;
-        const needsFlip = !isDouble && domino.left > domino.right;
-        return (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {isDouble ? (
-              <div style={{
-                width: imgH, height: imgW, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <img
-                  src={dominoSrc(domino.left, domino.right)}
-                  alt={`${domino.left}|${domino.right}`}
-                  width={imgW} height={imgH}
-                  style={{ transform: 'rotate(90deg)', borderRadius: 3, boxShadow: '1px 2px 5px rgba(0,0,0,0.5)', display: 'block' }}
-                />
-              </div>
-            ) : (
-              <img
-                src={dominoSrc(domino.left, domino.right)}
-                alt={`${domino.left}|${domino.right}`}
-                width={imgW} height={imgH}
-                style={{
-                  transform: needsFlip ? 'scaleX(-1)' : 'none',
-                  transformOrigin: 'center',
-                  borderRadius: 3,
-                  boxShadow: '1px 2px 5px rgba(0,0,0,0.5)',
-                  display: 'block',
-                  flexShrink: 0,
-                }}
-              />
-            )}
-            {i < board.length - 1 && (
-              <div style={{ width: 3, height: 1, background: 'rgba(180,140,60,0.12)' }} />
-            )}
-          </div>
-        );
-      })}
     </div>
   );
 }
@@ -675,7 +607,7 @@ export default function Game() {
             position: 'absolute', inset: 0, display: 'flex',
             alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: '60px 110px',
           }}>
-            <BoardChain board={gameState.board} />
+            <DominoBoard board={gameState.board} />
           </div>
         </div>
 
