@@ -1,19 +1,15 @@
 import React from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 import { Image } from '@mantine/core';
-import './DominoBoard.css';
+import { Domino } from '../../../types/Game.ts'
 
-type BoardDomino = {
-    left: number;
-    right: number;
-};
-
-// TESTING: change the size of the board tiles
+// TESTING: change the size/gap of the board tiles
 const tileSize = 28;
 const tileWidth = Math.round(tileSize * 1.9);
 const tileHeight = tileSize;
+const tileGap = 2;
 
-export default function DominoBoard({ board }: { board: BoardDomino[] }) {
+export default function DominoBoard({ board }: { board: Domino[] }) {
 
     // return empty board if no dominoes have been played yet
     if (board.length === 0) {
@@ -37,7 +33,7 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
             display: 'flex',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: 1,
+            gap: tileGap,
             justifyContent: 'center',
             maxWidth: '100%',
         }}>
@@ -56,7 +52,7 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 1
+                            gap: 2
                         }}
                     >
                         
@@ -74,7 +70,12 @@ export default function DominoBoard({ board }: { board: BoardDomino[] }) {
                                     src={dominoSrc(domino.left, domino.right)}
                                     alt={`${domino.left}|${domino.right}`}
                                     width={tileWidth} height={tileHeight}
-                                    style={{ transform: 'rotate(90deg)', borderRadius: 3, boxShadow: '1px 2px 5px rgba(0,0,0,0.5)', display: 'block' }}
+                                    style={{
+                                        transform: 'rotate(90deg)',
+                                        borderRadius: 3,
+                                        boxShadow: '1px 2px 5px rgba(0,0,0,0.5)',
+                                        display: 'block'
+                                    }}
                                 />
                             </div>
                         ) 
