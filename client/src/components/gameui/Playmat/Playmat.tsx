@@ -5,9 +5,11 @@ import Seats from "../Seats/Seats.tsx";
 interface PlaymatProps {
     gameState: any;
     seats: any;
+    knockedPlayerId?: string | null;
+    knockShakeToken?: number;
 }
 
-export default function Playmat({gameState, seats}: PlaymatProps) {
+export default function Playmat({gameState, seats, knockedPlayerId = null, knockShakeToken = 0}: PlaymatProps) {
     return (
         <div className="playmat">
             {/* felt */}
@@ -46,7 +48,7 @@ export default function Playmat({gameState, seats}: PlaymatProps) {
                 </div>
 
                 {/*other players seats*/}
-                <Seats seats={seats} gameState={gameState} />
+                <Seats seats={seats} gameState={gameState} knockedPlayerId={knockedPlayerId} knockShakeToken={knockShakeToken} />
             </div>
         </div>
     );

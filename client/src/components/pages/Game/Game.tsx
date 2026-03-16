@@ -50,6 +50,8 @@ export default function Game() {
     endAtMs: number;
   } | null>(null);
   const [roundEndSecondsLeft, setRoundEndSecondsLeft] = useState(0);
+  const [knockedPlayerId, setKnockedPlayerId] = useState<string | null>(null);
+  const [knockShakeToken, setKnockShakeToken] = useState(0);
   const gameStateRef = useRef<GameState | null>(null);
   const {log, addLog, clearRoundLog, logEntriesRef, lastDominoLogKeyRef, lastRoundStartLogKeyRef} = useRoundLog(logStorageKey);
   const isMyTurn = gameState?.currentTurn === playerId;
@@ -155,6 +157,9 @@ export default function Game() {
     });
 
     s.on('playerKnocked', (data: ScorePayload & { playerId: string; username: string; points: number; isFreeKnock?: boolean; awardedTeam?: number | null }) => {
+      setKnockedPlayerId(data.playerId);
+      setKnockShakeToken((prev) => prev + 1);
+
       setGameState(prev => prev ? {
         ...prev,
         scores: data.scores,
@@ -236,7 +241,8 @@ export default function Game() {
         endAtMs: Date.now() + (roundDelaySec * 1000),
       });
 
-      setTimeLeft(null);
+      // Reuse the main timer bar during round intermission.
+      setTimeLeft(roundDelaySec);
     });
 
     s.on('gameOver', (data: any) => {
@@ -300,7 +306,7 @@ export default function Game() {
       {/* table area */}
       <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/*play board (domino board + player seat cards*/}
-        <Playmat gameState={gameState} seats={seats}/>
+        <Playmat gameState={gameState} seats={seats} knockedPlayerId={knockedPlayerId} knockShakeToken={knockShakeToken} />
 
         {/*turn timer bar (30s)*/}
         <TimerBar timerColor={timerColor} timerPct={timerPct} remainingSeconds={timeLeft} />
@@ -360,7 +366,7 @@ export default function Game() {
           </CornerCard>
         </div>
       )}
-      {gameOver && (<PostGamePrompt gameOver={gameOver} gameState={gameState} bootTimer={bootTimer} onLeave={() => navigate('/lobby')} />)}
+      {gameOver && (<PostGamePrompt gameOver={gameOver} gameState={gameState} bootTimer={bootTimer} onLeave={() => navigate('/lobby')} log={log} />)}
     </div>
   );
 }

@@ -6,16 +6,17 @@ interface SeatCardProps {
     player: Player;
     isActive: boolean;
     isMe?: boolean;
+    shouldShake?: boolean;
 }
 
 const PLAYER_NAME_COLOR = '#ffc94a';
 
-export default function SeatCard({ player, isActive, isMe }: SeatCardProps) {
+export default function SeatCard({ player, isActive, isMe, shouldShake = false }: SeatCardProps) {
     const teamColor = player.team === 1 ? '#88c0f0' : '#f0956a';
     const teamBorder = player.team === 1 ? 'rgba(74,144,217,0.42)' : 'rgba(217,112,74,0.42)';
 
     return (
-        <div style={{
+        <div className={shouldShake ? 'seat-card-knock-shake' : undefined} style={{
             background: isActive ? 'rgba(8,4,1,0.95)' : 'rgba(8,4,1,0.8)',
             border: `3px solid ${isActive ? 'rgba(76,175,80,0.62)' : isMe ? 'rgba(244,184,66,0.42)' : teamBorder}`,
             borderRadius: 15, padding: '5px 10px',

@@ -211,6 +211,20 @@ function processKnock(io, game, playerId) {
         consecutiveKnocks: game.consecutiveKnocks,
     });
 
+    // Game ends immediately when any team reaches 20+ from knock scoring.
+    if (game.scores[1] >= 20 || game.scores[2] >= 20) {
+        const winner = game.scores[1] >= 20 ? 1 : 2;
+        clearTimeout(game.turnTimer);
+        clearTimeout(game.roundTransitionTimer);
+        io.of('/game').to(game.code).emit('gameOver', {
+            winner,
+            scores: game.scores,
+            playerScores: game.playerScores,
+        });
+        delete games[game.code];
+        return;
+    }
+
     // hard lock — all 4 knocked consecutively
     if (game.consecutiveKnocks >= 4) {
         endRound(io, game, null);

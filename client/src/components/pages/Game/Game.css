@@ -99,6 +99,19 @@
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
 }
 
+@keyframes seatCardKnockShake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-3px) rotate(-0.8deg); }
+  40% { transform: translateX(3px) rotate(0.8deg); }
+  60% { transform: translateX(-2px) rotate(-0.4deg); }
+  80% { transform: translateX(2px) rotate(0.4deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+.seat-card-knock-shake {
+  animation: seatCardKnockShake 380ms ease-in-out;
+}
+
 .game-seat-top {
   top: var(--seat-top-offset);
   left: 50%;

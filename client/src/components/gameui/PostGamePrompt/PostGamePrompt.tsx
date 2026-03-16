@@ -1,5 +1,7 @@
 import React from 'react';
 import { GameState } from '../../../types/Game.ts';
+import RoundLog from '../RoundLog/RoundLog.tsx';
+import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
 interface PostGamePromptProps {
     gameOver: { winner: number; scores: { 1: number; 2: number } } | null;
@@ -7,6 +9,7 @@ interface PostGamePromptProps {
     bootTimer: number;
     onLeave: () => void;
     playerNameColor?: string;
+    log: any[];
 }
 
 function formatBoot(seconds: number): string {
@@ -17,7 +20,7 @@ function getTeamLabel(team: number) {
     return team === 1 ? 'Blue Team' : 'Red Team';
 }
 
-export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave, playerNameColor = '#ffc94a',}: PostGamePromptProps) {
+export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave, playerNameColor = '#ffc94a', log}: PostGamePromptProps) {
     if (!gameOver || !gameState) return null;
 
     const currentRound = gameState.roundNumber ?? 1;
@@ -34,15 +37,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                 justifyContent: 'center',
                 zIndex: 50,
         }}>
-            <div
-                className="game-dialog-card"
-                style={{
-                    borderRadius: 6,
-                    padding: '24px 32px',
-                    textAlign: 'center',
-                    width: 300,
-                }}
-            >
+            <CornerCard style={{ borderRadius: 6, padding: '24px 24px 18px', textAlign: 'center', width: 380 }} cornerSize={14}>
                 <div style={{
                     fontSize: 28,
                     color: '#f4b942',
@@ -103,16 +98,32 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
 
                             {gameState.players.filter(p => p.team === t).map(p => (
                                 <div key={p.playerId} style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    gap: 8,
                                     fontFamily: 'KomikaTitle, sans-serif',
                                     fontSize: 9,
                                     color: playerNameColor,
                                     textShadow: '0 0 5px rgba(255,201,74,0.22)',
                                 }}>
-                                    {p.username}
+                                    <span>{p.username}</span>
+                                    <span style={{ color: 'rgba(244,184,66,0.86)', fontSize: 10 }}>{p.points}</span>
                                 </div>
                             ))}
                         </div>
                     ))}
+                </div>
+
+                <div style={{
+                    marginBottom: 12,
+                    border: '1px solid rgba(180,140,60,0.2)',
+                    borderRadius: 4,
+                    background: 'rgba(12,7,3,0.44)',
+                    maxHeight: 170,
+                    overflow: 'hidden',
+                }}>
+                    <RoundLog log={log} />
                 </div>
 
                 <div style={{
@@ -139,7 +150,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                 >
                     LEAVE GAME
                 </div>
-            </div>
+            </CornerCard>
         </div>
     );
 }
