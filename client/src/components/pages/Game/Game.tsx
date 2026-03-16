@@ -110,7 +110,7 @@ export default function Game() {
       setGameState(prev => prev ? { ...prev, currentTurn: data.currentTurn } : prev);
     });
 
-    s.on('playerKnocked', (data: ScorePayload & { playerId: string; username: string; points: number; isFreeKnock?: boolean }) => {
+    s.on('playerKnocked', (data: ScorePayload & { playerId: string; username: string; points: number; isFreeKnock?: boolean; awardedTeam?: number | null }) => {
       setGameState(prev => prev ? {
         ...prev,
         scores: data.scores,
@@ -122,6 +122,7 @@ export default function Game() {
 
       const myTeam = gameStateRef.current?.players.find(p => p.playerId === playerId)?.team;
       const knockerTeam = gameStateRef.current?.players.find(p => p.playerId === data.playerId)?.team;
+      const awardedTeam = data.awardedTeam ?? (knockerTeam === 1 ? 2 : knockerTeam === 2 ? 1 : null);
       const outcome = myTeam && knockerTeam
         ? (knockerTeam === myTeam ? 'lose' : 'win')
         : undefined;
@@ -129,7 +130,7 @@ export default function Game() {
       addLog(
         data.isFreeKnock
           ? `${data.username} knocked — free knock (no points)`
-          : `${data.username} knocked — ${data.points}pt to opposing team`,
+          : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? `Team ${awardedTeam}` : 'opposing team'}`,
         'knock',
         data.username,
         undefined,
