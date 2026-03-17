@@ -99,7 +99,7 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                         letterSpacing: '0.12em'
                     }}
                 >
-                    game #{code} · round {currentRound}
+                    game #{code}
                 </span>
 
             </div>
