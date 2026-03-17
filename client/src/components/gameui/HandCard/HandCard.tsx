@@ -16,7 +16,8 @@ interface HandCardProps {
     validIndices: number[];
 }
 
-const handTileSize = 40;
+// Slightly larger hand tiles for better readability.
+const handTileSize = 60;
 
 function getTeamLabel(team: number) {
     return team === 1 ? 'BLUE TEAM' : 'RED TEAM';
@@ -98,7 +99,7 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                             key={i}
                             style={{
                                 opacity: isMyTurn && !isValid ? 0.22 : 1,
-                                transition: 'opacity 0.2s'
+                                transition: 'opacity 0.2s',
                             }}
                         >
                             <DominoTile

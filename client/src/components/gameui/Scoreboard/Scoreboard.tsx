@@ -21,13 +21,13 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                 style={{
                     justifyContent: 'space-between',
                     padding: '5px 12px',
-                    fontSize: 9,
+                    fontSize: 8,
                     letterSpacing: '0.12em',
                     color: 'rgba(235,218,165,0.64)',
                 }}
             >
-                <Text>round <Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</Text></Text>
-                <Text>first to<Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}> 20</Text></Text>
+                <Text style={{ fontSize: 8 }}>round <Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 8 }}>{currentRound}</Text></Text>
+                <Text style={{ fontSize: 8 }}>first to<Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 8 }}> 20</Text></Text>
             </Group>
 
             <Box
@@ -43,8 +43,8 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 marginBottom: 2
                             }}
                         >
-                            <Text style={{ fontSize: 10, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabelLower(t)}</Text>
-                            <Text style={{ fontSize: 15, color: t === 1 ? '#88c0f0' : '#f0956a' }}>{gameState.scores[t as 1 | 2]}</Text>
+                            <Text style={{ fontSize: 9, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabelLower(t)}</Text>
+                            <Text style={{ fontSize: 13, color: t === 1 ? '#88c0f0' : '#f0956a' }}>{gameState.scores[t as 1 | 2]}</Text>
                         </Group>
 
                         <Box
@@ -77,8 +77,8 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 padding: '1px 0',
                                 textShadow: '0 0 5px rgba(255,201,74,0.22)',
                             }}>
-                                <Text>{p.username.toUpperCase()}</Text>
-                                <Text style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 10, color: 'rgba(244,184,66,0.4)' }}>{p.points}</Text>
+                                <Text style={{ fontSize: 8 }}>{p.username.toUpperCase()}</Text>
+                                <Text style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 8, color: 'rgba(244,184,66,0.4)' }}>{p.points}</Text>
                             </Group>
                         ))}
                     </Box>

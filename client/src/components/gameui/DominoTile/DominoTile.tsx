@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Image } from '@mantine/core';
+import { Box } from '@mantine/core';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 
 interface DominoTileProps {
@@ -41,12 +41,17 @@ export default function DominoTile({ left, right, size = 26, onClick, valid, sel
             alignItems: 'center',
             justifyContent: 'center',
             cursor: onClick && valid ? 'pointer' : 'default',
+            transform: valid && isHovered ? 'translateY(-2px)' : 'none',
+            transition: 'transform 0.12s ease',
         }}>
-            <Image
+            <img
                 src={dominoSrc(left, right)}
                 alt={`${left}|${right}`}
-                width={tileWidth} height={tileHeight}
+                width={tileWidth}
+                height={tileHeight}
                 style={{
+                    width: tileWidth,
+                    height: tileHeight,
                     transform: 'rotate(90deg)',
                     borderRadius: 3,
                     boxShadow: outline,
