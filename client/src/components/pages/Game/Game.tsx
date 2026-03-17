@@ -301,7 +301,7 @@ export default function Game() {
       </div>
 
       {/* header */}
-      <GameHeader gameState={gameState} code={code ?? 'unknown'} displayUsername={displayUsername} currentRound={currentRound} />
+      <GameHeader gameState={gameState} code={code ?? 'unknown'} displayUsername={displayUsername}/>
 
       {/* table area */}
       <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>

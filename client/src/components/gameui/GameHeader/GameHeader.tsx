@@ -6,14 +6,14 @@ interface GameHeaderProps {
     gameState: any;
     code: string;
     displayUsername: string;
-    currentRound: number;
 }
 
-function getTeamLabelLower(team: number) {
+// convert team number to label
+function getTeamLabel(team: number) {
     return team === 1 ? 'blue team' : 'red team';
 }
 
-export default function GameHeader({gameState, code, displayUsername, currentRound}: GameHeaderProps) {
+export default function GameHeader({gameState, code, displayUsername}: GameHeaderProps) {
     return (
         <CornerCard
             style={{
@@ -60,7 +60,7 @@ export default function GameHeader({gameState, code, displayUsername, currentRou
                         color: t === 1 ? '#88c0f0' : '#f0956a',
                         border: `1px solid ${t === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`,
                     }}>
-                        {getTeamLabelLower(t)} — {gameState.scores[t as 1 | 2]} pts
+                        {getTeamLabel(t)} — {gameState.scores[t as 1 | 2]} pts
                     </div>
                 ))}
             </div>
