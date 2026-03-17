@@ -30,10 +30,10 @@ export default function FaceDownTiles({ total, remaining }: FaceDownTilesProps) 
                         width: tileWidth,
                         height: tileHeight,
                         borderRadius: 1,
-                        background: played ? 'rgba(20,12,3,0.4)' : 'linear-gradient(135deg,#2a1e10,#1a1208)',
-                        border: `0.5px solid ${played ? 'rgba(40,24,8,0.15)' : 'rgba(180,140,60,0.2)'}`,
-                        boxShadow: played ? 'none' : '1px 1px 2px rgba(0,0,0,0.4)',
-                        opacity: played ? 0.2 : 1,
+                        background: played ? 'rgba(24,14,5,0.5)' : 'linear-gradient(135deg,#3a2a16,#23170c)',
+                        border: `0.5px solid ${played ? 'rgba(70,42,15,0.22)' : 'rgba(205,162,78,0.35)'}`,
+                        boxShadow: played ? '0 0 1px rgba(0,0,0,0.25)' : '1px 1px 3px rgba(0,0,0,0.5)',
+                        opacity: played ? 0.35 : 1,
                         transition: 'all 0.3s ease',
                     }} />
                 );
