@@ -18,8 +18,8 @@ import GameHeader from '../../gameui/GameHeader/GameHeader.tsx';
 import Scoreboard from '../../gameui/Scoreboard/Scoreboard.tsx';
 import RoundLog from '../../gameui/RoundLog/RoundLog.tsx';
 import Playmat from '../../gameui/Playmat/Playmat.tsx';
-import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 import useRoundLog from './useRoundLog.ts';
+import PostRoundPrompt from '../../gameui/PostRoundPrompt/PostRoundPrompt.tsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const ROUND_END_POPUP_FALLBACK_SEC = 15; // how many seconds of intermission between rounds
@@ -568,131 +568,7 @@ export default function Game() {
             zIndex: 55,
           }}
         >
-          <CornerCard
-            style={{
-              borderRadius: 6,
-              padding: '24px 24px 18px',
-              textAlign: 'center',
-              width: 360,
-            }}
-            cornerSize={14}
-          >
-            <Box
-              component="div"
-              style={{
-                fontSize: 10,
-                letterSpacing: '0.2em',
-                color: 'rgba(235,218,165,0.72)',
-                marginBottom: 6,
-              }}
-            >
-              ROUND ENDED
-            </Box>
-            <Box
-              component="div"
-              style={{
-                fontSize: 22,
-                color:
-                  roundEndPrompt.winningTeam === 1
-                    ? '#88c0f0'
-                    : roundEndPrompt.winningTeam === 2
-                      ? '#f0956a'
-                      : '#f4e8c1',
-                marginBottom: 8,
-              }}
-            >
-              {roundEndPrompt.winningTeam
-                ? `${getTeamLabel(roundEndPrompt.winningTeam).toUpperCase()} WON ${roundEndPrompt.points} PTS`
-                : 'ROUND COMPLETE'}
-            </Box>
-            <Box
-              component="div"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 10,
-                marginBottom: 10,
-              }}
-            >
-              {[1, 2].map((team) => (
-                <Box
-                  component="div"
-                  key={team}
-                  style={{
-                    borderRadius: 4,
-                    padding: '10px',
-                    border: `1px solid ${team === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`,
-                    background:
-                      team === 1
-                        ? 'rgba(74,144,217,0.05)'
-                        : 'rgba(217,112,74,0.05)',
-                  }}
-                >
-                  <Box
-                    component="div"
-                    style={{
-                      fontSize: 10,
-                      letterSpacing: '0.1em',
-                      color: team === 1 ? '#88c0f0' : '#f0956a',
-                    }}
-                  >
-                    {getTeamLabel(team).toUpperCase()}
-                  </Box>
-                  <Box
-                    component="div"
-                    style={{
-                      fontSize: 24,
-                      color: team === 1 ? '#88c0f0' : '#f0956a',
-                    }}
-                  >
-                    {roundEndPrompt.scores[team as 1 | 2]}
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-
-            <Box
-              component="div"
-              style={{
-                fontSize: 10,
-                letterSpacing: '0.1em',
-                color: 'rgba(235,218,165,0.8)',
-                marginBottom: 12,
-              }}
-            >
-              Next round begins in {roundEndSecondsLeft}s
-            </Box>
-
-            <Box
-              component="div"
-              style={{
-                marginBottom: 12,
-                border: '1px solid rgba(180,140,60,0.2)',
-                borderRadius: 4,
-                background: 'rgba(12,7,3,0.44)',
-                maxHeight: 170,
-                overflow: 'hidden',
-              }}
-            >
-              <RoundLog log={log} />
-            </Box>
-
-            <Box
-              component="div"
-              className="game-dialog-leave-btn"
-              onClick={() => setRoundEndPrompt(null)}
-              style={{
-                display: 'inline-block',
-                padding: '7px 20px',
-                borderRadius: 3,
-                fontSize: 13,
-                letterSpacing: '0.12em',
-                cursor: 'pointer',
-              }}
-            >
-              CONTINUE TO NEXT ROUND
-            </Box>
-          </CornerCard>
+          <PostRoundPrompt roundEndPrompt={roundEndPrompt} roundEndSecondsLeft={roundEndSecondsLeft} setRoundEndPrompt={setRoundEndPrompt} log={log}/>
         </Box>
       )}
 
