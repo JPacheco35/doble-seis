@@ -1,3 +1,5 @@
+// Not found page when trying to access a non-existent route
+
 import React from 'react';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import { Stack, Box } from '@mantine/core';

@@ -1,8 +1,9 @@
+// Background Dominoes scattered across the screen, transparent
 import React from 'react';
 import { Box, Image } from '@mantine/core';
 import dominoSrc from '../../../functions/dominoSrc.ts';
 
-// relative positions of dominoes
+// relative positions of dominoes to the screen
 const POSITIONS = [
   { top: '8%', left: '5%', rotate: 15, leftPip: 6, rightPip: 6 },
   { top: '15%', right: '8%', rotate: -22, leftPip: 3, rightPip: 3 },
@@ -14,6 +15,7 @@ const POSITIONS = [
   { top: '85%', right: '18%', rotate: 35, leftPip: 1, rightPip: 3 },
 ];
 
+// postion and type of domino
 interface Position {
   top: string;
   left?: string;
@@ -28,6 +30,7 @@ export default function BGDominoes() {
     <Box
       className="wood-grain"
     >
+      {/*place each domino of onto the wood-grain background*/}
       {(POSITIONS as Position[]).map((d, i) => (
         <Image
           key={i}

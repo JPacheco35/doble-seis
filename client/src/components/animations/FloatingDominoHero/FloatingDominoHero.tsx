@@ -1,3 +1,5 @@
+// Floating Domino Hero on the Welcome.tsx page
+
 import React from 'react';
 import { Image } from '@mantine/core';
 import dominoSrc from '../../../functions/dominoSrc.ts';

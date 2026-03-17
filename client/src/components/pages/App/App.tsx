@@ -1,3 +1,5 @@
+// the main app component which defines the routing
+
 import { Route, Routes } from 'react-router-dom';
 import Welcome from '../Welcome/Welcome.tsx';
 import React from 'react';
@@ -10,11 +12,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/welcome" element={<Welcome />} />
-        <Route path="/lobby" element={<Lobby />} />
-        <Route path="/game/:code" element={<Game />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/" element={<Welcome />} />            {/*welcome/login page*/}
+        <Route path="/welcome" element={<Welcome />} />     {/*welcome/login page*/}
+        <Route path="/lobby" element={<Lobby />} />         {/*lobby page*/}
+        <Route path="/game/:code" element={<Game />} />     {/*game page*/}
+        <Route path="*" element={<NotFound />} />           {/*not found page*/}
       </Routes>
     </BrowserRouter>
   );

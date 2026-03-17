@@ -1,3 +1,5 @@
+// lobby page - shows list of lobbies, allows creating and joining lobbies, and handles lobby state
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
@@ -12,32 +14,45 @@ import JoinLobby from '../../ui/JoinLobby/JoinLobby.tsx';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function Lobby() {
+
+  // user identification
   const playerId = localStorage.getItem('playerId');
   const username = localStorage.getItem('username');
 
+  // connection status and socket to lobby matchmaking system
   const [connected, setConnected] = useState(false);
-  const [lobbyName, setLobbyName] = useState(`${username}'s Game`);
-  const [joinCode, setJoinCode] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  // lobby creation
+  const [lobbyName, setLobbyName] = useState(`${username}'s Game`);
   const [lobbyCreated, setLobbyCreated] = useState(false);
   const [lobbyCode, setLobbyCode] = useState('');
+
+  // joining lobby
+  const [joinCode, setJoinCode] = useState('');
   const [joinedCode, setJoinedCode] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
 
+  // no valid identification, redirect back to welcome page
   if (!playerId || !username) {
     return <Navigate to="/welcome" replace />;
   }
 
+  // establish socket connection and routes
   useEffect(() => {
+
+    // authentication
     const s = io(`${API_URL}/lobby`, {
       auth: { playerId, username },
     });
 
+    // connection
     s.on('connect', () => {
       setConnected(true);
       setSocket(s);
     });
 
+    // disconnection
     s.on('disconnect', () => {
       setConnected(false);
       setLobbyCreated(false);
@@ -45,6 +60,7 @@ export function Lobby() {
       setCountdown(null);
     });
 
+    // start/cancel game countdown
     s.on('gameCountdown', () => setCountdown(10));
     s.on('countdownCancelled', () => setCountdown(null));
 
@@ -57,7 +73,10 @@ export function Lobby() {
       className="wood-grain"
       style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}
     >
+      {/*background dominoes*/}
       <BGDominoes />
+
+      {/*header*/}
       <LobbyHeader connected={connected} />
 
       <Box
@@ -70,6 +89,8 @@ export function Lobby() {
       >
         <Grid gutter="lg">
           <Grid.Col span={8}>
+
+            {/*list of current lobbies*/}
             <LobbyList
               socket={socket}
               isHosting={lobbyCreated}
@@ -78,10 +99,13 @@ export function Lobby() {
               joinedCode={joinedCode}
               setJoinedCode={setJoinedCode}
             />
+
           </Grid.Col>
 
           <Grid.Col span={4}>
             <Stack gap="lg">
+
+              {/*create lobby section*/}
               <CreateLobby
                 lobbyName={lobbyName}
                 setLobbyName={setLobbyName}
@@ -95,6 +119,8 @@ export function Lobby() {
                 countdown={countdown}
                 setCountdown={setCountdown}
               />
+
+              {/*joined lobby section*/}
               <JoinLobby
                 joinCode={joinCode}
                 setJoinCode={setJoinCode}
@@ -104,6 +130,7 @@ export function Lobby() {
                 joinedCode={joinedCode}
                 lobbyCreated={lobbyCreated}
               />
+
             </Stack>
           </Grid.Col>
         </Grid>

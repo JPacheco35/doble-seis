@@ -1,3 +1,5 @@
+// Main game page component. Handles socket connection, game state management, and renders the main game UI and subcomponents.
+
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -20,36 +22,48 @@ import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 import useRoundLog from './useRoundLog.ts';
 
 const API_URL = import.meta.env.VITE_API_URL;
-const ROUND_END_POPUP_FALLBACK_SEC = 15;
+const ROUND_END_POPUP_FALLBACK_SEC = 15; // how many seconds of intermission between rounds
 
+// convert team number to name
 function getTeamLabel(team: number | null | undefined) {
   if (team === 1) return 'Blue Team';
   if (team === 2) return 'Red Team';
   return 'Unknown Team';
 }
 
-function getTeamLabelLower(team: number | null | undefined) {
-  return getTeamLabel(team).toLowerCase();
-}
-
 export default function Game() {
-  const { code } = useParams();
-  const navigate = useNavigate();
+  // user identification
   const playerId = localStorage.getItem('playerId');
   const username = localStorage.getItem('username');
+
+  const { code } = useParams();
+  const navigate = useNavigate();
+
+  // key for retrieving logs from app storage
   const logStorageKey = `game-log:v1:${code ?? 'unknown'}:${playerId ?? 'anon'}`;
-  const [gameState, setGameState] = useState<GameState | null>(null);
+
+  // socket connection
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [sidePrompt, setSidePrompt] = useState<number | null>(null);
+
+  // current game state
+  const [gameState, setGameState] = useState<GameState | null>(null);
+
+  // track whether the game is over
   const [gameOver, setGameOver] = useState<{ winner: number; scores: { 1: number; 2: number } } | null>(null);
+
+  // timers for turn and post game screen
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [bootTimer, setBootTimer] = useState(180);
+
+  // popup prompt states
+  const [sidePrompt, setSidePrompt] = useState<number | null>(null);
   const [roundEndPrompt, setRoundEndPrompt] = useState<{
     winningTeam: number | null;
     points: number;
     scores: { 1: number; 2: number };
     endAtMs: number;
   } | null>(null);
+
   const [roundEndSecondsLeft, setRoundEndSecondsLeft] = useState(0);
   const [knockedPlayerId, setKnockedPlayerId] = useState<string | null>(null);
   const [knockShakeToken, setKnockShakeToken] = useState(0);
@@ -180,7 +194,7 @@ export default function Game() {
       addLog(
         data.isFreeKnock
           ? `${data.username} knocked — free knock (no points)`
-          : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? getTeamLabelLower(awardedTeam) : 'opposing team'}`,
+          : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? getTeamLabel(awardedTeam) : 'opposing team'}`,
         'knock',
         data.username,
         undefined,
@@ -363,7 +377,15 @@ export default function Game() {
                 </Box>
               ))}
             </Box>
-            <Box component="div" style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(235,218,165,0.8)', marginBottom: 12 }}>
+
+            <Box component="div"
+                 style={{
+                   fontSize: 10,
+                   letterSpacing: '0.1em',
+                   color: 'rgba(235,218,165,0.8)',
+                   marginBottom: 12
+                 }}
+            >
               Next round begins in {roundEndSecondsLeft}s
             </Box>
 
@@ -382,7 +404,14 @@ export default function Game() {
               component="div"
               className="game-dialog-leave-btn" 
               onClick={() => setRoundEndPrompt(null)} 
-              style={{ display: 'inline-block', padding: '7px 20px', borderRadius: 3, fontSize: 13, letterSpacing: '0.12em', cursor: 'pointer' }}
+              style={{
+                display: 'inline-block',
+                padding: '7px 20px',
+                borderRadius: 3,
+                fontSize: 13,
+                letterSpacing: '0.12em',
+                cursor: 'pointer'
+              }}
             >
               CONTINUE TO NEXT ROUND
             </Box>

@@ -1,3 +1,5 @@
+// various useful types for the game
+
 export interface Player {
     playerId: string;
     username: string;
@@ -6,15 +8,18 @@ export interface Player {
     points: number;
 }
 
+// domino in the hand
 export interface Domino {
     left: number;
     right: number;
 }
 
+// domino on the board
 export interface BoardDomino extends Domino {
     placedBy: string;
 }
 
+// current state of the game
 export interface GameState {
     board: BoardDomino[];
     hand: Domino[];
@@ -26,11 +31,14 @@ export interface GameState {
     roundNumber: number;
 }
 
+// team and player scores
 export interface ScorePayload {
     scores: { 1: number; 2: number };
     playerScores?: Record<string, number>;
 }
 
+
+// round end data
 export interface RoundEndedPayload extends ScorePayload {
     tally: number;
     points: number;
@@ -38,6 +46,7 @@ export interface RoundEndedPayload extends ScorePayload {
     nextRoundInSec?: number;
 }
 
+// domino placement data
 export interface DominoPlacedPayload {
     playerId: string;
     placedDomino?: Domino;
@@ -49,6 +58,7 @@ export interface DominoPlacedPayload {
     autoPlayed: boolean;
 }
 
+// log entry data
 export interface LogEntry {
     id: number;
     text: string;
