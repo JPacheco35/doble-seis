@@ -10,7 +10,31 @@ const tileWidth = Math.round(tileSize * 1.9);
 const tileHeight = tileSize;
 const tileGap = 2;
 
+function isSameDomino(a: Domino, b: Domino) {
+    return a.left === b.left && a.right === b.right;
+}
+
+function getEnteringIndex(prevBoard: Domino[], nextBoard: Domino[]): number | null {
+    if (nextBoard.length !== prevBoard.length + 1) return null;
+
+    // New domino placed on the left end.
+    const isPrepended = prevBoard.every((d, i) => isSameDomino(d, nextBoard[i + 1]));
+    if (isPrepended) return 0;
+
+    // New domino placed on the right end.
+    const isAppended = prevBoard.every((d, i) => isSameDomino(d, nextBoard[i]));
+    if (isAppended) return nextBoard.length - 1;
+
+    return null;
+}
+
 export default function DominoBoard({ board }: { board: Domino[] }) {
+    const previousBoardRef = React.useRef<Domino[]>([]);
+    const enteringIndex = getEnteringIndex(previousBoardRef.current, board);
+
+    React.useEffect(() => {
+        previousBoardRef.current = board;
+    }, [board]);
 
     // return empty board if no dominoes have been played yet
     if (board.length === 0) {
@@ -52,7 +76,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                     <Box
                         component="div"
                         key={i}
-                        className={i === board.length - 1 ? 'domino-board-tile domino-board-tile-enter' : 'domino-board-tile'}
+                        className={i === enteringIndex ? 'domino-board-tile domino-board-tile-enter' : 'domino-board-tile'}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
