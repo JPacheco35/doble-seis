@@ -2,6 +2,7 @@ import React from 'react';
 import { Socket } from 'socket.io-client';
 import { GameState } from '../../../types/Game.ts';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
+import dominoSrc from '../../../functions/dominoSrc.ts';
 
 interface SidePromptProps {
     sidePrompt: number | null;
@@ -77,11 +78,28 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                 <div
                     style={{
                         fontFamily: 'KomikaTitle, sans-serif',
-                        fontSize: 22,
                         color: '#f4e8c1',
                         marginBottom: 18
                 }}>
-                    {selectedDomino?.left}|{selectedDomino?.right}
+                    {selectedDomino ? (
+                        <img
+                            src={dominoSrc(selectedDomino.left, selectedDomino.right)}
+                            alt={`${selectedDomino.left}-${selectedDomino.right}`}
+                            width={68}
+                            height={36}
+                            style={{
+                                display: 'block',
+                                margin: '0 auto',
+                                objectFit: 'contain',
+                                borderRadius: 3,
+                                boxShadow: '0 2px 7px rgba(0,0,0,0.42)',
+                                background: 'rgba(255,248,232,0.98)',
+                                border: '1px solid rgba(180,140,60,0.28)',
+                            }}
+                        />
+                    ) : (
+                        <span style={{ fontSize: 18 }}>?-?</span>
+                    )}
                 </div>
 
                 <div
