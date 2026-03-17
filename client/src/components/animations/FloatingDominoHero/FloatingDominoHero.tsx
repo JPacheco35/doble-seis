@@ -1,12 +1,12 @@
 import React from 'react';
 import { Image } from '@mantine/core';
-import l66 from '../../../assets/dominoes/light_6-6.svg';
+import dominoSrc from '../../../functions/dominoSrc.ts';
 import './FloatingDominoHero.css';
 
 export default function FloatingDominoHero() {
   return (
     <Image
-      src={l66}
+      src={dominoSrc(6, 6)}
       alt="double-six"
       className="floating-domino-hero"
     />
