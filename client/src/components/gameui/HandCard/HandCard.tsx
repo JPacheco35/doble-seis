@@ -68,9 +68,9 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
 
                           {isMyTurn
                               ? gameState.board.length === 0 && gameState.roundNumber === 1
-                                  ? 'YOUR TURN — PLAY THE 6|6 TO OPEN'
-                                  : 'YOUR TURN — PLAY A TILE'
-                              : `YOU (${getTeamLabel(seats.bottom.team)}) — WAITING…`}
+                                  ? 'your turn: play the double-six to open'
+                                  : 'your turn — play a tile'
+                              : `YOU (${getTeamLabel(seats.bottom.team)}) — waiting...`}
                         </Text>
                     </>
                 )}

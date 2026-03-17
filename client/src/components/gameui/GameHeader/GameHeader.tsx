@@ -33,6 +33,7 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
             }}
             cornerSize={0}
         >
+            {/*animated logo*/}
             <Group
                 className="game-title"
                 style={{
@@ -42,6 +43,7 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                 <Logo fontSize={24} />
             </Group>
 
+            {/*team labels and scores*/}
             <Group
                 className="game-team-scores"
                 style={{
@@ -70,6 +72,7 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                     gap: 8
                 }}
             >
+              {/*username display*/}
               <Text className="game-user-chip" style={{
                   fontSize: 10,
                   letterSpacing: '0.08em',
@@ -81,15 +84,16 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                 {displayUsername}
               </Text>
 
-            <Box
-                style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background: '#4caf50',
-                    boxShadow: '0 0 5px #4caf50'
-                }}
-            />
+              {/*game code display*/}
+              <Box
+                  style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      background: '#4caf50',
+                      boxShadow: '0 0 5px #4caf50'
+                  }}
+              />
                 <Text
                     style={{
                         fontSize: 10,
