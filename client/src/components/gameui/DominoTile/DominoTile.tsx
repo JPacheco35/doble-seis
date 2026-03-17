@@ -11,21 +11,28 @@ interface DominoTileProps {
 }
 
 export default function DominoTile({ left, right, size = 26, onClick, valid, selected }: DominoTileProps) {
+    const [isHovered, setIsHovered] = React.useState(false);
 
     // size parameters for the domino tile
     const tileWidth = Math.round(size * 1.9);
     const tileHeight = size;
 
-    // if valid move, add a subtle orange glow, if selected, add a green glow
+    // Hovering a valid tile uses green highlight; default valid state stays amber.
     const outline = selected
         ? '0 0 0 2px #4caf50, 0 0 10px rgba(76,175,80,0.45)'
+        : (valid && isHovered)
+            ? '0 0 0 2px rgba(76,175,80,0.7), 0 0 10px rgba(76,175,80,0.35)'
         : valid
             ? '0 0 0 1.5px rgba(244,184,66,0.55), 0 0 7px rgba(244,184,66,0.15)'
             : 'none';
 
     // return domino tile
     return (
-        <div onClick={onClick} style={{
+        <div
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
             width: tileHeight,
             height: tileWidth,
             flexShrink: 0,
