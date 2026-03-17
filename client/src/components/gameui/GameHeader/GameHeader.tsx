@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Group, Text } from '@mantine/core';
 import Logo from "../../ui/Logo/Logo.tsx";
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
@@ -25,33 +26,31 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                 zIndex: 3,
                 background: 'rgba(28, 16, 8, 0.76)',
                 border: 'none',
-                borderBottom: '1px solid rgba(180, 140, 60, 0.2)',
+                borderBottom: '2px solid rgba(180, 140, 60, 0.2)',
                 borderRadius: 0,
                 boxShadow: 'none',
                 backdropFilter: 'blur(4px)',
             }}
-            cornerSize={6}
+            cornerSize={0}
         >
-            <div
+            <Group
                 className="game-title"
                 style={{
-                    display: 'flex',
                     alignItems: 'center'
                 }}
             >
                 <Logo fontSize={24} />
-            </div>
+            </Group>
 
-            <div
+            <Group
                 className="game-team-scores"
                 style={{
-                    display: 'flex',
                     gap: 6,
                     alignItems: 'center'
                 }}
             >
                 {[1, 2].map(t => (
-                    <div key={t} className="game-team-chip" style={{
+                    <Box key={t} className="game-team-chip" style={{
                         padding: '2px 11px',
                         borderRadius: 3,
                         fontSize: 11,
@@ -61,18 +60,17 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                         border: `1px solid ${t === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`,
                     }}>
                         {getTeamLabel(t)} — {gameState.scores[t as 1 | 2]} pts
-                    </div>
+                    </Box>
                 ))}
-            </div>
+            </Group>
 
-            <div
+            <Group
                 style={{
-                    display: 'flex',
                     alignItems: 'center',
                     gap: 8
                 }}
             >
-              <span className="game-user-chip" style={{
+              <Text className="game-user-chip" style={{
                   fontSize: 10,
                   letterSpacing: '0.08em',
                   padding: '2px 8px',
@@ -81,9 +79,9 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                   textTransform: 'uppercase',
               }}>
                 {displayUsername}
-              </span>
+              </Text>
 
-            <div
+            <Box
                 style={{
                     width: 6,
                     height: 6,
@@ -92,7 +90,7 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                     boxShadow: '0 0 5px #4caf50'
                 }}
             />
-                <span
+                <Text
                     style={{
                         fontSize: 10,
                         color: 'rgba(235,218,165,0.66)',
@@ -100,9 +98,9 @@ export default function GameHeader({gameState, code, displayUsername}: GameHeade
                     }}
                 >
                     game #{code}
-                </span>
+                </Text>
 
-            </div>
+            </Group>
         </CornerCard>
     )
 }

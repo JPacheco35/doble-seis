@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Flex, Text } from '@mantine/core';
 import DominoTile from '../DominoTile/DominoTile.tsx';
 import { GameState, Player } from '../../../types/Game.ts';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
@@ -39,17 +40,14 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
             }}
             cornerSize={12}
         >
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8
-                }}
+            <Flex
+                align="center"
+                justify="center"
+                gap={8}
             >
                 {seats.bottom && (
                     <>
-                        <div
+                        <Box
                             style={{
                                 width: 6,
                                 height: 6,
@@ -58,7 +56,8 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                             }}
                         />
 
-                        <span
+                        <Text
+                            component="span"
                             style={{
                                 fontSize: 9,
                                 letterSpacing: '0.14em',
@@ -71,12 +70,12 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                                   ? 'YOUR TURN — PLAY THE 6|6 TO OPEN'
                                   : 'YOUR TURN — PLAY A TILE'
                               : `YOU (${getTeamLabel(seats.bottom.team)}) — WAITING…`}
-                        </span>
+                        </Text>
                     </>
                 )}
-            </div>
+            </Flex>
 
-            <div
+            <Text
                 style={{
                     fontSize: 8,
                     letterSpacing: '0.2em',
@@ -85,20 +84,17 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                 }}
             >
                 your hand
-            </div>
+            </Text>
 
-            <div
-                style={{
-                    display: 'flex',
-                    gap: 2,
-                    justifyContent: 'center',
-                    alignItems: 'flex-end'
-                }}
+            <Flex
+                gap={2}
+                justify="center"
+                align="flex-end"
             >
                 {gameState.hand?.map((domino, i) => {
                     const isValid = validIndices.includes(i);
                     return (
-                        <div
+                        <Box
                             key={i}
                             style={{
                                 opacity: isMyTurn && !isValid ? 0.22 : 1,
@@ -110,10 +106,10 @@ export default function HandCard({gameState, seats, isMyTurn, handlePlaceDomino,
                                 size={handTileSize} valid={isValid}
                                 onClick={isValid ? () => handlePlaceDomino(i) : undefined}
                             />
-                        </div>
+                        </Box>
                     );
                 })}
-            </div>
+            </Flex>
         </CornerCard>
     )
 }

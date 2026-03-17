@@ -2,6 +2,7 @@ import React from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import { Box } from '@mantine/core';
 import './Game.css';
 import {GameState, DominoPlacedPayload, ScorePayload, LogEntry, RoundEndedPayload} from "../../../types/Game.ts";
 import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
@@ -285,26 +286,33 @@ export default function Game() {
     return (<LoadingScreen/>);
 
   return (
-    <div className="wood-grain game-page-root" style={{
-      width: '100vw',
-      height: '100vh',
-      fontFamily: 'KomikaTitle, sans-serif',
-      color: '#f4e8c1',
-      display: 'grid',
-      gridTemplateColumns: '1fr 230px',
-      gridTemplateRows: '38px 1fr',
-      overflow: 'hidden',
-    }}>
+    <Box 
+      component="div"
+      className="wood-grain game-page-root" 
+      style={{
+        width: '100vw',
+        height: '100vh',
+        fontFamily: 'KomikaTitle, sans-serif',
+        color: '#f4e8c1',
+        display: 'grid',
+        gridTemplateColumns: '1fr 230px',
+        gridTemplateRows: '38px 1fr',
+        overflow: 'hidden',
+      }}>
       {/*dominoes background*/}
-      <div className="game-bg-dominoes-layer" aria-hidden="true">
+      <Box component="div" className="game-bg-dominoes-layer" aria-hidden="true">
         <BGDominoes />
-      </div>
+      </Box>
 
       {/* header */}
       <GameHeader gameState={gameState} code={code ?? 'unknown'} displayUsername={displayUsername}/>
 
       {/* table area */}
-      <div className="game-table-column" style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Box 
+        component="div"
+        className="game-table-column" 
+        style={{ position: 'relative', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+      >
         {/*play board (domino board + player seat cards*/}
         <Playmat gameState={gameState} seats={seats} knockedPlayerId={knockedPlayerId} knockShakeToken={knockShakeToken} />
 
@@ -313,43 +321,53 @@ export default function Game() {
 
         {/* your hand tray */}
         <HandCard seats={seats} gameState={gameState} isMyTurn={isMyTurn} handlePlaceDomino={handlePlaceDomino} validIndices={validIndices} />
-      </div>
+      </Box>
 
       {/* right side panel */}
-      <div className="game-right-panel"
-           style={{
-             display: 'flex',
-             flexDirection: 'column',
-             overflow: 'hidden',
-             zIndex: 1,
-           }}
+      <Box 
+        component="div"
+        className="game-right-panel"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          zIndex: 1,
+        }}
       >
         <Scoreboard gameState={gameState} currentRound={currentRound} />
         <RoundLog log={log} />
-      </div>
+      </Box>
 
       {/*conditional prompts*/}
       {code && (<SidePrompt sidePrompt={sidePrompt} setSidePrompt={setSidePrompt} gameState={gameState} code={code} socket={socket} />)}
       {roundEndPrompt && !gameOver && (
-        <div className="game-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 55 }}>
+        <Box 
+          component="div"
+          className="game-overlay" 
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.82)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 55 }}
+        >
           <CornerCard style={{ borderRadius: 6, padding: '24px 24px 18px', textAlign: 'center', width: 360 }} cornerSize={14}>
-            <div style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(235,218,165,0.72)', marginBottom: 6 }}>ROUND ENDED</div>
-            <div style={{ fontSize: 22, color: roundEndPrompt.winningTeam === 1 ? '#88c0f0' : roundEndPrompt.winningTeam === 2 ? '#f0956a' : '#f4e8c1', marginBottom: 8 }}>
+            <Box component="div" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(235,218,165,0.72)', marginBottom: 6 }}>ROUND ENDED</Box>
+            <Box component="div" style={{ fontSize: 22, color: roundEndPrompt.winningTeam === 1 ? '#88c0f0' : roundEndPrompt.winningTeam === 2 ? '#f0956a' : '#f4e8c1', marginBottom: 8 }}>
               {roundEndPrompt.winningTeam ? `${getTeamLabel(roundEndPrompt.winningTeam).toUpperCase()} WON ${roundEndPrompt.points} PTS` : 'ROUND COMPLETE'}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+            </Box>
+            <Box component="div" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
               {[1, 2].map((team) => (
-                <div key={team} style={{ borderRadius: 4, padding: '10px', border: `1px solid ${team === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`, background: team === 1 ? 'rgba(74,144,217,0.05)' : 'rgba(217,112,74,0.05)' }}>
-                  <div style={{ fontSize: 10, letterSpacing: '0.1em', color: team === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabel(team).toUpperCase()}</div>
-                  <div style={{ fontSize: 24, color: team === 1 ? '#88c0f0' : '#f0956a' }}>{roundEndPrompt.scores[team as 1 | 2]}</div>
-                </div>
+                <Box 
+                  component="div"
+                  key={team} 
+                  style={{ borderRadius: 4, padding: '10px', border: `1px solid ${team === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`, background: team === 1 ? 'rgba(74,144,217,0.05)' : 'rgba(217,112,74,0.05)' }}
+                >
+                  <Box component="div" style={{ fontSize: 10, letterSpacing: '0.1em', color: team === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabel(team).toUpperCase()}</Box>
+                  <Box component="div" style={{ fontSize: 24, color: team === 1 ? '#88c0f0' : '#f0956a' }}>{roundEndPrompt.scores[team as 1 | 2]}</Box>
+                </Box>
               ))}
-            </div>
-            <div style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(235,218,165,0.8)', marginBottom: 12 }}>
+            </Box>
+            <Box component="div" style={{ fontSize: 10, letterSpacing: '0.1em', color: 'rgba(235,218,165,0.8)', marginBottom: 12 }}>
               Next round begins in {roundEndSecondsLeft}s
-            </div>
+            </Box>
 
-            <div style={{
+            <Box component="div" style={{
               marginBottom: 12,
               border: '1px solid rgba(180,140,60,0.2)',
               borderRadius: 4,
@@ -358,15 +376,20 @@ export default function Game() {
               overflow: 'hidden',
             }}>
               <RoundLog log={log} />
-            </div>
+            </Box>
 
-            <div className="game-dialog-leave-btn" onClick={() => setRoundEndPrompt(null)} style={{ display: 'inline-block', padding: '7px 20px', borderRadius: 3, fontSize: 13, letterSpacing: '0.12em', cursor: 'pointer' }}>
+            <Box 
+              component="div"
+              className="game-dialog-leave-btn" 
+              onClick={() => setRoundEndPrompt(null)} 
+              style={{ display: 'inline-block', padding: '7px 20px', borderRadius: 3, fontSize: 13, letterSpacing: '0.12em', cursor: 'pointer' }}
+            >
               CONTINUE TO NEXT ROUND
-            </div>
+            </Box>
           </CornerCard>
-        </div>
+        </Box>
       )}
       {gameOver && (<PostGamePrompt gameOver={gameOver} gameState={gameState} bootTimer={bootTimer} onLeave={() => navigate('/lobby')} log={log} />)}
-    </div>
+    </Box>
   );
 }

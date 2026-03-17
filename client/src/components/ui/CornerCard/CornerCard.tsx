@@ -1,4 +1,4 @@
-import { Paper } from '@mantine/core';
+import { Paper, Box } from '@mantine/core';
 import './CornerCard.css';
 import React from "react";
 
@@ -24,10 +24,10 @@ export default function CornerCard({
                 ...style,
             }}
         >
-            <div className="corner tl" style={{ width: cornerSize, height: cornerSize }} />
-            <div className="corner tr" style={{ width: cornerSize, height: cornerSize }} />
-            <div className="corner bl" style={{ width: cornerSize, height: cornerSize }} />
-            <div className="corner br" style={{ width: cornerSize, height: cornerSize }} />
+            <Box component="div" className="corner tl" style={{ width: cornerSize, height: cornerSize }} />
+            <Box component="div" className="corner tr" style={{ width: cornerSize, height: cornerSize }} />
+            <Box component="div" className="corner bl" style={{ width: cornerSize, height: cornerSize }} />
+            <Box component="div" className="corner br" style={{ width: cornerSize, height: cornerSize }} />
             {children}
         </Paper>
     );

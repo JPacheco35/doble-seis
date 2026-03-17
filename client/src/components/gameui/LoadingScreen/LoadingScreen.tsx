@@ -1,9 +1,10 @@
 import React from 'react';
+import { Box, Text } from '@mantine/core';
 
 export default function LoadingScreen() {
     return (
-        <div
-            className="wood-grain game-loading-root"
+        <Box
+            className="wood-grain"
             style={{
                 minHeight: '100vh',
                 display: 'flex',
@@ -11,16 +12,14 @@ export default function LoadingScreen() {
                 justifyContent: 'center'
             }}
         >
-        <span
-            style={{
+            <Text style={{
                 fontFamily: 'KomikaTitle, sans-serif',
                 fontSize: 24,
                 letterSpacing: '0.15em',
                 color: 'rgba(235,218,165,0.78)'
-            }}
-        >
-          connecting to game...
-        </span>
-        </div>
+            }}>
+              connecting to game...
+            </Text>
+        </Box>
     )
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Group, Box } from '@mantine/core';
 
 interface FaceDownTilesProps {
     total: number;
@@ -11,22 +12,19 @@ const tileHeight = 18;
 
 export default function FaceDownTiles({ total, remaining }: FaceDownTilesProps) {
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'row',
+        <Group style={{
             gap: 2,
             flexWrap: 'wrap',
             maxWidth: 96,
             width: '100%',
             justifyContent: 'center',
-            alignItems: 'center',
         }}>
 
             {/*create a facedown tile for each domino remaining*/}
             {Array.from({ length: total }).map((_, i) => {
                 const played = i >= remaining;
                 return (
-                    <div key={i} style={{
+                    <Box key={i} style={{
                         width: tileWidth,
                         height: tileHeight,
                         borderRadius: 1,
@@ -35,10 +33,11 @@ export default function FaceDownTiles({ total, remaining }: FaceDownTilesProps) 
                         boxShadow: played ? '0 0 1px rgba(0,0,0,0.25)' : '1px 1px 3px rgba(0,0,0,0.5)',
                         opacity: played ? 0.35 : 1,
                         transition: 'all 0.3s ease',
+                        flexShrink: 0,
                     }} />
                 );
             })}
 
-        </div>
+        </Group>
     );
 }

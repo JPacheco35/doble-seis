@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
-import { Grid, Stack } from '@mantine/core';
+import { Grid, Stack, Box } from '@mantine/core';
 import { Navigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import LobbyHeader from '../../ui/LobbyHeader/LobbyHeader.tsx';
@@ -52,14 +52,16 @@ export function Lobby() {
   }, []);
 
   return (
-    <div
+    <Box
+      component="div"
       className="wood-grain"
       style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}
     >
       <BGDominoes />
       <LobbyHeader connected={connected} />
 
-      <div
+      <Box
+        component="div"
         style={{
           padding: '80px 32px 32px',
           maxWidth: '100%',
@@ -105,7 +107,7 @@ export function Lobby() {
             </Stack>
           </Grid.Col>
         </Grid>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

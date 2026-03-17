@@ -1,10 +1,11 @@
 import React from 'react';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
-import { Stack } from '@mantine/core';
+import { Stack, Box } from '@mantine/core';
 
 export default function NotFound() {
   return (
-    <div
+    <Box
+      component="div"
       className="wood-grain"
       style={{
         fontFamily: 'KomikaTitle, sans-serif',
@@ -19,6 +20,6 @@ export default function NotFound() {
         <h1>404 - Not Found</h1>
         <p>The page you are looking for does not exist.</p>
       </Stack>
-    </div>
+    </Box>
   );
 }

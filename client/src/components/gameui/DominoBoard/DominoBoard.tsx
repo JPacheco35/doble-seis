@@ -1,6 +1,6 @@
 import React from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
-import { Image } from '@mantine/core';
+import { Image, Box, Flex } from '@mantine/core';
 import { Domino } from '../../../types/Game.ts'
 import './DominoBoard.css';
 
@@ -15,7 +15,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
     // return empty board if no dominoes have been played yet
     if (board.length === 0) {
         return (
-            <div style={{
+            <Box component="div" style={{
                 color: 'rgba(235,218,165,0.58)',
                 fontSize: 11,
                 fontFamily: 'KomikaTitle, sans-serif',
@@ -24,21 +24,21 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                 width: '100%',
             }}>
                 board is empty, waiting for first play...
-            </div>
+            </Box>
         );
     }
 
     // return dominoes board
     return (
-        <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            gap: tileGap,
-            justifyContent: 'center',
-            width: 'max-content',
-            maxWidth: 'none',
-        }}>
+        <Flex component="div" 
+            align="center"
+            wrap="nowrap"
+            gap={tileGap}
+            justify="center"
+            style={{
+                width: 'max-content',
+                maxWidth: 'none',
+            }}>
             {/*lay out each domino in the array (has been played)*/}
             {board.map((domino, i) => {
 
@@ -49,7 +49,8 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                 const needsFlip = !isDouble && (domino.left > domino.right);
 
                 return (
-                    <div
+                    <Box
+                        component="div"
                         key={i}
                         className={i === board.length - 1 ? 'domino-board-tile domino-board-tile-enter' : 'domino-board-tile'}
                         style={{
@@ -61,7 +62,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                         
                         {/*case: double domino, place vertically*/}
                         {isDouble ? (
-                            <div style={{
+                            <Box component="div" style={{
                                 width: tileHeight,
                                 height: tileWidth,
                                 flexShrink: 0,
@@ -80,7 +81,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                                         display: 'block'
                                     }}
                                 />
-                            </div>
+                            </Box>
                         ) 
                             : 
                         // case: non double domino, place horizontally
@@ -99,9 +100,9 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                                 }}
                             />
                         )}
-                    </div>
+                    </Box>
                 );
             })}
-        </div>
+        </Flex>
     );
 }

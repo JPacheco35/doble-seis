@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Button, Group, Text } from '@mantine/core';
 import { GameState } from '../../../types/Game.ts';
 import RoundLog from '../RoundLog/RoundLog.tsx';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
@@ -26,7 +27,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
     const currentRound = gameState.roundNumber ?? 1;
 
     return (
-        <div
+        <Box
             className="game-overlay"
             style={{
                 position: 'fixed',
@@ -38,7 +39,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                 zIndex: 50,
         }}>
             <CornerCard style={{ borderRadius: 6, padding: '24px 24px 18px', textAlign: 'center', width: 380 }} cornerSize={14}>
-                <div style={{
+                <Text style={{
                     fontSize: 28,
                     color: '#f4b942',
                     letterSpacing: '0.1em',
@@ -46,9 +47,9 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     }}
                 >
                     {getTeamLabel(gameOver.winner).toUpperCase()} WINS!
-                </div>
+                </Text>
 
-                <div style={{
+                <Text style={{
                     fontFamily: 'KomikaTitle, sans-serif',
                     fontSize: 9,
                     letterSpacing: '0.2em',
@@ -58,9 +59,9 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     }}
                 >
                     Final Score · Round {currentRound}
-                </div>
+                </Text>
 
-                <div style={{
+                <Box style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: 10,
@@ -68,7 +69,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     }}
                 >
                     {[1, 2].map(t => (
-                        <div
+                        <Box
                             key={t}
                             style={{
                                 borderRadius: 4,
@@ -76,7 +77,7 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                                 border: `1px solid ${t === 1 ? 'rgba(74,144,217,0.28)' : 'rgba(217,112,74,0.28)'}`,
                                 background: t === 1 ? 'rgba(74,144,217,0.05)' : 'rgba(217,112,74,0.05)',
                         }}>
-                            <div
+                            <Text
                                 style={{
                                     fontSize: 10,
                                     letterSpacing: '0.14em',
@@ -85,20 +86,19 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                                 }}
                             >
                                 {getTeamLabel(t).toUpperCase()}
-                            </div>
+                            </Text>
 
-                            <div style={{
+                            <Text style={{
                                 fontSize: 24,
                                 color: t === 1 ? '#88c0f0' : '#f0956a',
                                 marginBottom: 5
                                 }}
                             >
                                 {gameOver.scores[t as 1 | 2]}
-                            </div>
+                            </Text>
 
                             {gameState.players.filter(p => p.team === t).map(p => (
-                                <div key={p.playerId} style={{
-                                    display: 'flex',
+                                <Group key={p.playerId} style={{
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
                                     gap: 8,
@@ -107,15 +107,15 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                                     color: playerNameColor,
                                     textShadow: '0 0 5px rgba(255,201,74,0.22)',
                                 }}>
-                                    <span>{p.username}</span>
-                                    <span style={{ color: 'rgba(244,184,66,0.86)', fontSize: 10 }}>{p.points}</span>
-                                </div>
+                                    <Text>{p.username}</Text>
+                                    <Text style={{ color: 'rgba(244,184,66,0.86)', fontSize: 10 }}>{p.points}</Text>
+                                </Group>
                             ))}
-                        </div>
+                        </Box>
                     ))}
-                </div>
+                </Box>
 
-                <div style={{
+                <Box style={{
                     marginBottom: 12,
                     border: '1px solid rgba(180,140,60,0.2)',
                     borderRadius: 4,
@@ -124,9 +124,9 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     overflow: 'hidden',
                 }}>
                     <RoundLog log={log} />
-                </div>
+                </Box>
 
-                <div style={{
+                <Text style={{
                     fontFamily: 'KomikaTitle, sans-serif',
                     fontSize: 9,
                     color: 'rgba(235,218,165,0.62)',
@@ -134,23 +134,21 @@ export default function PostGamePrompt({gameOver, gameState, bootTimer, onLeave,
                     }}
                 >
                     Returning to lobby in {formatBoot(bootTimer)}
-                </div>
+                </Text>
 
-                <div
+                <Button
                     className="game-dialog-leave-btn"
                     onClick={onLeave}
                     style={{
-                        display: 'inline-block',
                         padding: '7px 20px',
                         borderRadius: 3,
                         fontSize: 13,
                         letterSpacing: '0.12em',
-                        cursor: 'pointer',
                     }}
                 >
                     LEAVE GAME
-                </div>
+                </Button>
             </CornerCard>
-        </div>
+        </Box>
     );
 }

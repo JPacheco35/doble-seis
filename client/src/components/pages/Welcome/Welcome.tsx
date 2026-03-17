@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../../ui/Logo/Logo.tsx';
-import { Button, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Stack, Text, TextInput, Box } from '@mantine/core';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import FloatingDominoHero from '../../animations/FloatingDominoHero/FloatingDominoHero.tsx';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
@@ -35,7 +35,8 @@ export default function Welcome() {
   }
 
   return (
-    <div
+    <Box
+      component="div"
       className="wood-grain"
       style={{
         display: 'flex',
@@ -128,6 +129,6 @@ export default function Welcome() {
           </Button>
         </Stack>
       </CornerCard>
-    </div>
+    </Box>
   );
 }

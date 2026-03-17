@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mantine/core';
 import SeatCard from "../SeatCard/SeatCard.tsx";
 
 interface SeatsProps {
@@ -10,10 +11,10 @@ interface SeatsProps {
 
 export default function Seats({seats, gameState, knockedPlayerId = null, knockShakeToken = 0}:SeatsProps) {
     return (
-        <div>
+        <Box>
 
             {seats.top && (
-                <div
+                <Box
                     className="game-seat game-seat-top"
                     style={{ zIndex: 3 }}>
                     <SeatCard
@@ -22,11 +23,11 @@ export default function Seats({seats, gameState, knockedPlayerId = null, knockSh
                         isActive={gameState.currentTurn === seats.top.playerId}
                         shouldShake={knockedPlayerId === seats.top.playerId}
                     />
-                </div>
+                </Box>
             )}
 
             {seats.left && (
-                <div
+                <Box
                     className="game-seat game-seat-left"
                     style={{ zIndex: 3 }}>
                     <SeatCard
@@ -35,11 +36,11 @@ export default function Seats({seats, gameState, knockedPlayerId = null, knockSh
                         isActive={gameState.currentTurn === seats.left.playerId}
                         shouldShake={knockedPlayerId === seats.left.playerId}
                     />
-                </div>
+                </Box>
             )}
 
             {seats.right && (
-                <div className="game-seat game-seat-right"
+                <Box className="game-seat game-seat-right"
                      style={{ zIndex: 3 }}>
                     <SeatCard
                         key={`${seats.right.playerId}-${knockedPlayerId === seats.right.playerId ? knockShakeToken : 'steady'}`}
@@ -47,9 +48,9 @@ export default function Seats({seats, gameState, knockedPlayerId = null, knockSh
                         isActive={gameState.currentTurn === seats.right.playerId}
                         shouldShake={knockedPlayerId === seats.right.playerId}
                     />
-                </div>
+                </Box>
             )}
 
-        </div>
+        </Box>
     )
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ActionIcon, Box, Group, Image, Text } from '@mantine/core';
 import { Socket } from 'socket.io-client';
 import { GameState } from '../../../types/Game.ts';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
@@ -19,7 +20,7 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
     const selectedDomino = gameState.hand?.[sidePrompt];
 
     return (
-        <div
+        <Box
             className="game-overlay"
             style={{
                 position: 'fixed',
@@ -44,18 +45,16 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                 cornerSize={12}
             >
 
-                <button
-                    type="button"
+                <ActionIcon
+                    variant="transparent"
+                    size="sm"
                     aria-label="Go back"
                     onClick={() => setSidePrompt(null)}
                     style={{
                         position: 'absolute',
                         top: 10,
                         left: 10,
-                        border: 'none',
-                        background: 'transparent',
                         color: '#f4e8c1',
-                        cursor: 'pointer',
                         fontSize: 20,
                         fontWeight: 700,
                         lineHeight: 1,
@@ -63,9 +62,9 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                     }}
                 >
                     ←
-                </button>
+                </ActionIcon>
 
-                <div
+                <Text
                     style={{
                         fontSize: 9,
                         letterSpacing: '0.22em',
@@ -73,20 +72,20 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                         marginBottom: 8
                 }}>
                     WHICH END?
-                </div>
+                </Text>
 
-                <div
+                <Box
                     style={{
                         fontFamily: 'KomikaTitle, sans-serif',
                         color: '#f4e8c1',
                         marginBottom: 18
                 }}>
                     {selectedDomino ? (
-                        <img
+                        <Image
                             src={dominoSrc(selectedDomino.left, selectedDomino.right)}
                             alt={`${selectedDomino.left}-${selectedDomino.right}`}
-                            width={68}
-                            height={36}
+                            w={68}
+                            h={36}
                             style={{
                                 display: 'block',
                                 margin: '0 auto',
@@ -98,13 +97,12 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                             }}
                         />
                     ) : (
-                        <span style={{ fontSize: 18 }}>?-?</span>
+                        <Text span style={{ fontSize: 18 }}>?-?</Text>
                     )}
-                </div>
+                </Box>
 
-                <div
+                <Group
                     style={{
-                        display: 'flex',
                         gap: 10,
                         justifyContent: 'center'
                     }}
@@ -113,7 +111,7 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                         { side: 'left' as const, color: '#88c0f0', border: 'rgba(74,144,217,0.3)', end: gameState.leftEnd, arrow: '←', prefix: 'LEFT' },
                         { side: 'right' as const, color: '#f0956a', border: 'rgba(217,112,74,0.3)', end: gameState.rightEnd, arrow: '→', prefix: 'RIGHT' },
                     ]).map(({ side, color, border, end, arrow, prefix }) => (
-                        <div key={side}
+                        <Box key={side}
                              className="game-dialog-action"
                              onClick={() => { socket?.emit('placeDomino', { code, dominoIndex: sidePrompt, side }); setSidePrompt(null); }}
                              style={{
@@ -126,14 +124,14 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                                  letterSpacing: '0.1em'
                             }}
                         >
-                            <span style={{ color, fontSize: 10 }}>{side === 'left' ? `${arrow} ${prefix}` : `${prefix} ${arrow}`}</span>
-                            <span style={{ marginLeft: 6, color: '#f4e8c1', fontSize: 14, fontWeight: 700, textShadow: '0 0 6px rgba(244,232,193,0.35)' }}>
+                            <Text span style={{ color, fontSize: 10 }}>{side === 'left' ? `${arrow} ${prefix}` : `${prefix} ${arrow}`}</Text>
+                            <Text span style={{ marginLeft: 6, color: '#f4e8c1', fontSize: 14, fontWeight: 700, textShadow: '0 0 6px rgba(244,232,193,0.35)' }}>
                                 {end}
-                            </span>
-                        </div>
+                            </Text>
+                        </Box>
                     ))}
-                </div>
+                </Group>
             </CornerCard>
-        </div>
+        </Box>
     );
 }

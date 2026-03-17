@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Image } from '@mantine/core';
 
 // import domino SVGs (ie. l00 == light 0-0 domino)
 import l26 from '../../../assets/dominoes/light_2-6.svg';
@@ -32,11 +33,11 @@ interface Position {
 
 export default function BGDominoes() {
   return (
-    <div
+    <Box
       className="wood-grain"
     >
       {(POSITIONS as Position[]).map((d, i) => (
-        <img
+        <Image
           key={i}
           src={d.src}
           alt=""
@@ -53,6 +54,6 @@ export default function BGDominoes() {
           }}
         />
       ))}
-    </div>
+    </Box>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import CornerCard from "../CornerCard/CornerCard.tsx";
-import { Button, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Stack, Text, TextInput, Box, Flex } from "@mantine/core";
 import { Socket } from "socket.io-client";
 import { useNavigate } from 'react-router-dom';
 import './CreateLobby.css';
@@ -122,7 +122,8 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
             const player = teamPlayers[i];
             const isSelected = selectedPlayer?.playerId === player?.playerId;
             return player ? (
-                <div
+                <Box
+                    component="div"
                     key={player.playerId}
                     className={`player-badge ${isSelected ? 'player-badge-selected' : ''}`}
                     style={{
@@ -132,9 +133,10 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
                     onClick={() => handlePlayerClick(player)}
                 >
                     <span className="player-badge-name">{player.username}</span>
-                </div>
+                </Box>
             ) : (
-                <div
+                <Box
+                    component="div"
                     key={`empty-${i}`}
                     className={`player-slot-empty ${selectedPlayer ? 'player-slot-droppable' : ''}`}
                     onClick={() => handleEmptySlotClick(team)}
@@ -167,28 +169,28 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
 
                 {lobbyCreated && (
                     <>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: '0 12px' }}>
-                            <div className="team-column" onClick={() => handleEmptySlotClick(1)}>
+                        <Box component="div" style={{ display: 'grid', gridTemplateColumns: '1fr 1px 1fr', gap: '0 12px' }}>
+                            <Box component="div" className="team-column" onClick={() => handleEmptySlotClick(1)}>
                                 <Text className="team-label" style={{ color: '#4a90d9' }}>{getTeamLabel(1)}</Text>
                                 {renderSlots(1, team1)}
-                            </div>
-                            <div style={{ background: 'rgba(180,140,60,0.15)' }} />
-                            <div className="team-column" onClick={() => handleEmptySlotClick(2)}>
+                            </Box>
+                            <Box component="div" style={{ background: 'rgba(180,140,60,0.15)' }} />
+                            <Box component="div" className="team-column" onClick={() => handleEmptySlotClick(2)}>
                                 <Text className="team-label" style={{ color: '#d9704a' }}>{getTeamLabel(2)}</Text>
                                 {renderSlots(2, team2)}
-                            </div>
-                        </div>
+                            </Box>
+                        </Box>
 
                         <Text style={{ fontSize: 10, color: 'rgba(200,184,122,0.3)', textAlign: 'center', letterSpacing: '0.08em' }}>
                             {players.length}/4 · click a player then a slot to swap
                         </Text>
 
                         {countdown !== null && (
-                            <div style={{ textAlign: 'center' }}>
+                            <Flex direction="column" align="center">
                                 <Text style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(200,184,122,0.5)', marginBottom: 12 }}>
                                     Game Starting In
                                 </Text>
-                                <div className="countdown-wrap">
+                                <Box component="div" className="countdown-wrap">
                                     <svg className="countdown-ring" viewBox="0 0 60 60">
                                         <circle cx="30" cy="30" r={radius} className="countdown-ring-bg" />
                                         <circle
@@ -199,8 +201,8 @@ export default function CreateLobby({ lobbyName, setLobbyName, socket, connected
                                         />
                                     </svg>
                                     <span className="countdown-number">{countdown}</span>
-                                </div>
-                            </div>
+                                </Box>
+                            </Flex>
                         )}
 
                         {isFull && countdown === null && (

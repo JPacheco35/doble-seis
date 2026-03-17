@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Box, Image, Text } from '@mantine/core';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 
 interface RoundLogProps {
@@ -36,16 +37,16 @@ export default function RoundLog({log}: RoundLogProps) {
     }, [animatedEntryId]);
 
     return (
-        <div>
-            <div className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(235,218,165,0.68)', padding: '7px 12px 5px' }}>
+        <Box>
+            <Text className="game-log-title" style={{ fontSize: 10, letterSpacing: '0.2em', color: 'rgba(235,218,165,0.68)', padding: '7px 12px 5px' }}>
                 round log
-            </div>
-            <div className="game-log-list" ref={logRef} style={{
+            </Text>
+            <Box className="game-log-list" ref={logRef} style={{
                 flex: 1, overflowY: 'auto', padding: '5px 10px',
                 display: 'flex', flexDirection: 'column', gap: 2, scrollbarWidth: 'none',
             }}>
                 {log.map((entry, index) => (
-                    <div key={entry.id} className={`game-log-entry${animatedEntryId === entry.id ? ' game-log-entry-enter' : ''}`} style={{
+                    <Box key={entry.id} className={`game-log-entry${animatedEntryId === entry.id ? ' game-log-entry-enter' : ''}`} style={{
                         fontFamily: 'KomikaTitle, sans-serif', fontSize: 11,
                         lineHeight: 1.6, paddingBottom: 3,
                         borderBottom: '0.5px solid rgba(180,140,60,0.04)',
@@ -62,14 +63,14 @@ export default function RoundLog({log}: RoundLogProps) {
                         transition: 'opacity 0.2s ease',
                     }}>
                         {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
-                            <span className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                  <b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</b>
-                  <span>played</span>
-                  <img
+                            <Box className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <Text span style={{ color: PLAYER_NAME_COLOR, fontWeight: 500 }}>{entry.player}</Text>
+                  <Text span>played</Text>
+                  <Image
                       src={dominoSrc(entry.domino.left, entry.domino.right)}
                       alt={`${entry.domino.left}-${entry.domino.right}`}
-                      width={30}
-                      height={16}
+                      w={30}
+                      h={16}
                       style={{
                           display: 'inline-block',
                           objectFit: 'contain',
@@ -80,19 +81,19 @@ export default function RoundLog({log}: RoundLogProps) {
                           verticalAlign: 'middle',
                       }}
                   />
-                                {entry.type === 'auto' && <span>(timeout)</span>}
-                </span>
+                                {entry.type === 'auto' && <Text span>(timeout)</Text>}
+                </Box>
                         ) : entry.player
-                            ? <><b style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, textShadow: '0 0 6px rgba(255,201,74,0.35)' }}>{entry.player}</b>{' '}{entry.text.replace(entry.player + ' ', '')}</>
+                            ? <><Text span style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, textShadow: '0 0 6px rgba(255,201,74,0.35)' }}>{entry.player}</Text>{' '}{entry.text.replace(entry.player + ' ', '')}</>
                             : entry.text}
-                    </div>
+                    </Box>
                 ))}
                 {log.length === 0 && (
-                    <div className="game-log-empty" style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, fontStyle: 'italic' }}>
+                    <Text className="game-log-empty" style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 9, fontStyle: 'italic' }}>
                         Round log will appear here…
-                    </div>
+                    </Text>
                 )}
-            </div>
-        </div>
+            </Box>
+        </Box>
     )
 }

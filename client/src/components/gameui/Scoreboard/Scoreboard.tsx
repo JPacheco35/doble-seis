@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Group, Text } from '@mantine/core';
 import {GameState} from "../../../types/Game.ts";
 
 interface ScoreboardProps {
@@ -14,11 +15,10 @@ function getTeamLabelLower(team: number) {
 
 export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
     return (
-        <div>
-            <div
+        <Box>
+            <Group
                 className="game-right-panel-meta"
                 style={{
-                    display: 'flex',
                     justifyContent: 'space-between',
                     padding: '5px 12px',
                     fontSize: 9,
@@ -26,29 +26,28 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                     color: 'rgba(235,218,165,0.64)',
                 }}
             >
-                <span>round <span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</span></span>
-                <span>first to<span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}> 20</span></span>
-            </div>
+                <Text>round <Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}>{currentRound}</Text></Text>
+                <Text>first to<Text span style={{ color: 'rgba(244,184,66,0.48)', fontSize: 10 }}> 20</Text></Text>
+            </Group>
 
-            <div
+            <Box
                 className="game-right-panel-scores"
                 style={{ padding: '9px 12px' }}>
                 {[1, 2].map(t => (
-                    <div key={t} style={{ marginBottom: t === 1 ? 8 : 0 }}>
+                    <Box key={t} style={{ marginBottom: t === 1 ? 8 : 0 }}>
 
-                        <div
+                        <Group
                             style={{
-                                display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'baseline',
                                 marginBottom: 2
                             }}
                         >
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabelLower(t)}</span>
-                            <span style={{ fontSize: 15, color: t === 1 ? '#88c0f0' : '#f0956a' }}>{gameState.scores[t as 1 | 2]}</span>
-                        </div>
+                            <Text style={{ fontSize: 10, letterSpacing: '0.1em', color: t === 1 ? '#88c0f0' : '#f0956a' }}>{getTeamLabelLower(t)}</Text>
+                            <Text style={{ fontSize: 15, color: t === 1 ? '#88c0f0' : '#f0956a' }}>{gameState.scores[t as 1 | 2]}</Text>
+                        </Group>
 
-                        <div
+                        <Box
                             style={{
                                 height: 2,
                                 background: 'rgba(255,255,255,0.04)',
@@ -57,7 +56,7 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 overflow: 'hidden'
                             }}
                         >
-                            <div style={{
+                            <Box style={{
                                 height: '100%',
                                 borderRadius: 1,
                                 width: `${Math.min(100, (gameState.scores[t as 1 | 2] / 20) * 100)}%`,
@@ -66,11 +65,10 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 }}
                             />
 
-                        </div>
+                        </Box>
 
                         {gameState.players.filter(p => p.team === t).map(p => (
-                            <div key={p.playerId} style={{
-                                display: 'flex',
+                            <Group key={p.playerId} style={{
                                 justifyContent: 'space-between',
                                 fontFamily: 'KomikaTitle, sans-serif',
                                 fontSize: 9,
@@ -79,13 +77,13 @@ export default function Scoreboard({gameState, currentRound}: ScoreboardProps) {
                                 padding: '1px 0',
                                 textShadow: '0 0 5px rgba(255,201,74,0.22)',
                             }}>
-                                <span>{p.username.toUpperCase()}</span>
-                                <span style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 10, color: 'rgba(244,184,66,0.4)' }}>{p.points}</span>
-                            </div>
+                                <Text>{p.username.toUpperCase()}</Text>
+                                <Text style={{ fontFamily: 'KomikaTitle, sans-serif', fontSize: 10, color: 'rgba(244,184,66,0.4)' }}>{p.points}</Text>
+                            </Group>
                         ))}
-                    </div>
+                    </Box>
                 ))}
-            </div>
-        </div>
+            </Box>
+        </Box>
     )
 }

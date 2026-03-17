@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Button, Group, Text } from '@mantine/core';
+import { Badge, Button, Group, Text, Box, Flex } from '@mantine/core';
 import CornerCard from '../CornerCard/CornerCard.tsx';
 import './LobbyCard.css';
 
@@ -27,7 +27,7 @@ export default function LobbyCard({ lobby, onJoin, onLeave, isJoined, isHosting,
     <CornerCard style={{ padding: '16px 20px' }} cornerSize={5}>
       <Group justify="space-between" align="center" wrap="nowrap">
         {/* Left: code + name + host */}
-        <div className="lobby-left">
+        <Flex direction="column" gap={2}>
           <Text
             className="lobby-code"
           >
@@ -39,29 +39,30 @@ export default function LobbyCard({ lobby, onJoin, onLeave, isJoined, isHosting,
           >
             Host: {lobby.hostname}
           </Text>
-        </div>
+        </Flex>
 
         {/* Middle: filled + empty seats */}
-        <div className="lobby-middle">
+        <Box component="div" className="lobby-middle">
           <Group gap={6}>
             {lobby.players.map((player: Player, idx: number) => (
-              <div
+              <Box
+                component="div"
                 key={idx}
                 className="seat"
                 style={{ color: player.team === 1 ? '#4a90d9' : '#d9704a' }}
                 title={player.username}
               >
                 {player.username.charAt(0).toUpperCase()}
-              </div>
+              </Box>
             ))}
             {Array.from({ length: emptySeats }).map((_, idx) => (
-              <div key={`empty-${idx}`} className="seat-empty" />
+              <Box component="div" key={`empty-${idx}`} className="seat-empty" />
             ))}
           </Group>
-        </div>
+        </Box>
 
         {/* Right: badge + join */}
-        <div className="lobby-right">
+        <Flex direction="column" align="center" gap={6}>
           {isJoined ? (<Badge className="badge-joined">Joined</Badge>)
               : full ? (<Badge className="badge-full">Full</Badge>)
               : (<Badge className="badge-waiting">Waiting</Badge>) }
@@ -79,7 +80,7 @@ export default function LobbyCard({ lobby, onJoin, onLeave, isJoined, isHosting,
                 Join
               </Button>
           )}
-        </div>
+        </Flex>
       </Group>
     </CornerCard>
   );

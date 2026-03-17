@@ -1,4 +1,4 @@
-import { Group, Text } from '@mantine/core';
+import { Group, Text, Box } from '@mantine/core';
 import Logo from '../Logo/Logo.tsx';
 import CornerCard from '../CornerCard/CornerCard.tsx';
 import './LobbyHeader.css';
@@ -31,13 +31,13 @@ export default function LobbyHeader({ connected = false }: HeaderProps) {
 
                 <Group gap="md">
                     <Group gap={6}>
-                        <div className={`connectivity-dot ${connected ? 'connected' : 'disconnected'}`} />
+                        <Box component="div" className={`connectivity-dot ${connected ? 'connected' : 'disconnected'}`} />
                         <Text className="connectivity-label">
                             {connected ? 'Connected' : 'Disconnected'}
                         </Text>
                     </Group>
 
-                    <div className="header-divider" />
+                    <Box component="div" className="header-divider" />
 
                     {username && (
                         <Group gap={6}>

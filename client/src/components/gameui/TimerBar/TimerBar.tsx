@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Text } from '@mantine/core';
 
 interface TimerBarProps {
     timerPct: number;
@@ -14,7 +15,7 @@ export default function TimerBar({timerPct, timerColor, remainingSeconds}:TimerB
             : '#2eb34d';
 
     return (
-        <div
+        <Box
             className="game-timer-track"
             style={{
                 height: 14,
@@ -24,7 +25,7 @@ export default function TimerBar({timerPct, timerColor, remainingSeconds}:TimerB
                 zIndex: 4
             }}
         >
-            <div
+            <Box
                 className="game-timer-fill"
                 style={{
                     height: '100%',
@@ -34,7 +35,7 @@ export default function TimerBar({timerPct, timerColor, remainingSeconds}:TimerB
                     transition: 'width 1s linear, background 0.35s ease',
             }} />
 
-            <span style={{
+            <Text component="span" style={{
                 position: 'absolute',
                 inset: 0,
                 display: 'flex',
@@ -49,7 +50,7 @@ export default function TimerBar({timerPct, timerColor, remainingSeconds}:TimerB
                 pointerEvents: 'none',
             }}>
                 {Math.max(0, Math.floor(remainingSeconds ?? 0))}s
-            </span>
-        </div>
+            </Text>
+        </Box>
     )
 }
