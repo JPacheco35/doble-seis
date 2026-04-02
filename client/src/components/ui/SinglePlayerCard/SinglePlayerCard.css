@@ -1,0 +1,21 @@
+.play-button {
+    background: rgba(74, 217, 120, 0.15) !important;
+    color: #4ad978 !important;
+    border: 1px solid rgba(74, 217, 120, 0.3) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 10px !important;
+}
+
+.play-button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.play-button:disabled {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(200, 184, 122, 0.25) !important;
+    border: 0px solid rgba(74, 217, 120, 0.3) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+}

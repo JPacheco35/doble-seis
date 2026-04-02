@@ -10,6 +10,7 @@ import LobbyHeader from '../../ui/LobbyHeader/LobbyHeader.tsx';
 import LobbyList from '../../ui/LobbyList/LobbyList.tsx';
 import CreateLobby from '../../ui/CreateLobby/CreateLobby.tsx';
 import JoinLobby from '../../ui/JoinLobby/JoinLobby.tsx';
+import SinglePlayerCard from "../../ui/SinglePlayerCard/SinglePlayerCard.tsx";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -129,6 +130,12 @@ export function Lobby() {
                 setCountdown={setCountdown}
                 joinedCode={joinedCode}
                 lobbyCreated={lobbyCreated}
+              />
+
+              {/*play singleplayer section*/}
+              <SinglePlayerCard
+                isJoined={!!joinedCode}
+                isHosting={lobbyCreated}
               />
 
             </Stack>
