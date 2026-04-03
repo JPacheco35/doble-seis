@@ -74,10 +74,12 @@ export default function useRoundLog(logStorageKey: string) {
     type: LogEntry['type'],
     domino?: Domino,
     outcome?: LogEntry['outcome'],
-    isFreeKnock?: boolean
+    isFreeKnock?: boolean,
+    player?: string
   ) => {
     logCounterRef.current += 1;
-    setLog(prev => [{ text, type, domino, outcome, isFreeKnock }, ...prev.slice(0, 49)]);
+    const id = logCounterRef.current;
+    setLog(prev => [{ id, text, type, player, domino, outcome, isFreeKnock }, ...prev.slice(0, 49)]);
   }, []);
 
   const clearRoundLog = useCallback(() => {

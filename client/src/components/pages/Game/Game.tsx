@@ -196,7 +196,7 @@ export default function Game() {
         : `${placerName} played ${tileLabel}`;
 
       // add to the round log
-      addLog(text, type, placed);
+      addLog(text, type, placed, undefined, undefined, placerName);
 
       // update the game state
       setGameState((prev) =>

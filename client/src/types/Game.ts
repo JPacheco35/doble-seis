@@ -73,6 +73,7 @@ export interface DominoPlacedPayload {
 
 /** Log Entry Data, sent to all clients to keep a record of all moves in the current round */
 export interface LogEntry {
+    id: number;                   // unique entry id for animations and key
     text: string;                 // text to display in the log, varies based on type (see below)
     type:                         // type of event
       'play' |                      // [PLAYER1] played X-X
@@ -80,6 +81,7 @@ export interface LogEntry {
       'score' |                     // idk?
       'system' |                    // Round Started/Ended, Free Knocks
       'auto';                       // [PLAYER1] auto-played X-X
+    player?: string;              // playerId of the player performing the action
     domino?: Domino;              // domino that was played (if applicable)
     outcome?: 'win' | 'lose';     // is this outcome a win or loss for the player's team
     isFreeKnock?: boolean;        // is this a free knock? (no points awarded to opposing team)
