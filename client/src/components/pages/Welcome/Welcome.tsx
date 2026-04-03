@@ -37,7 +37,7 @@ export default function Welcome() {
   return (
     <Box
       component="div"
-      className="wood-grain"
+      className="wood-grain-background"
       style={{
         display: 'flex',
         flexDirection: 'column',

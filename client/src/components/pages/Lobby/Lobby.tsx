@@ -71,7 +71,7 @@ export function Lobby() {
   return (
     <Box
       component="div"
-      className="wood-grain"
+      className="wood-grain-background"
       style={{ fontFamily: 'KomikaTitle, sans-serif', minHeight: '100vh' }}
     >
       {/*background dominoes*/}

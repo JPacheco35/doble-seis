@@ -1,4 +1,4 @@
-.wood-grain {
+.wood-grain-background {
     background-color: #2a1506;
     background-image:
             radial-gradient(
@@ -29,13 +29,7 @@
             );
 }
 
-@font-face {
-        font-family: 'KomikaRegular';
-        src: url('./fonts/KomikaRegular.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-}
-
+/*imported fonts*/
 @font-face {
         font-family: 'KomikaTitle';
         src: url('./fonts/KomikaTitle.ttf') format('truetype');

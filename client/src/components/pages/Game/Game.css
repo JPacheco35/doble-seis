@@ -20,7 +20,7 @@
   pointer-events: none;
 }
 
-.game-bg-dominoes-layer .wood-grain {
+.game-bg-dominoes-layer .wood-grain-background {
   background: transparent;
   min-height: 100%;
 }

@@ -1,5 +1,5 @@
 /*wood grain back ground radiating from the center*/
-.wood-grain {
+.wood-grain-background {
     background-color: #2a1506;
     background-image:
             radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.65) 100%),

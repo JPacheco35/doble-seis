@@ -28,7 +28,7 @@ interface Position {
 export default function BGDominoes() {
   return (
     <Box
-      className="wood-grain"
+      className="wood-grain-background"
     >
       {/*place each domino of onto the wood-grain background*/}
       {(POSITIONS as Position[]).map((d, i) => (

@@ -461,7 +461,7 @@ export default function Game() {
   return (
     <Box
       component="div"
-      className="wood-grain game-page-root"
+      className="wood-grain-background game-page-root"
       style={{
         width: '100vw',
         height: '100vh',

@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <Box
       component="div"
-      className="wood-grain"
+      className="wood-grain-background"
       style={{
         fontFamily: 'KomikaTitle, sans-serif',
       }}

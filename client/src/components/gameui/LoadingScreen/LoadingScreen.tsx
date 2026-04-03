@@ -4,7 +4,7 @@ import { Box, Text } from '@mantine/core';
 export default function LoadingScreen() {
     return (
         <Box
-            className="wood-grain"
+            className="wood-grain-background"
             style={{
                 minHeight: '100vh',
                 display: 'flex',
