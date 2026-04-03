@@ -1,3 +1,6 @@
+// Stylized Title Logo component
+// only takes font size component as a prop, default is 24px
+
 import React from 'react';
 import { Text } from '@mantine/core';
 import './Logo.css';
