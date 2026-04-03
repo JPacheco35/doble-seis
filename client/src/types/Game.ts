@@ -40,12 +40,12 @@ export interface GameState {
 
 /** Scoreboard Payload, sent to server when the score needs to be updated */
 export interface ScorePayload {
-    scores: {
-      1: number;
-      2: number
+    scores: {                                 // team scores
+      1: number;                                // team1 score
+      2: number                                 // team2 score
     };
 
-    playerScores?: Record<string, number>;
+    playerScores?: Record<string, number>;    // optional player scores
 }
 
 
