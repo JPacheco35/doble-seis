@@ -196,7 +196,7 @@ export default function Game() {
         : `${placerName} played ${tileLabel}`;
 
       // add to the round log
-      addLog(text, type, placerName, placed);
+      addLog(text, type, placed);
 
       // update the game state
       setGameState((prev) =>
@@ -287,7 +287,6 @@ export default function Game() {
             ? `${data.username} knocked — free knock (no points)`
             : `${data.username} knocked — ${data.points}pt to ${awardedTeam ? getTeamLabel(awardedTeam) : 'opposing team'}`,
           'knock',
-          data.username,
           undefined,
           outcome,
           data.isFreeKnock,
@@ -360,7 +359,6 @@ export default function Game() {
         `Round ended — tally ${data.tally} = ${data.points}pts to ${data.winningTeam ? getTeamLabel(data.winningTeam) : 'no team'}`,
         'score',
         undefined,
-        undefined,
         outcome,
       );
 
@@ -369,7 +367,6 @@ export default function Game() {
       addLog(
         `${data.scores[1]}-${data.scores[2]} ${getTeamLabel(leadingTeam)}`,
         'score',
-        undefined,
         undefined,
         outcome,
       );

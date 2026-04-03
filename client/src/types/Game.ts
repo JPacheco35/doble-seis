@@ -1,70 +1,86 @@
-// various useful types for the game
+// various important type interfaces
 
-export interface Player {
-    playerId: string;
-    username: string;
-    team: number;
-    handSize: number;
-    points: number;
-}
-
-// domino in the hand
+/** Single domino pip {left: 0-6, right: 0-6} */
 export interface Domino {
-    left: number;
-    right: number;
+  left: number;
+  right: number;
 }
 
-// domino on the board
+
+/** Single Domino placed on the board */
 export interface BoardDomino extends Domino {
-    placedBy: string;
+  placedBy: string;   // playerId of the Player that placed this domino
 }
 
-// current state of the game
+
+/** Player Data during a game session, this is used by ALL players */
+export interface Player {
+    playerId: string;     // Unique ID from server
+    username: string;     // Player Username
+    team: number;         // 1 or 2, what team is Player on
+    handSize: number;     // How large is the player's hand (for display purposes, not actual hand data)
+    points: number;       // How many points has this player scored in the current game
+}
+
+
+/** Full game snapshot. Sent to clients on state change.
+ * Invariant: board is ordered [oldest..newest].
+ */
 export interface GameState {
-    board: BoardDomino[];
-    hand: Domino[];
-    currentTurn: string;
-    scores: { 1: number; 2: number };
-    leftEnd: number | null;
-    rightEnd: number | null;
-    players: Player[];
-    roundNumber: number;
+    board: BoardDomino[];                 // the domino board, what has been played so far
+    hand: Domino[];                       // the player's current hand (has actual hand data)
+    currentTurn: string;                  // the playerId of whose turn it is
+    scores: { 1: number; 2: number };     // team scores
+    leftEnd: number | null;               // value on the left end of the board
+    rightEnd: number | null;              // value on the right end of the board
+    players: Player[];                    // Player Data of all players in the game
+    roundNumber: number;                  // round number, game starts at 1
 }
 
-// team and player scores
+
+/** Scoreboard Payload, sent to server when the score needs to be updated */
 export interface ScorePayload {
-    scores: { 1: number; 2: number };
+    scores: {
+      1: number;
+      2: number
+    };
+
     playerScores?: Record<string, number>;
 }
 
 
-// round end data
+/** End of Round Status, sent to all players when round is over */
 export interface RoundEndedPayload extends ScorePayload {
-    tally: number;
-    points: number;
-    winningTeam: number | null;
-    nextRoundInSec?: number;
+    tally: number;                // total value of outstanding pips
+    points: number;               // point value of the tally (10pts of tally --> 1pt) (5&below = round down) (6&above = round up)
+    winningTeam: number | null;   // which team won this round (and the points)
+    nextRoundInSec?: number;      // countdown until next round starts (default = 15s)
 }
 
-// domino placement data
+
+/** Domino Placement Data, sent to all players when a move is made */
 export interface DominoPlacedPayload {
-    playerId: string;
-    placedDomino?: Domino;
-    moveNumber?: number;
-    side?: 'left' | 'right';
-    board: BoardDomino[];
-    leftEnd: number | null;
-    rightEnd: number | null;
-    autoPlayed: boolean;
+    playerId: string;           // playerId of the player that made the move
+    placedDomino?: Domino;      // which domino was placed
+    moveNumber?: number;        // move number of this placement (1st? 4th? 15?)
+    side?: 'left' | 'right';    // side this domino placed on
+    board: BoardDomino[];       // the current domino board
+    leftEnd: number | null;     // left end value of the board
+    rightEnd: number | null;    // right end value of the board
+    autoPlayed: boolean;        // was this move an autoplay (AFK timeout)
 }
 
-// log entry data
+
+/** Log Entry Data, sent to all clients to keep a record of all moves in the current round */
 export interface LogEntry {
-    id: number;
-    text: string;
-    type: 'play' | 'knock' | 'score' | 'system' | 'auto';
-    player?: string;
-    domino?: Domino;
-    outcome?: 'win' | 'lose';
-    isFreeKnock?: boolean;
+    text: string;                 // text to display in the log, varies based on type (see below)
+    type:                         // type of event
+      'play' |                      // [PLAYER1] played X-X
+      'knock' |                     // [PLAYER1] knocked, X points awarded to [OPPOSING-TEAM]
+      'score' |                     // idk?
+      'system' |                    // Round Started/Ended, Free Knocks
+      'auto';                       // [PLAYER1] auto-played X-X
+    domino?: Domino;              // domino that was played (if applicable)
+    outcome?: 'win' | 'lose';     // is this outcome a win or loss for the player's team
+    isFreeKnock?: boolean;        // is this a free knock? (no points awarded to opposing team)
 }
