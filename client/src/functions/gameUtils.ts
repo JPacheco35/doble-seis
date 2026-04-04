@@ -1,6 +1,6 @@
 // gameUtils.ts: helper functions for the Game component moved into another file for readability
 
-import { GameState } from '../../../types/gameTypes.ts';
+import { GameState } from '../types/gameTypes.ts';
 
 
 // returns the indices of the player's hand that are valid to play based on the current game state

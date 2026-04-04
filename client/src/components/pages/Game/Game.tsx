@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client';
 import { Box } from '@mantine/core';
 import './Game.css';
 import {GameState, DominoPlacedPayload, ScorePayload, LogEntry, RoundEndedPayload} from "../../../types/gameTypes.ts";
-import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
+import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from '../../../functions/gameUtils.ts';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import SidePrompt from '../../gameui/SidePrompt/SidePrompt.tsx';
 import PostGamePrompt from '../../gameui/PostGamePrompt/PostGamePrompt.tsx';
@@ -18,7 +18,7 @@ import GameHeader from '../../gameui/GameHeader/GameHeader.tsx';
 import Scoreboard from '../../gameui/Scoreboard/Scoreboard.tsx';
 import RoundLog from '../../gameui/RoundLog/RoundLog.tsx';
 import Playmat from '../../gameui/Playmat/Playmat.tsx';
-import useRoundLog from './useRoundLog.ts';
+import useRoundLog from '../../../hooks/useRoundLog.ts';
 import PostRoundPrompt from '../../gameui/PostRoundPrompt/PostRoundPrompt.tsx';
 
 const API_URL = import.meta.env.VITE_API_URL;
