@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Group, Text } from '@mantine/core';
-import { GameState } from '../../../types/Game.ts';
+import { GameState } from '../../../types/gameTypes.ts';
 import RoundLog from '../RoundLog/RoundLog.tsx';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 

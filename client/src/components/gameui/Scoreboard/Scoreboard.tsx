@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Group, Text } from '@mantine/core';
-import {GameState} from "../../../types/Game.ts";
+import {GameState} from "../../../types/gameTypes.ts";
 
 interface ScoreboardProps {
     gameState: GameState;

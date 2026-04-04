@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActionIcon, Box, Group, Image, Text } from '@mantine/core';
 import { Socket } from 'socket.io-client';
-import { GameState } from '../../../types/Game.ts';
+import { GameState } from '../../../types/gameTypes.ts';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 import dominoSrc from '../../../functions/dominoSrc.ts';
 

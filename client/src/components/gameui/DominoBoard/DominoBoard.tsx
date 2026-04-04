@@ -1,7 +1,7 @@
 import React from 'react';
 import dominoSrc from "../../../functions/dominoSrc.ts";
 import { Image, Box, Flex } from '@mantine/core';
-import { Domino } from '../../../types/Game.ts'
+import { Domino } from '../../../types/gameTypes.ts'
 import './DominoBoard.css';
 
 // TESTING: change the size/gap of the board tiles

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Flex, Text } from '@mantine/core';
 import DominoTile from '../DominoTile/DominoTile.tsx';
-import { GameState, Player } from '../../../types/Game.ts';
+import { GameState, Player } from '../../../types/gameTypes.ts';
 import CornerCard from '../../ui/CornerCard/CornerCard.tsx';
 
 type Seats = {

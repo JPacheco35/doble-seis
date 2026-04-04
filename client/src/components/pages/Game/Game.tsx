@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { Box } from '@mantine/core';
 import './Game.css';
-import {GameState, DominoPlacedPayload, ScorePayload, LogEntry, RoundEndedPayload} from "../../../types/Game.ts";
+import {GameState, DominoPlacedPayload, ScorePayload, LogEntry, RoundEndedPayload} from "../../../types/gameTypes.ts";
 import { getValidIndices, getSeatedPlayers, getTimerPct, getTimerColor } from './gameUtils.ts';
 import BGDominoes from '../../animations/BGDominoes/BGDominoes.tsx';
 import SidePrompt from '../../gameui/SidePrompt/SidePrompt.tsx';

@@ -1,7 +1,7 @@
 // Round Log Management Helper Functions
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Domino, LogEntry } from '../../../types/Game.ts';
+import { Domino, LogEntry } from '../../../types/gameTypes.ts';
 
 function shouldKeepBetweenRounds(entry: LogEntry) {
   const isCompactScoreSnapshot = /^\d+-\d+ (Blue Team|Red Team)$/.test(entry.text) || /^\d+-\d+ Team [12]$/.test(entry.text);

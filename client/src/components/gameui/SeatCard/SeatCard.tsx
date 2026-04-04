@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Group, Text } from '@mantine/core';
 import FaceDownTiles from '../FaceDownTiles/FaceDownTiles.tsx';
-import { Player } from '../../../types/Game.ts';
+import { Player } from '../../../types/gameTypes.ts';
 
 interface SeatCardProps {
     player: Player;
