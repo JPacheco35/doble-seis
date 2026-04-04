@@ -24,7 +24,7 @@ export interface Player {
 
 
 /** Full game snapshot. Sent to clients on state change.
- * Invariant: board is ordered [oldest..newest].
+ * Invariant: board is ordered [oldest...newest].
  */
 export interface GameState {
     board: BoardDomino[];                 // the domino board, what has been played so far
@@ -78,7 +78,7 @@ export interface LogEntry {
     type:                         // type of event
       'play' |                      // [PLAYER1] played X-X
       'knock' |                     // [PLAYER1] knocked, X points awarded to [OPPOSING-TEAM]
-      'score' |                     // idk?
+      'score' |                     // Current Team Scores
       'system' |                    // Round Started/Ended, Free Knocks
       'auto';                       // [PLAYER1] auto-played X-X
     player?: string;              // playerId of the player performing the action

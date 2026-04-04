@@ -62,27 +62,27 @@ export default function RoundLog({log}: RoundLogProps) {
                         textShadow: index === 0 ? '0 0 9px rgba(255,247,215,0.42)' : '0 0 3px rgba(255,247,215,0.16)',
                         transition: 'opacity 0.2s ease',
                     }}>
-                        {entry.player && entry.domino && (entry.type === 'play' || entry.type === 'auto') ? (
+                        {entry.player && entry.domino && entry.domino.left !== undefined && entry.domino.right !== undefined && (entry.type === 'play' || entry.type === 'auto') ? (
                             <Box className="game-log-play" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <Text span style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, fontSize: 9 }}>{entry.player}</Text>
                   <Text span style={{ fontSize: 9 }}>played</Text>
                   <Image
-                      src={dominoSrc(entry.domino.left, entry.domino.right)}
-                      alt={`${entry.domino.left}-${entry.domino.right}`}
-                      w={26}
-                      h={14}
-                      style={{
-                          display: 'inline-block',
-                          objectFit: 'contain',
-                          background: 'rgba(255,248,232,0.96)',
-                          border: '1px solid rgba(180,140,60,0.28)',
-                          borderRadius: 3,
-                          boxShadow: '0 2px 5px rgba(0,0,0,0.34)',
-                          verticalAlign: 'middle',
-                      }}
-                  />
-                                {entry.type === 'auto' && <Text span style={{ fontSize: 9 }}>(timeout)</Text>}
-                </Box>
+                       src={dominoSrc(entry.domino)}
+                       alt={`${entry.domino.left}-${entry.domino.right}`}
+                       w={26}
+                       h={14}
+                       style={{
+                           display: 'inline-block',
+                           objectFit: 'contain',
+                           background: 'rgba(255,248,232,0.96)',
+                           border: '1px solid rgba(180,140,60,0.28)',
+                           borderRadius: 3,
+                           boxShadow: '0 2px 5px rgba(0,0,0,0.34)',
+                           verticalAlign: 'middle',
+                       }}
+                   />
+                                 {entry.type === 'auto' && <Text span style={{ fontSize: 9 }}>(timeout)</Text>}
+                 </Box>
                         ) : entry.player
                             ? <><Text span style={{ color: PLAYER_NAME_COLOR, fontWeight: 500, fontSize: 9, textShadow: '0 0 6px rgba(255,201,74,0.35)' }}>{entry.player}</Text>{' '}{entry.text.replace(entry.player + ' ', '')}</>
                             : entry.text}

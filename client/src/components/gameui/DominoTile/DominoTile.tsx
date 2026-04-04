@@ -29,37 +29,38 @@ export default function DominoTile({ left, right, size = 26, onClick, valid, sel
 
     // return domino tile
     return (
-        <Box
-            onClick={onClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            style={{
-            width: tileHeight,
-            height: tileWidth,
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: onClick && valid ? 'pointer' : 'default',
-            transform: valid && isHovered ? 'translateY(-2px)' : 'none',
-            transition: 'transform 0.12s ease',
-        }}>
-            <img
-                src={dominoSrc(left, right)}
-                alt={`${left}|${right}`}
-                width={tileWidth}
-                height={tileHeight}
-                style={{
-                    width: tileWidth,
-                    height: tileHeight,
-                    transform: 'rotate(90deg)',
-                    borderRadius: 3,
-                    boxShadow: outline,
-                    display: 'block',
-                    objectFit: 'contain',
-                    transition: 'box-shadow 0.12s ease',
-                }}
-            />
-        </Box>
+      <Box
+        onClick={onClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          width: tileHeight,
+          height: tileWidth,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: onClick && valid ? 'pointer' : 'default',
+          transform: valid && isHovered ? 'translateY(-2px)' : 'none',
+          transition: 'transform 0.12s ease',
+        }}
+      >
+        <img
+          src={dominoSrc({left,right})}
+          alt={`${left}|${right}`}
+          width={tileWidth}
+          height={tileHeight}
+          style={{
+            width: tileWidth,
+            height: tileHeight,
+            transform: 'rotate(90deg)',
+            borderRadius: 3,
+            boxShadow: outline,
+            display: 'block',
+            objectFit: 'contain',
+            transition: 'box-shadow 0.12s ease',
+          }}
+        />
+      </Box>
     );
 }

@@ -82,7 +82,7 @@ export default function SidePrompt({ sidePrompt, setSidePrompt, gameState, code,
                 }}>
                     {selectedDomino ? (
                         <Image
-                            src={dominoSrc(selectedDomino.left, selectedDomino.right)}
+                            src={dominoSrc(selectedDomino)}
                             alt={`${selectedDomino.left}-${selectedDomino.right}`}
                             w={68}
                             h={36}

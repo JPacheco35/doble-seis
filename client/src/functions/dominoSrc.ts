@@ -3,16 +3,26 @@
 // Assumes dominoes from 0-6 only
 // SVG file names are in lo-hi format (its light_3-5.svg, not light_5-3.svg)
 
-function dominoSrc(a: number, b: number): string {
+import { Domino } from "../types/gameTypes";
 
-  // check for invalid values
-  if (a < 0 || a > 6 || b < 0 || b > 6) {
-    throw new Error(`Invalid domino values: ${a}, ${b}. Must be between 0 and 6.`);
+function dominoSrc(domino: Domino): string {
+  // check for missing or invalid domino object
+  if (!domino || domino.left === undefined || domino.right === undefined) {
+    console.warn('Invalid domino passed to dominoSrc:', domino);
+    return '/dominoes/light_0-0.svg'; // fallback to blank domino
   }
 
-  const lo = Math.min(a, b);
-  const hi = Math.max(a, b);
+  // check for out-of-range values
+  if (domino.left < 0 || domino.left > 6 || domino.right < 0 || domino.right > 6) {
+    throw new Error(
+      `Invalid domino values: ${domino.left}, ${domino.right}. Must be between 0 and 6.`,
+    );
+  }
+
+  const lo = Math.min(domino.left, domino.right);
+  const hi = Math.max(domino.left, domino.right);
   return `/dominoes/light_${lo}-${hi}.svg`;
 }
+
 
 export default dominoSrc;

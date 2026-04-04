@@ -95,7 +95,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                                 justifyContent: 'center',
                             }}>
                                 <img
-                                    src={dominoSrc(domino.left, domino.right)}
+                                    src={dominoSrc(domino)}
                                     alt={`${domino.left}|${domino.right}`}
                                     width={tileWidth} height={tileHeight}
                                     style={{
@@ -111,7 +111,7 @@ export default function DominoBoard({ board }: { board: Domino[] }) {
                         // case: non double domino, place horizontally
                         (
                             <Image
-                                src={dominoSrc(domino.left, domino.right)}
+                                src={dominoSrc(domino)}
                                 alt={`${domino.left}|${domino.right}`}
                                 width={tileWidth} height={tileHeight}
                                 style={{
