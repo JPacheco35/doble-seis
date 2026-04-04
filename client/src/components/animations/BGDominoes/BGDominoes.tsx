@@ -27,14 +27,12 @@ interface Position {
 
 export default function BGDominoes() {
   return (
-    <Box
-      className="wood-grain-background"
-    >
+    <Box className="wood-grain-background">
       {/*place each domino of onto the wood-grain background*/}
       {(POSITIONS as Position[]).map((d, i) => (
         <Image
           key={i}
-          src={dominoSrc({left:d.leftPip, right:d.rightPip)}
+          src={dominoSrc({ left:d.leftPip, right:d.rightPip })}
           alt=""
           style={{
             position: 'fixed',
