@@ -34,7 +34,7 @@ export default function BGDominoes() {
       {(POSITIONS as Position[]).map((d, i) => (
         <Image
           key={i}
-          src={dominoSrc({left:d.leftPip, right:d.rightPip})}
+          src={dominoSrc({left:d.leftPip, right:d.rightPip)}
           alt=""
           style={{
             position: 'fixed',
