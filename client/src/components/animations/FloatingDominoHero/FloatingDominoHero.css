@@ -5,6 +5,8 @@
     animation: tileFloat 4s ease-in-out infinite;
     filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
 }
+
+/*floating up and down animation*/
 @keyframes tileFloat {
     0%, 100% {
         transform: rotate(-3deg) translateY(0px);
