@@ -1,16 +1,30 @@
+/**
+ * Animation for domino tiles entering the board
+ *
+ * creates a bouncy entrance effect where tiles:
+ * 1. start small and transparent above the board
+ * 2. bounce down and grow slightly larger than final size
+ * 3. settle to normal size with a golden glow
+ *
+ * Duration: 320ms with ease-out timing for natural deceleration
+ */
+
 @keyframes dominoTileEnter {
+  /* initial state: tile hidden and scaled down */
   0% {
     opacity: 0;
     transform: translateY(-8px) scale(0.92);
     filter: drop-shadow(0 0 0 rgba(244, 185, 66, 0));
   }
 
+  /* midpoint: tile visible, bounces past final size, adds glow */
   55% {
     opacity: 1;
     transform: translateY(0) scale(1.06);
     filter: drop-shadow(0 0 8px rgba(244, 185, 66, 0.5));
   }
 
+  /* final state: tile at normal size, glow fades out */
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -18,11 +32,12 @@
   }
 }
 
+/* optimize performance for tiles that may animate */
 .domino-board-tile {
   will-change: transform, opacity, filter;
 }
 
+/* apply the entering animation to newly placed dominoes */
 .domino-board-tile-enter {
   animation: dominoTileEnter 320ms ease-out;
 }
-
